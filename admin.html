@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Boss 2026 | Organizer Command Center</title>
+<meta name="description" content="Organizer Admin Portal for Tech Boss 2026. Manage leaderboards, verify UTR registrations, and broadcast live tournament telemetry.">
+<link rel="icon" type="image/png" href="logo.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700;800&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-dark: #06070a;
+    --bg-surface: #0a0d14;
+    --panel-bg: rgba(14, 18, 30, 0.75);
+    --panel-border: rgba(255, 255, 255, 0.08);
+    --panel-hover: rgba(245, 186, 19, 0.4);
+    --line: rgba(255, 255, 255, 0.08);
+    
+    --gold: #f5ba13;
+    --gold-glow: rgba(245, 186, 19, 0.35);
+    --pink: #ff2a85;
+    --pink-glow: rgba(255, 42, 133, 0.35);
+    --cyan: #00f0ff;
+    --cyan-glow: rgba(0, 240, 255, 0.3);
+    --green: #00f59b;
+    --green-glow: rgba(0, 245, 155, 0.3);
+    
+    --text-main: #ffffff;
+    --text-muted: #9aa4bf;
+    --text-dim: #5f6b8c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .pixel { font-family: 'Press Start 2P', monospace; }
+  .outfit { font-family: 'Outfit', sans-serif; }
+
+  .wrap {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 24px;
+    width: 100%;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 18px;
+    font-weight: 600;
+    font-size: 13.5px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    border-radius: 9999px;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .btn-primary {
+    background: #ffffff;
+    color: #000000;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
+  }
+  .btn-primary:hover {
+    background: #f0f0f2;
+    transform: scale(1.02);
+  }
+  .btn-pink {
+    background: rgba(255, 42, 133, 0.15);
+    color: #ff2a85;
+    border: 1px solid rgba(255, 42, 133, 0.3);
+  }
+  .btn-pink:hover {
+    background: rgba(255, 42, 133, 0.25);
+  }
+  .btn-green {
+    background: #30d158;
+    color: #000000;
+    font-weight: 600;
+  }
+  .btn-green:hover { filter: brightness(1.1); }
+  .btn-ghost {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-main);
+    border: 1px solid var(--panel-border);
+  }
+  .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+  }
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  /* APPLE CARD */
+  .cyber-card {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    position: relative;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+  }
+
+  /* AUTH MODAL */
+  #authOverlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(7, 8, 17, 0.96);
+    backdrop-filter: blur(16px);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .auth-box {
+    max-width: 420px;
+    width: 100%;
+    padding: 36px 30px;
+    text-align: center;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 40px var(--gold-glow);
+  }
+  .auth-icon {
+    font-size: 38px;
+    margin-bottom: 14px;
+    display: inline-block;
+  }
+
+  /* HEADER */
+  header {
+    background: rgba(10, 12, 26, 0.95);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+  }
+  .header-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .brand-logo {
+    width: 32px;
+    height: 32px;
+    background: var(--gold);
+    color: #070811;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    font-weight: 900;
+    clip-path: polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%);
+  }
+
+  /* METRICS GRID */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin: 28px 0;
+  }
+  .metric-card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  .metric-lbl {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .metric-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1.1;
+  }
+  .metric-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* TABS NAVIGATION */
+  .nav-tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+    padding-bottom: 4px;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tab-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .tab-btn.active {
+    background: rgba(245, 186, 19, 0.15);
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    box-shadow: 0 0 14px var(--gold-glow);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* TABLES */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+  }
+  table.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--panel-bg);
+  }
+  table.admin-table th {
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 11.5px;
+    color: var(--text-dim);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    background: rgba(10, 12, 26, 0.95);
+    border-bottom: 1px solid var(--line);
+  }
+  table.admin-table td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13.5px;
+    vertical-align: middle;
+  }
+  table.admin-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .badge-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .status-verified { background: rgba(5, 255, 161, 0.15); color: var(--green); border: 1px solid var(--green); }
+  .status-pending { background: rgba(245, 186, 19, 0.15); color: var(--gold); border: 1px solid var(--gold); }
+  .status-rejected { background: rgba(255, 42, 109, 0.15); color: var(--pink); border: 1px solid var(--pink); }
+
+  /* FORMS */
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  input, select, textarea {
+    width: 100%;
+    background: rgba(10, 12, 26, 0.95);
+    border: 1px solid var(--line);
+    color: var(--text-main);
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13.5px;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--gold);
+    outline: none;
+    box-shadow: 0 0 10px var(--gold-glow);
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .form-group { margin-bottom: 14px; }
+
+  /* MODALS */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(4, 5, 12, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal-panel {
+    background: linear-gradient(135deg, #131735, #0a0c1e);
+    border: 1px solid var(--gold);
+    max-width: 500px;
+    width: 100%;
+    padding: 28px;
+    border-radius: 6px;
+    box-shadow: 0 0 35px var(--gold-glow);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--panel-bg);
+    border: 1px solid var(--green);
+    color: var(--green);
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    box-shadow: 0 0 20px var(--green-glow);
+    z-index: 300;
+    display: none;
+  }
+
+  .table-screenshot-thumb {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+    background: #000000;
+  }
+  .table-screenshot-thumb:hover {
+    transform: scale(1.1);
+    border-color: var(--gold);
+    box-shadow: 0 0 12px var(--gold-glow);
+  }
+
+  @media (max-width: 860px) {
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Passcode Gate -->
+<div id="authOverlay">
+  <div class="cyber-card auth-box">
+    <img src="logo.png" alt="Tech Boss" style="width:110px; height:auto; object-fit:contain; margin:0 auto 14px; display:block; filter:drop-shadow(0 0 16px var(--gold-glow)) drop-shadow(0 0 20px rgba(0,240,255,0.4));">
+    <span class="pixel" style="font-size: 10px; color: var(--gold); display: block; margin-bottom: 8px;">RESTRICTED ACCESS</span>
+    <h2 style="font-family:'Outfit', sans-serif; font-size:22px; font-weight:800; margin-bottom:10px;">ORGANIZER TERMINAL</h2>
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">
+      Enter the organizer password to open the admin console and enter tournament data.
+    </p>
+    <div style="margin-bottom:16px;">
+      <input type="password" id="adminPinInput" placeholder="Enter Password" autocomplete="current-password" autofocus style="text-align:center; font-size:16px; font-family:'JetBrains Mono', monospace; letter-spacing:3px;">
+    </div>
+    <button class="btn btn-primary" id="loginBtn" style="width:100%; height:44px;">AUTHENTICATE & ENTER</button>
+    <div id="authError" style="color:var(--pink); font-size:12px; margin-top:10px; display:none;">⚠️ Invalid Password. Access Denied.</div>
+  </div>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="wrap header-wrap">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <img src="logo.png" alt="Tech Boss Logo" style="height:38px; width:auto; object-fit:contain; filter:drop-shadow(0 0 8px rgba(0,240,255,0.5));">
+      <div>
+        <h1 style="font-size:16px; font-weight:800; line-height:1.1;">TECH BOSS 2026</h1>
+        <span style="font-size:11px; color:var(--text-dim); font-family:'JetBrains Mono', monospace;">ORGANIZER COMMAND CENTER</span>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:14px;">
+      <a class="btn btn-ghost btn-sm" href="index.html" target="_blank">🌐 Live Arena View ↗</a>
+      <button class="btn btn-pink btn-sm" id="logoutBtn">🔒 Lock Terminal</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="flex:1; padding-bottom:60px;">
+  <!-- Metrics Dashboard -->
+  <div class="metrics-grid">
+    <div class="cyber-card metric-card">
+      <div class="metric-lbl">Total Registrations</div>
+      <div class="metric-val" id="metRegCount">0</div>
+      <div class="metric-sub">Solo Challengers Signed Up</div>
+    </div>
+    <div class="cyber-card metric-card">
+      <div class="metric-lbl">Total Revenue Collected</div>
+      <div class="metric-val" id="metRevenue">₹0</div>
+      <div class="metric-sub">₹100 Unified Pass Payments</div>
+    </div>
+    <div class="cyber-card metric-card">
+      <div class="metric-lbl">Leaderboard Contenders</div>
+      <div class="metric-val" id="metBoardCount">0</div>
+      <div class="metric-sub">Ranked on Live Table</div>
+    </div>
+    <div class="cyber-card metric-card">
+      <div class="metric-lbl">Boss Health Level</div>
+      <div class="metric-val" id="metBossHealth" style="color:var(--pink);">78%</div>
+      <div class="metric-sub">Titan-X Target Status</div>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" data-tab="tab-leaderboard">🏆 Scoreboard Manager</button>
+    <button class="tab-btn" data-tab="tab-registrations">📋 Registered Challengers (<span id="tabRegBadge">0</span>)</button>
+    <button class="tab-btn" data-tab="tab-telemetry">⚡ Battle Feed & Telemetry</button>
+    <button class="tab-btn" data-tab="tab-data">💾 Data Backup & Reset</button>
+  </div>
+
+  <!-- TAB 1: LEADERBOARD MANAGER -->
+  <div class="tab-content active" id="tab-leaderboard">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h3 style="font-size:18px; font-weight:800;">LIVE SCOREBOARD TELEMETRY</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Insert damage scores, adjust ranks, and manage solo fighters appearing on the public leaderboard.</p>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <input type="file" id="uploadScoresFileInput" accept=".csv, .tsv, .txt, .json" style="display:none;">
+        <button class="btn btn-ghost" id="openUploadScoresBtn">📥 Upload Scores (CSV/Excel)</button>
+        <button class="btn btn-primary" id="openAddScoreModal">⚡ Add New Challenger Score</button>
+      </div>
+    </div>
+
+    <div class="cyber-card table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th style="width:60px;">Rank</th>
+            <th>Handle & Name</th>
+            <th>Stage / Track</th>
+            <th style="width:160px;">Damage (Score)</th>
+            <th style="width:110px;">Tier Rank</th>
+            <th style="width:180px; text-align:right;">Quick Actions</th>
+          </tr>
+        </thead>
+        <tbody id="adminBoardBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 2: REGISTRATION RECORDS & PAYMENT VERIFICATION -->
+  <div class="tab-content" id="tab-registrations">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h3 style="font-size:18px; font-weight:800;">REGISTRATION & PAYMENT VERIFICATION</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Inspect uploaded UPI payment screenshots, verify student details, and approve tournament passes.</p>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-ghost btn-sm" id="exportCsvBtn">📥 Export CSV</button>
+      </div>
+    </div>
+
+    <div class="cyber-card table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Participant</th>
+            <th>Register No</th>
+            <th>Branch & Year</th>
+            <th>Phone</th>
+            <th>Payment Screenshot</th>
+            <th>Status</th>
+            <th style="text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="adminRegBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 3: TELEMETRY & BATTLE FEED -->
+  <div class="tab-content" id="tab-telemetry">
+    <div class="cyber-card" style="padding:28px; max-width:700px;">
+      <h3 style="font-size:18px; font-weight:800; margin-bottom:6px;">LIVE TOURNAMENT TELEMETRY</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Broadcast announcement messages directly to the live battle feed on the main website.</p>
+
+      <div class="form-group">
+        <label for="broadcastMsg">Custom Battle Feed Announcement</label>
+        <textarea id="broadcastMsg" rows="3" placeholder="e.g. ⚡ Stage 2 Coding Battle officially commenced! 120 minutes remaining!"></textarea>
+      </div>
+
+      <button class="btn btn-primary" id="broadcastBtn">📢 Broadcast to Main Screen</button>
+
+      <hr style="border:0; border-top:1px solid var(--line); margin:28px 0;">
+
+      <h4 style="font-size:15px; font-weight:700; margin-bottom:12px;">BOSS HEALTH OVERRIDE</h4>
+      <div style="display:flex; align-items:center; gap:16px;">
+        <input type="range" id="bossHealthSlider" min="0" max="100" value="78" style="flex:1;">
+        <span class="mono" id="bossHealthVal" style="font-size:18px; font-weight:800; color:var(--pink); width:60px;">78%</span>
+        <button class="btn btn-ghost btn-sm" id="applyHealthBtn">Apply HP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: DATA BACKUP & RESET -->
+  <div class="tab-content" id="tab-data">
+    <div class="cyber-card" style="padding:28px; max-width:750px;">
+      <!-- Google Sheets Live Connector -->
+      <h3 style="font-size:18px; font-weight:800; margin-bottom:6px; color:var(--green);">📊 GOOGLE SPREADSHEET LIVE SYNC</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Connect your Google Sheet so all user registrations automatically append new rows in real time.</p>
+
+      <div class="form-group" style="margin-bottom:14px;">
+        <label for="sheetWebhookInput">Google Apps Script Web App URL</label>
+        <input type="text" id="sheetWebhookInput" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
+        <button class="btn btn-green btn-sm" id="saveSheetUrlBtn">💾 Save Webhook URL</button>
+        <button class="btn btn-primary btn-sm" id="testSheetSyncBtn">⚡ Test Connection</button>
+        <button class="btn btn-ghost btn-sm" id="syncAllToSheetBtn">🚀 Sync All Registrations to Sheet</button>
+      </div>
+
+      <details style="background:rgba(0,0,0,0.5); border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px; margin-bottom:24px; font-size:13px;">
+        <summary style="font-weight:700; color:var(--gold); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center;">
+          <span>📖 How to create your Google Sheet Webhook in 30 seconds (Click to expand)</span>
+          <span>▼</span>
+        </summary>
+        <div style="margin-top:12px; color:var(--text-muted); line-height:1.6;">
+          <ol style="padding-left:20px; margin-bottom:12px;">
+            <li>Create a new Google Sheet at <a href="https://sheets.new" target="_blank" style="color:var(--cyan);">sheets.new</a>.</li>
+            <li>In the top menu, click <b>Extensions → Apps Script</b>.</li>
+            <li>Replace all code in the editor with the script below and click <b>Save</b> (💾):</li>
+          </ol>
+          <pre style="background:#09090b; padding:12px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:11.5px; color:#30d158; overflow-x:auto; border:1px solid rgba(255,255,255,0.1);">function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["Timestamp", "Full Name", "Register No", "Branch", "Year", "Phone", "Fee", "Pass Tier", "Status", "Payment Screenshot"]);
+  }
+  sheet.appendRow([
+    data.timestamp || new Date().toLocaleString(),
+    data.name || "",
+    data.regNo || "",
+    data.branch || "",
+    data.year || "",
+    data.phone || "",
+    data.fee || "100",
+    data.pass || "All-Access Solo Pass",
+    data.status || "PENDING",
+    data.screenshot || "Uploaded"
+  ]);
+  return ContentService.createTextOutput(JSON.stringify({result: "success"})).setMimeType(ContentService.MimeType.JSON);
+}</pre>
+          <ol start="4" style="padding-left:20px; margin-top:10px;">
+            <li>Click <b>Deploy → New deployment</b> (top right).</li>
+            <li>Select type: <b>Web app</b>.</li>
+            <li>Set <i>Execute as</i>: <b>Me</b>, and <i>Who has access</i>: <b>Anyone</b>.</li>
+            <li>Click <b>Deploy</b>, authorize permissions, and copy the <b>Web app URL</b> into the box above!</li>
+          </ol>
+        </div>
+      </details>
+
+      <hr style="border:0; border-top:1px solid var(--line); margin:24px 0;">
+
+      <h3 style="font-size:18px; font-weight:800; margin-bottom:6px;">DATABASE BACKUP & RESTORE</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Export JSON snapshot of all leaderboard scores and registered contenders.</p>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px;">
+        <button class="btn btn-primary" id="downloadBackupBtn">💾 Download JSON Backup</button>
+        <button class="btn btn-ghost" id="seedDemoDataBtn">🌱 Load Demo Contestants</button>
+      </div>
+
+      <hr style="border:0; border-top:1px solid var(--line); margin:24px 0;">
+
+      <h3 style="font-size:18px; font-weight:800; margin-bottom:6px; color:var(--cyan);">ORGANIZER PASSWORD SETTINGS</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Update the password required to open and enter data in this Organizer Terminal.</p>
+
+      <div class="form-row" style="max-width:440px; margin-bottom:12px;">
+        <div>
+          <label for="newAdminPin">New Password</label>
+          <input type="password" id="newAdminPin" placeholder="Enter new password">
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="saveAdminPinBtn" style="margin-bottom:24px;">🔑 Update Password</button>
+
+      <hr style="border:0; border-top:1px solid var(--line); margin:24px 0;">
+
+      <h4 style="font-size:15px; font-weight:700; color:var(--pink); margin-bottom:8px;">DANGER ZONE</h4>
+      <p style="font-size:12.5px; color:var(--text-dim); margin-bottom:14px;">Erase all registration records and reset the leaderboard to clean slate.</p>
+      <button class="btn btn-pink btn-sm" id="clearAllDataBtn">🗑️ Wipe Entire Database</button>
+    </div>
+  </div>
+</main>
+
+<!-- Add / Edit Score Modal -->
+<div class="modal-backdrop" id="scoreModal">
+  <div class="modal-panel">
+    <h3 style="font-size:18px; font-weight:800; margin-bottom:16px;" id="modalTitle">ADD / UPDATE CHALLENGER</h3>
+
+    <div class="form-group">
+      <label for="modalHandle">Player Handle / Gamer Tag</label>
+      <input type="text" id="modalHandle" placeholder="e.g. @CyberKnight">
+    </div>
+
+    <div class="form-group">
+      <label for="modalName">Full Name</label>
+      <input type="text" id="modalName" placeholder="e.g. Mohith Kumar">
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label for="modalTrack">Tournament Track</label>
+        <select id="modalTrack">
+          <option>Solo Boss Battle</option>
+          <option>Solo Coding</option>
+          <option>Solo Quiz</option>
+        </select>
+      </div>
+      <div>
+        <label for="modalScore">Boss Damage (0-1000)</label>
+        <input type="number" id="modalScore" min="0" max="1000" placeholder="0 - 1000">
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+      <button class="btn btn-ghost" id="closeScoreModal">Cancel</button>
+      <button class="btn btn-primary" id="saveScoreBtn">Save to Leaderboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- Screenshot Lightbox Modal -->
+<div class="modal-backdrop" id="screenshotModal">
+  <div class="modal-panel" style="max-width: 540px; text-align: center;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h3 style="font-size:16px; font-weight:800; color:var(--gold);" id="screenshotModalTitle">PAYMENT SCREENSHOT PROOF</h3>
+      <button class="btn btn-ghost btn-sm" id="closeScreenshotModal">✕</button>
+    </div>
+    <div style="background:#05060b; border-radius:8px; padding:10px; border:1px solid var(--panel-border); margin-bottom:16px; max-height:460px; overflow:auto;">
+      <img id="modalScreenshotImg" src="" alt="Proof Screenshot" style="max-width:100%; height:auto; border-radius:4px; display:block; margin:0 auto; box-shadow:0 4px 20px rgba(0,0,0,0.6);">
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn btn-ghost" id="closeScreenshotModalBtn">Dismiss</button>
+      <button class="btn btn-green" id="approveModalScreenshotBtn">✓ Approve Payment</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="adminToast">Action completed</div>
+
+<script>
+  // ---------- AUTHENTICATION ----------
+  function getAdminPassword() {
+    return localStorage.getItem('techboss_admin_pin') || 'admin2026';
+  }
+  var authOverlay = document.getElementById('authOverlay');
+  var adminPinInput = document.getElementById('adminPinInput');
+  var loginBtn = document.getElementById('loginBtn');
+  var logoutBtn = document.getElementById('logoutBtn');
+  var authError = document.getElementById('authError');
+
+  // Always require password gate whenever Organizer Terminal is opened
+  authOverlay.style.display = 'flex';
+  setTimeout(function() {
+    if (adminPinInput) adminPinInput.focus();
+  }, 120);
+
+  loginBtn.addEventListener('click', function() {
+    var entered = adminPinInput.value.trim();
+    if (entered === getAdminPassword()) {
+      authOverlay.style.display = 'none';
+      authError.style.display = 'none';
+      adminPinInput.value = '';
+      showToast('⚡ Welcome, Organizer. Terminal Unlocked.');
+      loadData();
+      renderAll();
+    } else {
+      authError.style.display = 'block';
+      adminPinInput.value = '';
+      adminPinInput.focus();
+    }
+  });
+
+  logoutBtn.addEventListener('click', function() {
+    authOverlay.style.display = 'flex';
+    adminPinInput.value = '';
+    setTimeout(function() { adminPinInput.focus(); }, 120);
+    showToast('🔒 Terminal Locked');
+  });
+
+  adminPinInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') loginBtn.click();
+  });
+
+  // Password update handler
+  var saveAdminPinBtn = document.getElementById('saveAdminPinBtn');
+  var newAdminPinInput = document.getElementById('newAdminPin');
+  if (saveAdminPinBtn && newAdminPinInput) {
+    saveAdminPinBtn.addEventListener('click', function() {
+      var newPass = newAdminPinInput.value.trim();
+      if (!newPass || newPass.length < 4) {
+        alert('Please enter a password with at least 4 characters.');
+        return;
+      }
+      localStorage.setItem('techboss_admin_pin', newPass);
+      newAdminPinInput.value = '';
+      showToast('🔑 Organizer Password updated successfully!');
+    });
+  }
+
+  // ---------- TOAST NOTIFICATIONS ----------
+  function showToast(msg) {
+    var t = document.getElementById('adminToast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(function() { t.style.display = 'none'; }, 3000);
+  }
+
+  // ---------- TAB NAVIGATION ----------
+  var tabButtons = document.querySelectorAll('.tab-btn');
+  var tabContents = document.querySelectorAll('.tab-content');
+
+  tabButtons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      tabButtons.forEach(function(b) { b.classList.remove('active'); });
+      tabContents.forEach(function(c) { c.classList.remove('active'); });
+
+      btn.classList.add('active');
+      var target = document.getElementById(btn.getAttribute('data-tab'));
+      if (target) target.classList.add('active');
+    });
+  });
+
+  // ---------- DATA MODELS ----------
+  var defaultLeaderboard = [];
+  var defaultRegistrations = [];
+
+  var boardData = [];
+  var regData = [];
+
+  function loadData() {
+    try {
+      var savedBoard = localStorage.getItem('techboss_solo_leaderboard');
+      boardData = savedBoard ? JSON.parse(savedBoard) : [];
+    } catch (e) {
+      boardData = [];
+    }
+
+    try {
+      var savedReg = localStorage.getItem('techboss_registrations');
+      regData = savedReg ? JSON.parse(savedReg) : [];
+    } catch (e) {
+      regData = [];
+    }
+  }
+
+  var syncChannel = null;
+  if (typeof BroadcastChannel !== 'undefined') {
+    try {
+      syncChannel = new BroadcastChannel('techboss_sync_channel');
+    } catch (e) {}
+  }
+
+  function broadcastScoreUpdate() {
+    try {
+      localStorage.setItem('techboss_board_updated_at', Date.now().toString());
+      if (syncChannel) {
+        syncChannel.postMessage({ type: 'SCORE_UPDATE', data: boardData, timestamp: Date.now() });
+      }
+    } catch (e) {}
+  }
+
+  function saveData() {
+    try {
+      localStorage.setItem('techboss_solo_leaderboard', JSON.stringify(boardData));
+      localStorage.setItem('techboss_registrations', JSON.stringify(regData));
+    } catch (e) {}
+    broadcastScoreUpdate();
+    renderMetrics();
+  }
+
+  function tierFor(score) {
+    if (score >= 800) return 'S';
+    if (score >= 600) return 'A';
+    if (score >= 400) return 'B';
+    return 'C';
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  // ---------- RENDER FUNCTIONS ----------
+  function renderMetrics() {
+    var regCount = regData.length;
+    var rev = 0;
+    regData.forEach(function(r) {
+      rev += parseInt(r.fee || '100', 10) || 100;
+    });
+    document.getElementById('metRegCount').textContent = regCount;
+    document.getElementById('tabRegBadge').textContent = regCount;
+    document.getElementById('metRevenue').textContent = '₹' + rev.toLocaleString();
+    document.getElementById('metBoardCount').textContent = boardData.length;
+
+    var savedHp = localStorage.getItem('techboss_boss_hp') || '78';
+    document.getElementById('metBossHealth').textContent = savedHp + '%';
+    document.getElementById('bossHealthSlider').value = savedHp;
+    document.getElementById('bossHealthVal').textContent = savedHp + '%';
+  }
+
+  function renderLeaderboardTable() {
+    var tbody = document.getElementById('adminBoardBody');
+    boardData.sort(function(a, b) { return b.score - a.score; });
+
+    if (!boardData.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--text-dim);">No contenders on scoreboard. Click "Add New Challenger Score" above.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = boardData.map(function(item, idx) {
+      var tier = tierFor(item.score);
+      return '<tr>' +
+        '<td><b class="mono">#' + (idx + 1) + '</b></td>' +
+        '<td><div style="font-weight:700; color:var(--text-main);">' + escapeHtml(item.handle) + '</div><div style="font-size:12px; color:var(--text-dim);">' + escapeHtml(item.name || 'Solo Gladiator') + '</div></td>' +
+        '<td><span class="mono" style="font-size:12px; color:var(--cyan);">' + escapeHtml(item.track) + '</span></td>' +
+        '<td><span class="mono" style="font-weight:800; color:var(--gold); font-size:15px;">' + item.score + '</span> <span style="font-size:11px; color:var(--text-dim);">DMG</span></td>' +
+        '<td><span class="badge-status status-verified">' + tier + ' RANK</span></td>' +
+        '<td style="text-align:right;">' +
+          '<button class="btn btn-ghost btn-sm" onclick="adjustScore(' + idx + ', 50)" title="Add 50 DMG">+50</button> ' +
+          '<button class="btn btn-ghost btn-sm" onclick="editChallenger(' + idx + ')">✏️</button> ' +
+          '<button class="btn btn-pink btn-sm" onclick="deleteChallenger(' + idx + ')">🗑️</button>' +
+        '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  function renderRegistrationsTable() {
+    var tbody = document.getElementById('adminRegBody');
+    if (!regData.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--text-dim);">No registration records submitted yet.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = regData.map(function(item, idx) {
+      var statusClass = item.status === 'VERIFIED' ? 'status-verified' : (item.status === 'REJECTED' ? 'status-rejected' : 'status-pending');
+      var branchYearDisplay = (item.branch || 'General') + (item.year ? ' (' + item.year + ')' : '');
+      
+      var screenshotHtml = '';
+      if (item.screenshot) {
+        screenshotHtml = '<div style="display:flex; align-items:center; gap:8px;">' +
+          '<img src="' + item.screenshot + '" class="table-screenshot-thumb" onclick="openScreenshotModal(' + idx + ')" alt="Proof">' +
+          '<button class="btn btn-ghost btn-sm" onclick="openScreenshotModal(' + idx + ')" style="padding:4px 8px; font-size:11px;">🔍 View</button>' +
+        '</div>';
+      } else if (item.utr) {
+        screenshotHtml = '<span class="mono" style="font-size:12px; color:var(--text-dim);">UTR: ' + escapeHtml(item.utr) + '</span>';
+      } else {
+        screenshotHtml = '<span style="font-size:12px; color:var(--text-dim); font-style:italic;">No Image</span>';
+      }
+
+      return '<tr>' +
+        '<td><div style="font-weight:700; color:var(--text-main);">' + escapeHtml(item.name || item.handle) + '</div><div style="font-size:12px; color:var(--gold);">' + escapeHtml(item.handle || '') + '</div></td>' +
+        '<td><b class="mono" style="color:var(--cyan); font-size:13px;">' + escapeHtml(item.regNo || '--') + '</b></td>' +
+        '<td><span style="font-weight:500;">' + escapeHtml(branchYearDisplay) + '</span></td>' +
+        '<td><div class="mono" style="font-size:12.5px;">' + escapeHtml(item.phone || '--') + '</div><div style="font-size:11px; color:var(--text-dim);">' + escapeHtml(item.date || '') + '</div></td>' +
+        '<td>' + screenshotHtml + '</td>' +
+        '<td><span class="badge-status ' + statusClass + '">' + (item.status || 'PENDING') + '</span></td>' +
+        '<td style="text-align:right;">' +
+          (item.status !== 'VERIFIED' ? '<button class="btn btn-green btn-sm" onclick="verifyReg(' + idx + ')" style="margin-right:4px;">Approve</button>' : '') +
+          '<button class="btn btn-ghost btn-sm" onclick="promoteToBoard(' + idx + ')" title="Add to Scoreboard">⚡ Score</button> ' +
+          '<button class="btn btn-pink btn-sm" onclick="deleteReg(' + idx + ')">🗑️</button>' +
+        '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  // ---------- SCREENSHOT LIGHTBOX MODAL ----------
+  var currentModalRegIdx = -1;
+  var screenshotModal = document.getElementById('screenshotModal');
+  var modalScreenshotImg = document.getElementById('modalScreenshotImg');
+  var screenshotModalTitle = document.getElementById('screenshotModalTitle');
+  var closeScreenshotModal = document.getElementById('closeScreenshotModal');
+  var closeScreenshotModalBtn = document.getElementById('closeScreenshotModalBtn');
+  var approveModalScreenshotBtn = document.getElementById('approveModalScreenshotBtn');
+
+  window.openScreenshotModal = function(idx) {
+    var reg = regData[idx];
+    if (!reg) return;
+    currentModalRegIdx = idx;
+    screenshotModalTitle.textContent = 'PAYMENT PROOF — ' + (reg.name || reg.handle || 'CHALLENGER').toUpperCase() + ' (' + (reg.regNo || 'PASS') + ')';
+    modalScreenshotImg.src = reg.screenshot || '';
+    if (reg.status === 'VERIFIED') {
+      approveModalScreenshotBtn.style.display = 'none';
+    } else {
+      approveModalScreenshotBtn.style.display = 'inline-flex';
+    }
+    screenshotModal.classList.add('show');
+  };
+
+  function hideScreenshotModal() {
+    screenshotModal.classList.remove('show');
+    currentModalRegIdx = -1;
+  }
+
+  if (closeScreenshotModal) closeScreenshotModal.addEventListener('click', hideScreenshotModal);
+  if (closeScreenshotModalBtn) closeScreenshotModalBtn.addEventListener('click', hideScreenshotModal);
+  if (approveModalScreenshotBtn) {
+    approveModalScreenshotBtn.addEventListener('click', function() {
+      if (currentModalRegIdx >= 0) {
+        verifyReg(currentModalRegIdx);
+        hideScreenshotModal();
+      }
+    });
+  }
+
+  // ---------- LEADERBOARD CRUD ----------
+  window.adjustScore = function(idx, delta) {
+    if (boardData[idx]) {
+      boardData[idx].score = Math.max(0, Math.min(1000, boardData[idx].score + delta));
+      saveData();
+      renderLeaderboardTable();
+      showToast('Score updated for ' + boardData[idx].handle);
+    }
+  };
+
+  window.deleteChallenger = function(idx) {
+    if (confirm('Delete ' + boardData[idx].handle + ' from the scoreboard?')) {
+      boardData.splice(idx, 1);
+      saveData();
+      renderLeaderboardTable();
+      showToast('Challenger removed from leaderboard.');
+    }
+  };
+
+  var editingIdx = -1;
+  var scoreModal = document.getElementById('scoreModal');
+
+  document.getElementById('openAddScoreModal').addEventListener('click', function() {
+    editingIdx = -1;
+    document.getElementById('modalTitle').textContent = 'ADD NEW CHALLENGER SCORE';
+    document.getElementById('modalHandle').value = '';
+    document.getElementById('modalName').value = '';
+    document.getElementById('modalScore').value = '';
+    scoreModal.classList.add('show');
+  });
+
+  window.editChallenger = function(idx) {
+    editingIdx = idx;
+    var c = boardData[idx];
+    document.getElementById('modalTitle').textContent = 'EDIT CHALLENGER SCORE';
+    document.getElementById('modalHandle').value = c.handle;
+    document.getElementById('modalName').value = c.name || '';
+    document.getElementById('modalTrack').value = c.track;
+    document.getElementById('modalScore').value = c.score;
+    scoreModal.classList.add('show');
+  };
+
+  document.getElementById('closeScoreModal').addEventListener('click', function() {
+    scoreModal.classList.remove('show');
+  });
+
+  document.getElementById('saveScoreBtn').addEventListener('click', function() {
+    var handle = document.getElementById('modalHandle').value.trim();
+    var name = document.getElementById('modalName').value.trim();
+    var track = document.getElementById('modalTrack').value;
+    var scoreVal = parseInt(document.getElementById('modalScore').value, 10);
+
+    if (!handle || isNaN(scoreVal)) {
+      alert('Please provide a valid handle and score (0-1000).');
+      return;
+    }
+
+    var cleanHandle = handle.startsWith('@') ? handle : ('@' + handle);
+    var cleanScore = Math.max(0, Math.min(1000, scoreVal));
+
+    if (editingIdx >= 0) {
+      boardData[editingIdx] = {
+        handle: cleanHandle,
+        name: name,
+        track: track,
+        score: cleanScore
+      };
+    } else {
+      boardData.push({
+        handle: cleanHandle,
+        name: name || 'Solo Challenger',
+        track: track,
+        score: cleanScore
+      });
+    }
+
+    saveData();
+    renderLeaderboardTable();
+    scoreModal.classList.remove('show');
+    showToast('Scoreboard updated successfully.');
+  });
+
+  // ---------- FILE UPLOAD SCORES (CSV / EXCEL / JSON) ----------
+  var openUploadScoresBtn = document.getElementById('openUploadScoresBtn');
+  var uploadScoresFileInput = document.getElementById('uploadScoresFileInput');
+
+  if (openUploadScoresBtn && uploadScoresFileInput) {
+    openUploadScoresBtn.addEventListener('click', function() {
+      uploadScoresFileInput.click();
+    });
+
+    uploadScoresFileInput.addEventListener('change', function(e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        var content = evt.target.result;
+        var importedCount = 0;
+
+        try {
+          if (file.name.endsWith('.json')) {
+            var jsonParsed = JSON.parse(content);
+            if (Array.isArray(jsonParsed)) {
+              jsonParsed.forEach(function(item) {
+                if (item.handle || item.name) {
+                  var cleanH = (item.handle || ('@' + (item.name || 'player').toLowerCase().replace(/[^a-z0-9]/g, ''))).trim();
+                  if (!cleanH.startsWith('@')) cleanH = '@' + cleanH;
+                  var sc = parseInt(item.score || item.damage || item.dmg || 0, 10);
+                  if (!isNaN(sc)) {
+                    var existing = boardData.find(function(b) { return b.handle.toLowerCase() === cleanH.toLowerCase(); });
+                    if (existing) {
+                      existing.score = sc;
+                      if (item.name) existing.name = item.name;
+                      if (item.track) existing.track = item.track;
+                    } else {
+                      boardData.push({
+                        handle: cleanH,
+                        name: item.name || '',
+                        track: item.track || 'Solo Boss Battle',
+                        score: sc
+                      });
+                    }
+                    importedCount++;
+                  }
+                }
+              });
+            }
+          } else {
+            // CSV / TSV parsing
+            var lines = content.split(/\r\n|\n|\r/);
+            lines.forEach(function(line, lineIdx) {
+              var trimmed = line.trim();
+              if (!trimmed) return;
+              if (lineIdx === 0 && (trimmed.toLowerCase().includes('score') || trimmed.toLowerCase().includes('damage') || trimmed.toLowerCase().includes('handle'))) {
+                return;
+              }
+              var parts = trimmed.split(/[,;\t]/).map(function(p) { return p.replace(/^["']|["']$/g, '').trim(); });
+              if (parts.length >= 2) {
+                var first = parts[0];
+                var second = parts[1];
+                var third = parts[2] || '';
+                var fourth = parts[3] || '';
+
+                var parsedScore = NaN;
+                var parsedHandle = '';
+                var parsedName = '';
+                var parsedTrack = 'Solo Boss Battle';
+
+                if (!isNaN(parseInt(fourth, 10)) && fourth !== '') {
+                  parsedHandle = first;
+                  parsedName = second;
+                  parsedTrack = third || 'Solo Boss Battle';
+                  parsedScore = parseInt(fourth, 10);
+                } else if (!isNaN(parseInt(third, 10)) && third !== '') {
+                  parsedHandle = first;
+                  parsedName = second;
+                  parsedScore = parseInt(third, 10);
+                } else if (!isNaN(parseInt(second, 10)) && second !== '') {
+                  parsedHandle = first;
+                  parsedScore = parseInt(second, 10);
+                }
+
+                if (!isNaN(parsedScore)) {
+                  var cleanH = parsedHandle.startsWith('@') ? parsedHandle : ('@' + parsedHandle.toLowerCase().replace(/[^a-z0-9]/g, ''));
+                  var existing = boardData.find(function(b) { return b.handle.toLowerCase() === cleanH.toLowerCase(); });
+                  if (existing) {
+                    existing.score = parsedScore;
+                    if (parsedName) existing.name = parsedName;
+                  } else {
+                    boardData.push({
+                      handle: cleanH,
+                      name: parsedName || '',
+                      track: parsedTrack,
+                      score: parsedScore
+                    });
+                  }
+                  importedCount++;
+                }
+              }
+            });
+          }
+
+          if (importedCount > 0) {
+            saveData();
+            renderLeaderboardTable();
+            showToast('✅ Uploaded & synced ' + importedCount + ' scores to live dashboard!');
+          } else {
+            alert('Could not parse any valid scores from file.\n\nAccepted CSV format:\nHandle/Name, Score\ne.g.\n@binarybeast, 940\n@byteme, 865');
+          }
+        } catch (parseErr) {
+          alert('Error reading score file: ' + parseErr.message);
+        }
+
+        uploadScoresFileInput.value = '';
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  // ---------- REGISTRATION ACTIONS ----------
+  window.verifyReg = function(idx) {
+    if (regData[idx]) {
+      regData[idx].status = 'VERIFIED';
+      saveData();
+      renderRegistrationsTable();
+      showToast('Payment verified & pass approved for ' + (regData[idx].name || regData[idx].handle));
+    }
+  };
+
+  window.deleteReg = function(idx) {
+    if (confirm('Delete registration record for ' + (regData[idx].name || regData[idx].handle) + '?')) {
+      regData.splice(idx, 1);
+      saveData();
+      renderRegistrationsTable();
+      showToast('Registration record deleted.');
+    }
+  };
+
+  window.promoteToBoard = function(idx) {
+    var reg = regData[idx];
+    editingIdx = -1;
+    document.getElementById('modalTitle').textContent = 'ADD ' + (reg.name || reg.handle) + ' TO SCOREBOARD';
+    document.getElementById('modalHandle').value = reg.handle || ('@' + (reg.name || 'player').toLowerCase().replace(/\s+/g, ''));
+    document.getElementById('modalName').value = reg.name || '';
+    document.getElementById('modalScore').value = '450';
+    scoreModal.classList.add('show');
+  };
+
+  // ---------- CSV EXPORT ----------
+  document.getElementById('exportCsvBtn').addEventListener('click', function() {
+    if (!regData.length) {
+      alert('No registrations to export.');
+      return;
+    }
+    var headers = ['Name', 'Register No', 'Branch', 'Year', 'Phone', 'Handle', 'Pass', 'Fee', 'Status', 'Date'];
+    var rows = regData.map(function(r) {
+      return [
+        '"' + (r.name || '') + '"',
+        '"' + (r.regNo || '') + '"',
+        '"' + (r.branch || '') + '"',
+        '"' + (r.year || '') + '"',
+        '"' + (r.phone || '') + '"',
+        '"' + (r.handle || '') + '"',
+        '"' + (r.pass || 'All-Access Solo Pass') + '"',
+        '"' + (r.fee || '100') + '"',
+        '"' + (r.status || 'PENDING') + '"',
+        '"' + (r.date || '') + '"'
+      ].join(',');
+    });
+    var csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), rows.join('\n')].join('\n');
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'techboss_2026_registrations.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('CSV export downloaded.');
+  });
+
+  // ---------- BROADCAST TELEMETRY ----------
+  document.getElementById('broadcastBtn').addEventListener('click', function() {
+    var msg = document.getElementById('broadcastMsg').value.trim();
+    if (!msg) {
+      alert('Please enter a broadcast announcement.');
+      return;
+    }
+    localStorage.setItem('techboss_custom_broadcast', msg);
+    showToast('Announcement broadcasted to live arena feed.');
+    document.getElementById('broadcastMsg').value = '';
+  });
+
+  document.getElementById('bossHealthSlider').addEventListener('input', function(e) {
+    document.getElementById('bossHealthVal').textContent = e.target.value + '%';
+  });
+
+  document.getElementById('applyHealthBtn').addEventListener('click', function() {
+    var hp = document.getElementById('bossHealthSlider').value;
+    localStorage.setItem('techboss_boss_hp', hp);
+    renderMetrics();
+    showToast('Boss Health overridden to ' + hp + '%');
+  });
+
+  // ---------- BACKUP & RESET ----------
+  document.getElementById('downloadBackupBtn').addEventListener('click', function() {
+    var backup = {
+      timestamp: new Date().toISOString(),
+      leaderboard: boardData,
+      registrations: regData,
+      bossHp: localStorage.getItem('techboss_boss_hp') || '78'
+    };
+    var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backup, null, 2));
+    var dl = document.createElement('a');
+    dl.setAttribute('href', dataStr);
+    dl.setAttribute('download', 'techboss_backup_' + Date.now() + '.json');
+    dl.click();
+    showToast('JSON backup file saved.');
+  });
+
+  document.getElementById('seedDemoDataBtn').addEventListener('click', function() {
+    boardData = [
+      { handle: '@binarybeast', name: 'Devanshi K.', track: 'Solo Boss Battle', score: 940 },
+      { handle: '@byteme', name: 'Rohan Sharma', track: 'Solo Coding', score: 865 },
+      { handle: '@nullpointer', name: 'Aakash Verma', track: 'Solo Boss Battle', score: 780 }
+    ];
+    regData = [
+      {
+        name: 'Devanshi K.',
+        regNo: '22BCE1042',
+        branch: 'CSE',
+        year: '3rd Year',
+        phone: '9876543210',
+        handle: '@binarybeast',
+        screenshot: '',
+        pass: 'All-Access Solo Pass',
+        fee: '100',
+        status: 'VERIFIED',
+        date: new Date().toLocaleString()
+      }
+    ];
+    saveData();
+    renderLeaderboardTable();
+    renderRegistrationsTable();
+    showToast('Loaded demo contestant data.');
+  });
+
+  document.getElementById('clearAllDataBtn').addEventListener('click', function() {
+    if (confirm('CAUTION: This will delete all leaderboard entries and registrations. Continue?')) {
+      boardData = [];
+      regData = [];
+      localStorage.removeItem('techboss_solo_leaderboard');
+      localStorage.removeItem('techboss_registrations');
+      saveData();
+      renderLeaderboardTable();
+      renderRegistrationsTable();
+      showToast('Database wiped.');
+    }
+  });
+
+  // ---------- GOOGLE SHEETS LIVE SYNC HANDLERS ----------
+  var sheetWebhookInput = document.getElementById('sheetWebhookInput');
+  var saveSheetUrlBtn = document.getElementById('saveSheetUrlBtn');
+  var testSheetSyncBtn = document.getElementById('testSheetSyncBtn');
+  var syncAllToSheetBtn = document.getElementById('syncAllToSheetBtn');
+
+  function loadSheetUrl() {
+    var savedUrl = localStorage.getItem('techboss_sheets_url') || '';
+    if (sheetWebhookInput) sheetWebhookInput.value = savedUrl;
+  }
+
+  if (saveSheetUrlBtn && sheetWebhookInput) {
+    saveSheetUrlBtn.addEventListener('click', function() {
+      var url = sheetWebhookInput.value.trim();
+      localStorage.setItem('techboss_sheets_url', url);
+      showToast(url ? '✅ Google Sheet Webhook URL saved!' : 'Google Sheet URL cleared.');
+    });
+  }
+
+  if (testSheetSyncBtn && sheetWebhookInput) {
+    testSheetSyncBtn.addEventListener('click', function() {
+      var url = sheetWebhookInput.value.trim();
+      if (!url) {
+        alert('Please enter your Google Apps Script Web App URL first.');
+        return;
+      }
+      showToast('Sending test ping to Google Sheet...');
+      fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timestamp: new Date().toLocaleString(),
+          name: 'TEST CHALLENGER',
+          regNo: 'TEST_2026',
+          branch: 'CSD',
+          year: '3rd Year',
+          phone: '9999999999',
+          fee: '100',
+          pass: 'All-Access Solo Pass',
+          status: 'TEST_PING',
+          screenshot: 'Test Ping Successful'
+        })
+      }).then(function() {
+        showToast('✅ Test row sent to Google Sheet! Check your spreadsheet.');
+      }).catch(function(err) {
+        alert('Sync error: ' + err.message);
+      });
+    });
+  }
+
+  if (syncAllToSheetBtn && sheetWebhookInput) {
+    syncAllToSheetBtn.addEventListener('click', function() {
+      var url = sheetWebhookInput.value.trim();
+      if (!url) {
+        alert('Please enter and save your Google Apps Script Web App URL first.');
+        return;
+      }
+      if (!regData.length) {
+        alert('No registration records found to sync.');
+        return;
+      }
+      showToast('Syncing ' + regData.length + ' registrations to Google Sheet...');
+      var count = 0;
+      regData.forEach(function(r, i) {
+        setTimeout(function() {
+          fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              timestamp: r.date || new Date().toLocaleString(),
+              name: r.name || '',
+              regNo: r.regNo || '',
+              branch: r.branch || '',
+              year: r.year || '',
+              phone: r.phone || '',
+              fee: r.fee || '100',
+              pass: r.pass || 'All-Access Solo Pass',
+              status: r.status || 'PENDING',
+              screenshot: r.screenshot ? 'Uploaded' : 'None'
+            })
+          });
+          count++;
+          if (count === regData.length) {
+            showToast('✅ Successfully synced ' + count + ' records to Google Sheet!');
+          }
+        }, i * 250);
+      });
+    });
+  }
+
+  function initDashboard() {
+    loadData();
+    loadSheetUrl();
+    renderMetrics();
+    renderLeaderboardTable();
+    renderRegistrationsTable();
+  }
+
+  initDashboard();
+</script>
+
+</body>
+</html>
