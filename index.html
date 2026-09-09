@@ -1319,59 +1319,82 @@
       color: #ffffff;
     }
 
-    /* EVENT COUNTDOWN TIMER & TECH BOSS REVEAL */
-    .cd-container {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      max-width: 720px;
-      margin: 0 auto 36px;
-    }
-
-    .cd-card {
-      background: rgba(10, 10, 14, 0.85);
-      border: 1px solid rgba(229, 179, 88, 0.25);
-      border-radius: var(--radius-md);
-      padding: clamp(16px, 3vw, 24px) 12px;
+    /* MINIMAL COUNTDOWN COMPONENT (EXACT USER DESIGN MATCH) */
+    .countdown-section-card {
+      padding: clamp(48px, 7vw, 76px) 24px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(16, 16, 20, 0.95), rgba(8, 8, 11, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       position: relative;
       overflow: hidden;
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
 
-    .cd-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(229, 179, 88, 0.5);
-      box-shadow: 0 15px 40px rgba(229, 179, 88, 0.18);
+    .countdown-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      color: #000000;
+      padding: 7px 20px;
+      border-radius: 9999px;
+      font-size: 14.5px;
+      font-weight: 600;
+      margin-bottom: clamp(28px, 4.5vw, 44px);
+      box-shadow: 0 2px 14px rgba(255, 255, 255, 0.2);
     }
 
-    .cd-number {
-      font-family: 'Outfit', -apple-system, sans-serif;
-      font-size: clamp(34px, 6vw, 56px);
-      font-weight: 900;
+    .minimal-countdown-row {
+      display: inline-flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: clamp(10px, 2.5vw, 24px);
+      margin: 0 auto clamp(28px, 4.5vw, 44px);
+    }
+
+    .time-unit-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: clamp(65px, 11vw, 120px);
+    }
+
+    .time-digit {
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: clamp(46px, 9vw, 88px);
+      font-weight: 800;
+      color: #ffffff;
       line-height: 1;
-      background: linear-gradient(180deg, #ffffff 30%, #e5b358 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 6px;
-      letter-spacing: -1px;
+      letter-spacing: -2px;
+      text-align: center;
     }
 
-    .cd-label {
-      font-size: clamp(10px, 1.5vw, 12px);
+    .time-colon-sep {
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: clamp(38px, 7.5vw, 76px);
       font-weight: 700;
-      letter-spacing: 2px;
-      color: var(--text-secondary);
-      text-transform: uppercase;
+      color: #ffffff;
+      line-height: 1;
+      user-select: none;
+      opacity: 0.9;
+      margin-top: clamp(2px, 0.5vw, 6px);
+    }
+
+    .time-unit-label {
+      font-size: clamp(13px, 1.8vw, 16px);
+      font-weight: 500;
+      color: #86868b;
+      margin-top: 12px;
+      text-align: center;
     }
 
     .tech-boss-live-banner {
       display: none;
-      padding: clamp(28px, 5vw, 44px) 24px;
-      background: radial-gradient(circle, rgba(229, 179, 88, 0.18) 0%, rgba(0, 0, 0, 0.75) 75%);
-      border: 2px solid rgba(229, 179, 88, 0.6);
-      border-radius: var(--radius-lg);
+      padding: clamp(28px, 5vw, 48px) 24px;
+      background: radial-gradient(circle, rgba(229, 179, 88, 0.2) 0%, rgba(0, 0, 0, 0.8) 75%);
+      border: 2px solid rgba(229, 179, 88, 0.7);
+      border-radius: 20px;
       margin: 0 auto 36px;
       max-width: 760px;
       box-shadow: 0 0 50px rgba(229, 179, 88, 0.35);
@@ -1385,10 +1408,10 @@
     }
 
     .tb-boss-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: clamp(40px, 9vw, 76px);
+      font-family: 'Outfit', -apple-system, sans-serif;
+      font-size: clamp(48px, 10vw, 88px);
       font-weight: 900;
-      letter-spacing: 3px;
+      letter-spacing: 4px;
       line-height: 1.05;
       background: linear-gradient(180deg, #ffffff 20%, #e5b358 75%, #ff8800 100%);
       -webkit-background-clip: text;
@@ -1397,10 +1420,12 @@
       margin-bottom: 8px;
     }
 
-    @media (max-width: 580px) {
-      .cd-container {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+    @media (max-width: 540px) {
+      .minimal-countdown-row {
+        gap: 6px;
+      }
+      .time-unit-box {
+        min-width: 52px;
       }
     }
 
@@ -2178,57 +2203,57 @@
 
 
   <!-- GAME ZONE & EVENT COUNTDOWN SECTION -->
-  <section id="gamezone" class="gamezone-section" style="padding: 80px 0 100px; position: relative;">
+  <section id="gamezone" class="gamezone-section" style="padding: 70px 0 90px; position: relative;">
     <div class="wrap">
-      <div class="apple-card" style="padding: clamp(32px, 5vw, 56px); border-radius: 28px; background: linear-gradient(135deg, rgba(22, 22, 28, 0.95), rgba(12, 12, 15, 0.98)); border: 1px solid rgba(229, 179, 88, 0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(229, 179, 88, 0.08); text-align: center; position: relative; overflow: hidden;">
+      <div class="countdown-section-card">
         
         <!-- Glowing Ambient Ring -->
-        <div style="position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 400px; height: 180px; background: radial-gradient(ellipse, rgba(229, 179, 88, 0.25), transparent 70%); filter: blur(30px); pointer-events: none;"></div>
+        <div style="position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 450px; height: 180px; background: radial-gradient(ellipse, rgba(229, 179, 88, 0.2), transparent 70%); filter: blur(35px); pointer-events: none;"></div>
 
-        <span class="apple-badge gold" style="margin-bottom: 16px; display: inline-flex; align-items: center; gap: 6px;">⏳ ARENA EVENT COUNTDOWN · 16 SEP 2026</span>
-        
-        <h2 class="section-title" id="countdownSecTitle" style="margin-bottom: 14px; font-size: clamp(30px, 5vw, 46px); line-height: 1.15;">
-          <span class="titanium-gradient">Championship Countdown</span><br>
-          <span class="gold-gradient">The Arena Awaits</span>
-        </h2>
-        
-        <p class="section-desc" id="countdownSecDesc" style="max-width: 680px; margin: 0 auto 34px; font-size: clamp(14px, 2vw, 16px); color: var(--text-secondary); line-height: 1.6;">
-          Real-time countdown to the grand opening on September 16, 2026. Prepare your algorithms, sharpen your reflexes, and get ready for solo arena combat.
-        </p>
+        <!-- Pill Badge matching User's Design -->
+        <div>
+          <div class="countdown-pill-badge">
+            <span style="font-size: 16px;">🧩</span>
+            <span>CountDown component</span>
+          </div>
+        </div>
 
-        <!-- Dynamic Live Countdown Timer Grid -->
-        <div class="cd-container" id="eventCountdownGrid">
-          <div class="cd-card">
-            <div class="cd-number" id="cdDays">00</div>
-            <div class="cd-label">Days</div>
+        <!-- Minimalist Countdown Component matching User's Design -->
+        <div class="minimal-countdown-row" id="eventCountdownGrid">
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdDays">00</div>
+            <div class="time-unit-label">Days</div>
           </div>
-          <div class="cd-card">
-            <div class="cd-number" id="cdHours">00</div>
-            <div class="cd-label">Hours</div>
+          <div class="time-colon-sep">:</div>
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdHours">00</div>
+            <div class="time-unit-label">Hours</div>
           </div>
-          <div class="cd-card">
-            <div class="cd-number" id="cdMins">00</div>
-            <div class="cd-label">Minutes</div>
+          <div class="time-colon-sep">:</div>
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdMins">00</div>
+            <div class="time-unit-label">Minutes</div>
           </div>
-          <div class="cd-card">
-            <div class="cd-number" id="cdSecs">00</div>
-            <div class="cd-label">Seconds</div>
+          <div class="time-colon-sep">:</div>
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdSecs">00</div>
+            <div class="time-unit-label">Seconds</div>
           </div>
         </div>
 
         <!-- TECH BOSS Live Celebration Banner (Revealed when Countdown Ends) -->
         <div class="tech-boss-live-banner" id="eventLiveBanner">
           <div class="tb-boss-title">TECH BOSS</div>
-          <p style="font-size: clamp(15px, 2.5vw, 19px); font-weight: 700; color: #ffffff; margin-bottom: 8px;">
+          <p style="font-size: clamp(16px, 2.5vw, 20px); font-weight: 700; color: #ffffff; margin-bottom: 6px;">
             👑 THE ARENA IS LIVE — THE CHAMPIONSHIP HAS BEGUN!
           </p>
           <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 0;">
-            Solo engineering duel is in session. Enter the battle station now.
+            September 16, 2026 Solo Engineering Championship in session.
           </p>
         </div>
 
         <!-- Action Buttons -->
-        <div style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <div style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
           <a href="gamezone.html" class="btn btn-white" style="font-size: 15px; font-weight: 700; padding: 14px 34px; height: auto; border-radius: 980px; box-shadow: 0 4px 24px rgba(229, 179, 88, 0.35); display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
             <span>🎮 Proceed to Game Zone & Dashboard</span>
             <span style="font-size: 18px;">↗</span>
