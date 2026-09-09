@@ -1414,6 +1414,50 @@
       margin-bottom: 45px;
     }
 
+    .footer-brand-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .footer-logo-img {
+      height: 32px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .footer-brand-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .footer-brand-text span {
+      color: var(--accent-gold);
+    }
+
+    .footer-brand-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .footer-date-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(229, 179, 88, 0.12);
+      border: 1px solid rgba(229, 179, 88, 0.25);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-gold);
+    }
+
     .footer-col-title {
       font-size: 12px;
       font-weight: 700;
@@ -1517,18 +1561,7 @@
     @media (max-width: 900px) {
       .footer-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 30px;
-      }
-    }
-
-    @media (max-width: 580px) {
-      .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 26px;
-      }
-      .footer-bottom-bar {
-        flex-direction: column;
-        align-items: flex-start;
+        gap: 24px;
       }
     }
 
@@ -1699,15 +1732,6 @@
         padding: 20px 16px;
       }
 
-      .footer-student-subgrid {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px 12px;
-      }
-
-      .footer-student-pill {
-        font-size: 12px;
-      }
-
       .broadcast-pill {
         font-size: 12px;
         padding: 8px 14px;
@@ -1810,16 +1834,103 @@
         padding: 20px 16px;
       }
 
-      .footer-row {
-        flex-direction: column;
-        text-align: center;
-        gap: 16px;
+      /* Ultra-Compact Lightweight Mobile Footer */
+      footer {
+        padding: 24px 0 16px;
       }
 
-      .footer-links {
-        justify-content: center;
-        gap: 14px;
-        font-size: 13px;
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .footer-brand-header {
+        margin-bottom: 4px;
+        gap: 8px;
+      }
+
+      .footer-logo-img {
+        height: 22px;
+      }
+
+      .footer-brand-text {
+        font-size: 15px;
+      }
+
+      .footer-brand-desc {
+        font-size: 11px;
+        line-height: 1.35;
+        margin-bottom: 6px;
+      }
+
+      .footer-date-pill {
+        padding: 3px 8px;
+        font-size: 10.5px;
+      }
+
+      .footer-col-title {
+        font-size: 10px;
+        letter-spacing: 0.8px;
+        margin-bottom: 5px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .footer-member-list {
+        display: flex;
+        flex-direction: row;
+        gap: 6px 14px;
+        flex-wrap: wrap;
+      }
+
+      .footer-member-item {
+        flex-direction: row;
+        align-items: baseline;
+        gap: 5px;
+      }
+
+      .footer-member-name {
+        font-size: 11px;
+      }
+
+      .footer-member-role {
+        font-size: 9.5px;
+      }
+
+      .footer-student-subgrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5px 8px;
+      }
+
+      .footer-student-pill {
+        font-size: 10.5px;
+        gap: 4px;
+        line-height: 1.2;
+      }
+
+      .footer-student-bullet {
+        width: 3.5px;
+        height: 3.5px;
+      }
+
+      .footer-links-list {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 4px 10px;
+      }
+
+      .footer-links-list a {
+        font-size: 10.5px;
+      }
+
+      .footer-bottom-bar {
+        padding-top: 10px;
+        gap: 4px;
+        font-size: 10px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
       }
     }
 
@@ -2445,15 +2556,15 @@
       <div class="footer-grid">
         
         <!-- Column 1: Event Identity & Overview -->
-        <div>
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-            <img src="logo.png?v=2" alt="Tech Boss Logo" style="height:32px; width:auto; object-fit:contain;">
-            <div style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:800; color:#ffffff;">Tech <span style="color:var(--accent-gold);">Boss</span></div>
+        <div class="footer-col-brand">
+          <div class="footer-brand-header">
+            <img src="logo.png?v=2" alt="Tech Boss Logo" class="footer-logo-img">
+            <div class="footer-brand-text">Tech <span>Boss</span></div>
           </div>
-          <p style="font-size:13px; color:var(--text-secondary); line-height:1.6; margin-bottom:18px;">
+          <p class="footer-brand-desc">
             The premier solo engineering & algorithmic championship. Compete alone across three intense battle stages.
           </p>
-          <div style="display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:9999px; background:rgba(229,179,88,0.12); border:1px solid rgba(229,179,88,0.25); font-size:12px; font-weight:600; color:var(--accent-gold);">
+          <div class="footer-date-pill">
             <span>🗓️ 16 September 2026 · ₹2,250 Cash Pool</span>
           </div>
         </div>
