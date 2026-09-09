@@ -10,7 +10,7 @@ import json
 import urllib.request
 import urllib.parse
 import urllib.error
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 PORT = 3000
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://sgcqsfgjiofoqdylrvoi.supabase.co").rstrip("/")
@@ -33,7 +33,7 @@ def supabase_request(endpoint, method="GET", data=None, headers=None):
 
     req = urllib.request.Request(url, data=body, headers=req_headers, method=method)
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with urllib.request.urlopen(req, timeout=6) as resp:
             content = resp.read().decode("utf-8")
             return resp.status, json.loads(content) if content else {}
     except urllib.error.HTTPError as e:
@@ -78,7 +78,7 @@ class TechBossHandler(SimpleHTTPRequestHandler):
         if path == "/api/registrations":
             status, data = supabase_request("registrations?select=*&order=created_at.desc")
             if status < 400:
-                self._send_json(200, {"success": True, "count": len(data), "registrations": data})
+                self._send_json(200, {"success": True, "count": len(data) if isinstance(data, list) else 0, "registrations": data})
             else:
                 self._send_json(status, {"success": False, "error": data})
             return
@@ -98,7 +98,7 @@ class TechBossHandler(SimpleHTTPRequestHandler):
             return
 
         elif path == "/api/health":
-            self._send_json(200, {"status": "healthy", "database": "connected"})
+            self._send_json(200, {"status": "healthy", "database": "connected", "server": "multi-threaded"})
             return
 
         # Default: Serve static files
@@ -252,9 +252,16 @@ class TechBossHandler(SimpleHTTPRequestHandler):
 
         self._send_json(404, {"error": "Not Found"})
 
+class ThreadedHTTPServer(ThreadingHTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
 if __name__ == "__main__":
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     server_address = ("0.0.0.0", PORT)
-    httpd = HTTPServer(server_address, TechBossHandler)
-    print(f"🚀 Tech Boss 2026 Backend & Web Server live on http://0.0.0.0:{PORT}")
+    httpd = ThreadedHTTPServer(server_address, TechBossHandler)
+    print(f"🚀 Tech Boss 2026 Multi-Threaded Backend & Web Server live on:")
+    print(f"   👉 http://localhost:{PORT}")
+    print(f"   👉 http://127.0.0.1:{PORT}")
     print(f"📡 Connected to Supabase Cloud Database: {SUPABASE_URL}")
     httpd.serve_forever()
