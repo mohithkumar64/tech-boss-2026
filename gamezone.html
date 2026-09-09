@@ -502,6 +502,170 @@
       color: var(--text-secondary);
     }
 
+    /* 3-LINES HAMBURGER MENU BUTTON */
+    .menu-toggle-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .menu-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .menu-line {
+      width: 18px;
+      height: 2px;
+      background: #ffffff;
+      border-radius: 2px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .menu-toggle-btn.open .menu-line:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .menu-toggle-btn.open .menu-line:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    .menu-toggle-btn.open .menu-line:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* SLIDE-OUT SIDE DRAWER */
+    .side-drawer-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .side-drawer-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .side-drawer {
+      position: fixed;
+      top: 0;
+      right: -340px;
+      width: 310px;
+      max-width: 85vw;
+      height: 100vh;
+      background: #0b0b0e;
+      border-left: 1px solid var(--border-subtle);
+      box-shadow: -12px 0 40px rgba(0, 0, 0, 0.85);
+      z-index: 210;
+      transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 20px;
+      overflow-y: auto;
+    }
+
+    .side-drawer.active {
+      right: 0;
+    }
+
+    .side-drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .side-drawer-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      color: #ffffff;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .side-drawer-close:hover {
+      background: rgba(255, 255, 255, 0.16);
+      transform: scale(1.05);
+    }
+
+    .drawer-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+      margin-top: 14px;
+    }
+
+    .drawer-nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .drawer-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: all 0.2s;
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid transparent;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .drawer-nav-item:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .drawer-nav-item.active {
+      color: var(--accent-gold);
+      border-color: rgba(229, 179, 88, 0.3);
+      background: rgba(229, 179, 88, 0.1);
+    }
+
     @media (max-width: 768px) {
       .gz-grid { grid-template-columns: 1fr; }
       .podium-grid {
@@ -511,6 +675,9 @@
       .podium-card.gold-podium {
         order: -1;
         transform: none;
+      }
+      .btn-ghost-header {
+        display: none !important;
       }
     }
   </style>
@@ -526,12 +693,54 @@
         <span>Tech Boss 2026</span>
       </a>
 
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <a class="btn btn-ghost btn-sm" href="index.html">← Back to Main Arena</a>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a class="btn btn-ghost btn-sm btn-ghost-header" href="index.html">← Arena Home</a>
         <a class="btn btn-white btn-sm" href="index.html#register">Register · ₹100</a>
+        
+        <!-- 3-Lines Side Menu Hamburger Button -->
+        <button class="menu-toggle-btn" id="sideMenuToggleBtn" aria-label="Toggle Side Menu" title="Open Menu">
+          <span class="menu-line"></span>
+          <span class="menu-line"></span>
+          <span class="menu-line"></span>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- Side Drawer Backdrop -->
+  <div class="side-drawer-backdrop" id="sideMenuBackdrop"></div>
+
+  <!-- Side Navigation Drawer -->
+  <aside class="side-drawer" id="sideMenuDrawer" aria-label="Side Navigation Menu">
+    <div class="side-drawer-header">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="logo.png?v=2" alt="Logo" style="height:26px; width:auto;">
+        <span style="font-weight:800; font-size:16px; color:#ffffff;">Tech <span style="color:var(--accent-gold);">Boss</span></span>
+      </div>
+      <button class="side-drawer-close" id="sideMenuCloseBtn" aria-label="Close Menu">✕</button>
+    </div>
+
+    <div class="drawer-section-title">🕹️ GAME ZONE MODES</div>
+    <ul class="drawer-nav-list">
+      <li><button class="drawer-nav-item active" data-drawer-tab="leaderboard">🏆 Championship Leaderboard</button></li>
+      <li><button class="drawer-nav-item" data-drawer-tab="boss-clicker">⚔️ Boss Rush Duel</button></li>
+      <li><button class="drawer-nav-item" data-drawer-tab="code-trial">⚡ Code Speed Reflex</button></li>
+      <li><button class="drawer-nav-item" data-drawer-tab="telemetry">📊 Live Arena Dashboard</button></li>
+      <li><button class="drawer-nav-item" data-drawer-tab="pass-search">🛡️ Pass Verification Portal</button></li>
+    </ul>
+
+    <div class="drawer-section-title">🔗 ARENA NAVIGATION</div>
+    <ul class="drawer-nav-list">
+      <li><a class="drawer-nav-item" href="index.html#register">🎟️ Register Pass (₹100)</a></li>
+      <li><a class="drawer-nav-item" href="index.html">🏟️ Main Championship Arena</a></li>
+      <li><a class="drawer-nav-item" href="admin.html" style="color:var(--accent-gold);">⚙️ Organizer Terminal ↗</a></li>
+    </ul>
+
+    <div style="margin-top:auto; padding-top:20px; border-top:1px solid var(--border-subtle); font-size:11.5px; color:var(--text-tertiary); text-align:center;">
+      <div style="color:var(--accent-gold); font-weight:600;">🗓️ 16 Sep 2026 · ₹2,250 Cash Pool</div>
+      <div style="margin-top:4px;">Solo Engineering Championship</div>
+    </div>
+  </aside>
 
   <main class="wrap" style="padding-top: 40px; padding-bottom: 80px;">
     <!-- Page Header -->
@@ -852,19 +1061,69 @@
       return div.innerHTML;
     }
 
-    // Tab Navigation
+    // Tab Navigation & Side Menu Drawer Integration
     var gzTabBtns = document.querySelectorAll('.gz-tab-btn');
     var gzTabContents = document.querySelectorAll('.gz-tab-content');
+    var sideMenuToggleBtn = document.getElementById('sideMenuToggleBtn');
+    var sideMenuDrawer = document.getElementById('sideMenuDrawer');
+    var sideMenuBackdrop = document.getElementById('sideMenuBackdrop');
+    var sideMenuCloseBtn = document.getElementById('sideMenuCloseBtn');
+    var drawerNavItems = document.querySelectorAll('[data-drawer-tab]');
+
+    function openSideMenu() {
+      if (sideMenuDrawer) sideMenuDrawer.classList.add('active');
+      if (sideMenuBackdrop) sideMenuBackdrop.classList.add('active');
+      if (sideMenuToggleBtn) sideMenuToggleBtn.classList.add('open');
+      playSynthSound('click');
+    }
+
+    function closeSideMenu() {
+      if (sideMenuDrawer) sideMenuDrawer.classList.remove('active');
+      if (sideMenuBackdrop) sideMenuBackdrop.classList.remove('active');
+      if (sideMenuToggleBtn) sideMenuToggleBtn.classList.remove('open');
+    }
+
+    if (sideMenuToggleBtn) {
+      sideMenuToggleBtn.addEventListener('click', function () {
+        if (sideMenuDrawer && sideMenuDrawer.classList.contains('active')) {
+          closeSideMenu();
+        } else {
+          openSideMenu();
+        }
+      });
+    }
+
+    if (sideMenuCloseBtn) sideMenuCloseBtn.addEventListener('click', closeSideMenu);
+    if (sideMenuBackdrop) sideMenuBackdrop.addEventListener('click', closeSideMenu);
+
+    function switchGzTab(tag) {
+      gzTabBtns.forEach(function (b) { b.classList.remove('active'); });
+      gzTabContents.forEach(function (c) { c.classList.remove('active'); });
+      drawerNavItems.forEach(function (d) { d.classList.remove('active'); });
+
+      var activeTabBtn = document.querySelector('.gz-tab-btn[data-gztag="' + tag + '"]');
+      if (activeTabBtn) activeTabBtn.classList.add('active');
+
+      var activeDrawerBtn = document.querySelector('[data-drawer-tab="' + tag + '"]');
+      if (activeDrawerBtn) activeDrawerBtn.classList.add('active');
+
+      var targetContent = document.getElementById('gz-' + tag);
+      if (targetContent) targetContent.classList.add('active');
+    }
 
     gzTabBtns.forEach(function (btn) {
       btn.addEventListener('click', function () {
-        gzTabBtns.forEach(function (b) { b.classList.remove('active'); });
-        gzTabContents.forEach(function (c) { c.classList.remove('active'); });
-
-        btn.classList.add('active');
         var tag = btn.getAttribute('data-gztag');
-        var targetContent = document.getElementById('gz-' + tag);
-        if (targetContent) targetContent.classList.add('active');
+        switchGzTab(tag);
+        playSynthSound('click');
+      });
+    });
+
+    drawerNavItems.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var tag = btn.getAttribute('data-drawer-tab');
+        switchGzTab(tag);
+        closeSideMenu();
         playSynthSound('click');
       });
     });
