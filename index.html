@@ -19,7 +19,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <!-- Supabase Cloud Sync -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
+  <script src="supabase-config.js?v=2026_sync_v2"></script>
 
   <style>
     :root {
@@ -2485,10 +2485,14 @@
         }
 
         // Send to Supabase Cloud Database (Instantly syncs across devices)
+        var cloudSyncMsg = '';
         if (window.TechBossSupabase) {
           try {
-            await window.TechBossSupabase.addRegistration(newRegistration);
-            console.log('⚡ Successfully sent registration to Supabase cloud!');
+            var cloudRes = await window.TechBossSupabase.addRegistration(newRegistration);
+            if (cloudRes && cloudRes.success) {
+              console.log('⚡ Successfully sent registration to Supabase cloud!');
+              cloudSyncMsg = '🟢 Synced to Organizer Cloud Database';
+            }
           } catch (err) {
             console.warn('Supabase cloud send error:', err);
           }
