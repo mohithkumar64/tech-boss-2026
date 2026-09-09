@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Zone & Contender Dashboard — Tech Boss 2026</title>
+  <meta name="description"
+    content="Interactive Arena Game Zone & Live Telemetry Dashboard for Tech Boss 2026. Test combat skills, simulate damage, and monitor boss telemetry.">
+  <link rel="icon" type="image/png" href="logo.png?v=2">
+  <link rel="apple-touch-icon" href="logo.png?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&family=Outfit:wght@500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <!-- Supabase Cloud Sync -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js?v=2026_sync_v2"></script>
+  <!-- Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg-black: #000000;
+      --bg-secondary: #0a0a0c;
+      --bg-card: rgba(22, 22, 26, 0.7);
+      --bg-card-hover: rgba(30, 30, 36, 0.85);
+
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.18);
+      --border-highlight: rgba(255, 255, 255, 0.12);
+
+      --text-primary: #f5f5f7;
+      --text-secondary: #86868b;
+      --text-tertiary: #515154;
+
+      --accent-blue: #2997ff;
+      --accent-gold: #e5b358;
+      --accent-silver: #a1a1a6;
+      --accent-green: #30d158;
+      --accent-pink: #ff2a85;
+      --accent-cyan: #00f0ff;
+
+      --radius-sm: 10px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius-pill: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-black);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(229, 179, 88, 0.12), transparent 50%),
+        radial-gradient(circle at 10% 40%, rgba(41, 151, 255, 0.08), transparent 45%),
+        radial-gradient(circle at 90% 70%, rgba(255, 42, 133, 0.08), transparent 50%);
+      background-attachment: fixed;
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav-wrap {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 17px;
+    }
+
+    .brand-logo-img {
+      height: 34px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      border: 1px solid transparent;
+      font-family: inherit;
+    }
+
+    .btn-white {
+      background: #ffffff;
+      color: #000000;
+    }
+    .btn-white:hover {
+      background: rgba(255, 255, 255, 0.88);
+      transform: scale(1.02);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      border-color: var(--border-subtle);
+    }
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-sm {
+      padding: 7px 14px;
+      font-size: 12.5px;
+    }
+
+    /* BADGES */
+    .apple-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .apple-badge.gold {
+      background: rgba(229, 179, 88, 0.12);
+      color: var(--accent-gold);
+      border-color: rgba(229, 179, 88, 0.3);
+    }
+
+    /* TABS */
+    .gz-nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 32px 0;
+    }
+
+    .gz-tab-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 11px 22px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: inherit;
+    }
+
+    .gz-tab-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .gz-tab-btn.active {
+      background: linear-gradient(135deg, rgba(229, 179, 88, 0.25), rgba(41, 151, 255, 0.2));
+      color: #ffffff;
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 25px rgba(229, 179, 88, 0.25);
+    }
+
+    .gz-tab-content {
+      display: none;
+      animation: gzFadeIn 0.35s ease;
+    }
+
+    .gz-tab-content.active {
+      display: block;
+    }
+
+    @keyframes gzFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .gz-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .gz-card:hover {
+      border-color: var(--border-hover);
+    }
+
+    /* MINI GAME BOSS CLICKER */
+    .boss-avatar-box {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 42, 133, 0.25), rgba(0, 0, 0, 0.8));
+      border: 2px solid #ff2a85;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 58px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.08s ease, box-shadow 0.1s ease;
+      box-shadow: 0 0 35px rgba(255, 42, 133, 0.35);
+      position: relative;
+    }
+
+    .boss-avatar-box:active {
+      transform: scale(0.92);
+      box-shadow: 0 0 55px rgba(255, 42, 133, 0.7);
+    }
+
+    .floating-dmg {
+      position: absolute;
+      font-weight: 900;
+      color: #ff2a85;
+      pointer-events: none;
+      animation: floatUpDmg 0.8s ease-out forwards;
+      font-size: 22px;
+      text-shadow: 0 0 10px rgba(255, 42, 133, 0.8);
+      z-index: 50;
+    }
+
+    @keyframes floatUpDmg {
+      0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -65px) scale(1.4); }
+    }
+
+    .telemetry-progress-bar {
+      height: 14px;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      margin: 10px 0;
+      position: relative;
+    }
+
+    .telemetry-progress-fill {
+      height: 100%;
+      border-radius: 7px;
+      background: linear-gradient(90deg, #ff2a85, #e5b358);
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* FORM ELEMENTS */
+    input[type="text"] {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: #ffffff;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 16px rgba(229, 179, 88, 0.2);
+    }
+
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-subtle);
+      padding: 30px 0;
+      background: rgba(0,0,0,0.6);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 768px) {
+      .gz-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header>
+    <div class="nav-wrap">
+      <a class="brand" href="index.html">
+        <img src="logo.png?v=2" alt="Tech Boss Logo" class="brand-logo-img">
+        <span>Tech Boss 2026</span>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a class="btn btn-ghost btn-sm" href="index.html">← Back to Main Arena</a>
+        <a class="btn btn-white btn-sm" href="index.html#register">Register · ₹100</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top: 40px; padding-bottom: 80px;">
+    <!-- Page Header -->
+    <div style="text-align: center; margin-bottom: 20px;">
+      <span class="apple-badge gold">🕹️ INTERACTIVE ARENA GAME ZONE & TELEMETRY</span>
+      <h1 style="font-size: 36px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 8px;">Combat Zone & Live Dashboard</h1>
+      <p style="color: var(--text-secondary); max-width: 680px; margin: 0 auto; font-size: 15px; line-height: 1.5;">
+        Test your combat speed against the Cyber Boss, monitor live tournament telemetry from the server, simulate your damage score, and verify your pass credentials in real time.
+      </p>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="gz-nav-tabs">
+      <button class="gz-tab-btn active" data-gztag="boss-clicker">⚔️ Boss Rush Duel</button>
+      <button class="gz-tab-btn" data-gztag="code-trial">⚡ Code Speed Reflex</button>
+      <button class="gz-tab-btn" data-gztag="telemetry">📊 Live Arena Dashboard</button>
+      <button class="gz-tab-btn" data-gztag="pass-search">🛡️ Pass Verification Portal</button>
+    </div>
+
+    <!-- TAB 1: BOSS RUSH CLICKER DUEL -->
+    <div class="gz-tab-content active" id="gz-boss-clicker">
+      <div class="gz-grid" style="grid-template-columns: 1.2fr 1fr; align-items: start;">
+        <div class="gz-card" style="text-align: center; position: relative;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--accent-gold); letter-spacing: 2px; margin-bottom: 6px;">INTERACTIVE ARENA COMBAT</div>
+          <h2 style="font-size: 24px; font-weight: 800; color: #ffffff; margin-bottom: 4px;">CYBER TITAN BOSS</h2>
+          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 20px;">Click the Boss rapidly to deal DMG, trigger combos, and climb the battle tier.</p>
+
+          <div id="bossDmgFloatArea" style="position: relative; display: inline-block;">
+            <div class="boss-avatar-box" id="bossClickTarget" title="Click to Attack Boss!">
+              👹
+            </div>
+          </div>
+
+          <!-- Boss HP Bar -->
+          <div style="max-width: 340px; margin: 0 auto 20px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+              <span style="color: var(--text-secondary);">BOSS SHIELD INTEGRITY</span>
+              <b id="miniBossHpVal" style="color: #ff2a85;">100%</b>
+            </div>
+            <div class="telemetry-progress-bar">
+              <div id="miniBossHpFill" class="telemetry-progress-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+            <button class="btn btn-white btn-sm" id="resetMiniBossBtn">🔄 Reset Boss HP</button>
+          </div>
+        </div>
+
+        <!-- Combat Stats & Combo Multiplier -->
+        <div class="gz-card">
+          <h3 style="font-size: 18px; font-weight: 800; color: #ffffff; margin-bottom: 16px;">🔥 Combat Telemetry</h3>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;">
+            <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 16px; text-align: center;">
+              <div style="font-size: 11.5px; color: var(--text-secondary);">Total DMG Dealt</div>
+              <div id="playerTotalDmg" style="font-size: 26px; font-weight: 900; color: var(--accent-gold); margin-top: 4px;">0</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 16px; text-align: center;">
+              <div style="font-size: 11.5px; color: var(--text-secondary);">Combo Multiplier</div>
+              <div id="playerComboVal" style="font-size: 26px; font-weight: 900; color: var(--accent-blue); margin-top: 4px;">1.0x</div>
+            </div>
+          </div>
+
+          <div style="background: rgba(229,179,88,0.06); border: 1px solid rgba(229,179,88,0.2); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; color: var(--text-secondary);">Simulated Rank:</span>
+              <span class="apple-badge" id="simRankBadge" style="background: rgba(48,209,88,0.15); color: var(--accent-green); border-color: rgba(48,209,88,0.3); margin-bottom:0;">BRONZE CONTENDER</span>
+            </div>
+          </div>
+
+          <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;">
+            💡 <b>Tournament Notice:</b> Official tournament standings and scores are scored exclusively during Phase 02 live gameplay duels.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: CODE SPEED REFLEX TRIAL -->
+    <div class="gz-tab-content" id="gz-code-trial">
+      <div class="gz-card" style="max-width: 760px; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h3 style="font-size: 22px; font-weight: 800; color: #ffffff;">⚡ Rapid Syntax Reflex Trial</h3>
+            <p style="font-size: 13.5px; color: var(--text-secondary);">Type the target code syntax snippet accurately before the timer runs out.</p>
+          </div>
+          <div>
+            <span class="apple-badge" id="codeTrialTimer" style="font-size: 15px; font-weight: 800; background: rgba(255,42,133,0.15); color: #ff2a85; border-color: rgba(255,42,133,0.3); margin-bottom: 0;">⏱️ 15.0s</span>
+          </div>
+        </div>
+
+        <div style="background: #09090b; border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 18px; font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #00f0ff;">
+          <span style="color: var(--text-secondary); font-size: 12px; display: block; margin-bottom: 6px;">TARGET SNIPPET:</span>
+          <span id="codeTargetSnippet" style="letter-spacing: 0.5px; font-weight: 700;">const bossHP = Math.max(0, currentHP - playerDamage);</span>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <input type="text" id="codeTrialInput" placeholder="Click 'Start Trial' below to type here..." autocomplete="off" spellcheck="false" class="mono" style="font-size: 14.5px; padding: 14px 18px;" disabled>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+          <button class="btn btn-white" id="startCodeTrialBtn">▶️ Start 15s Trial</button>
+          <div id="codeTrialScoreBox" style="font-size: 13.5px; color: var(--text-secondary);">
+            Speed: <b id="codeTrialScoreVal" style="color: var(--accent-gold); font-size: 18px;">0</b> WPM | Accuracy: <b id="codeTrialAccVal" style="color: var(--accent-green);">--</b>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: LIVE ARENA TELEMETRY DASHBOARD -->
+    <div class="gz-tab-content" id="gz-telemetry">
+      <div class="gz-grid">
+        <!-- Live Boss Status -->
+        <div class="gz-card">
+          <div style="font-size: 11px; font-weight: 700; color: #ff2a85; letter-spacing: 1.5px; margin-bottom: 6px;">ARENA SERVER TELEMETRY</div>
+          <h3 style="font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 14px;">Grand Finale Cyber Boss</h3>
+          
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px;">
+            <span style="font-size: 13px; color: var(--text-secondary);">Server Shield Level:</span>
+            <span id="dashboardBossHpText" style="font-size: 24px; font-weight: 900; color: #ff2a85;">78%</span>
+          </div>
+          <div class="telemetry-progress-bar">
+            <div id="dashboardBossHpFill" class="telemetry-progress-fill" style="width: 78%; background: linear-gradient(90deg, #ff2a85, #e5b358);"></div>
+          </div>
+
+          <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
+            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;">Live Status:</div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #30d158;"></span>
+              <span style="font-weight: 600; color: #ffffff; font-size: 13.5px;">Phase 01 Registrations Open</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Solo Damage Potential Calculator -->
+        <div class="gz-card">
+          <div style="font-size: 11px; font-weight: 700; color: var(--accent-gold); letter-spacing: 1.5px; margin-bottom: 6px;">DMG CALCULATOR</div>
+          <h3 style="font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 14px;">Damage Potential Estimator</h3>
+
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 12.5px; display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span>Stage 1 Quiz Accuracy:</span>
+              <b id="calcQuizVal" style="color: var(--accent-gold);">80%</b>
+            </label>
+            <input type="range" id="calcQuizSlider" min="0" max="100" value="80" style="width: 100%; accent-color: var(--accent-gold);">
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label style="font-size: 12.5px; display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span>Stage 2 Coding Speed:</span>
+              <b id="calcCodeVal" style="color: var(--accent-blue);">75%</b>
+            </label>
+            <input type="range" id="calcCodeSlider" min="0" max="100" value="75" style="width: 100%; accent-color: var(--accent-blue);">
+          </div>
+
+          <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 13px; color: var(--text-secondary);">Projected Total DMG:</span>
+            <span id="calcTotalDmgResult" style="font-size: 18px; font-weight: 900; color: var(--accent-gold);">775 DMG (A-Tier)</span>
+          </div>
+        </div>
+
+        <!-- Cash Prize Breakdown -->
+        <div class="gz-card">
+          <div style="font-size: 11px; font-weight: 700; color: var(--accent-blue); letter-spacing: 1.5px; margin-bottom: 6px;">REWARDS TELEMETRY</div>
+          <h3 style="font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 14px;">₹2,250 Cash Pool</h3>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+            <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-radius: 6px; background: rgba(229,179,88,0.1); border: 1px solid rgba(229,179,88,0.2);">
+              <span style="color: var(--accent-gold); font-weight: 700;">🥇 1st Place Champion:</span>
+              <b style="color: #ffffff;">₹1,000 Cash</b>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-radius: 6px; background: rgba(161,161,166,0.1); border: 1px solid rgba(161,161,166,0.2);">
+              <span style="color: var(--accent-silver); font-weight: 700;">🥈 2nd Place Runner-Up:</span>
+              <b style="color: #ffffff;">₹750 Cash</b>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-radius: 6px; background: rgba(205,127,50,0.1); border: 1px solid rgba(205,127,50,0.2);">
+              <span style="color: #cd7f32; font-weight: 700;">🥉 3rd Place Challenger:</span>
+              <b style="color: #ffffff;">₹500 Cash</b>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: PASS VERIFICATION PORTAL -->
+    <div class="gz-tab-content" id="gz-pass-search">
+      <div class="gz-card" style="max-width: 720px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h3 style="font-size: 22px; font-weight: 800; color: #ffffff;">🛡️ Contender Pass Verification Lookup</h3>
+          <p style="font-size: 13.5px; color: var(--text-secondary); margin-top: 6px;">Enter your Register Number to verify your registration status and arena pass directly from the central database.</p>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+          <input type="text" id="passLookupInput" placeholder="Enter Register No (e.g. 22BCE1001)" class="mono" style="flex: 1; min-width: 220px; font-size: 15px; text-transform: uppercase;">
+          <button class="btn btn-white" id="passLookupBtn">🔍 Check Status</button>
+        </div>
+
+        <div id="passLookupResult" style="display: none; padding: 20px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="logo.png?v=2" alt="Tech Boss Logo" style="height:24px; width:auto; object-fit:contain;">
+        <span style="font-weight:600; color:#ffffff;">Tech Boss 2026</span>
+        <span>— The Solo Championship.</span>
+      </div>
+      <div>
+        <a href="index.html" style="color:var(--text-secondary); text-decoration:none; margin-right:16px;">Main Arena</a>
+        <a href="index.html#register" style="color:var(--accent-gold); text-decoration:none; font-weight:600;">Register Pass (₹100)</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function playSynthSound(type) {
+      try {
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        var ctx = new AudioContext();
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.05);
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.05);
+        } else if (type === 'victory') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+          osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.18, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.4);
+        }
+      } catch (e) {}
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str || '';
+      return div.innerHTML;
+    }
+
+    // Tab Navigation
+    var gzTabBtns = document.querySelectorAll('.gz-tab-btn');
+    var gzTabContents = document.querySelectorAll('.gz-tab-content');
+
+    gzTabBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        gzTabBtns.forEach(function (b) { b.classList.remove('active'); });
+        gzTabContents.forEach(function (c) { c.classList.remove('active'); });
+
+        btn.classList.add('active');
+        var tag = btn.getAttribute('data-gztag');
+        var targetContent = document.getElementById('gz-' + tag);
+        if (targetContent) targetContent.classList.add('active');
+        playSynthSound('click');
+      });
+    });
+
+    // 1. Boss Clicker Mini Game
+    var bossClickTarget = document.getElementById('bossClickTarget');
+    var bossDmgFloatArea = document.getElementById('bossDmgFloatArea');
+    var miniBossHpVal = document.getElementById('miniBossHpVal');
+    var miniBossHpFill = document.getElementById('miniBossHpFill');
+    var playerTotalDmg = document.getElementById('playerTotalDmg');
+    var playerComboVal = document.getElementById('playerComboVal');
+    var simRankBadge = document.getElementById('simRankBadge');
+    var resetMiniBossBtn = document.getElementById('resetMiniBossBtn');
+
+    var currentMiniBossHp = 100;
+    var totalPlayerDmg = 0;
+    var comboCount = 0;
+    var comboTimer = null;
+
+    if (bossClickTarget) {
+      bossClickTarget.addEventListener('click', function (e) {
+        comboCount++;
+        clearTimeout(comboTimer);
+        comboTimer = setTimeout(function () {
+          comboCount = 0;
+          if (playerComboVal) playerComboVal.textContent = '1.0x';
+        }, 1200);
+
+        var multiplier = Math.min(3.5, 1.0 + (comboCount * 0.15));
+        var baseDmg = Math.floor(Math.random() * 15 + 25);
+        var hitDmg = Math.round(baseDmg * multiplier);
+
+        totalPlayerDmg += hitDmg;
+        currentMiniBossHp = Math.max(0, currentMiniBossHp - (hitDmg / 25));
+
+        if (playerTotalDmg) playerTotalDmg.textContent = totalPlayerDmg.toLocaleString();
+        if (playerComboVal) playerComboVal.textContent = multiplier.toFixed(1) + 'x';
+        if (miniBossHpVal) miniBossHpVal.textContent = Math.round(currentMiniBossHp) + '%';
+        if (miniBossHpFill) miniBossHpFill.style.width = Math.max(0, currentMiniBossHp) + '%';
+
+        var floatEl = document.createElement('div');
+        floatEl.className = 'floating-dmg';
+        floatEl.textContent = '+' + hitDmg + ' DMG';
+        floatEl.style.left = (e.offsetX || 70) + 'px';
+        floatEl.style.top = (e.offsetY || 70) + 'px';
+        bossDmgFloatArea.appendChild(floatEl);
+        setTimeout(function () { floatEl.remove(); }, 800);
+
+        if (simRankBadge) {
+          if (totalPlayerDmg >= 1500) {
+            simRankBadge.textContent = '👑 S-TIER BOSS SLAYER';
+            simRankBadge.style.color = '#f5ba13';
+          } else if (totalPlayerDmg >= 800) {
+            simRankBadge.textContent = '⚡ A-TIER ELITE';
+            simRankBadge.style.color = '#00f0ff';
+          } else if (totalPlayerDmg >= 350) {
+            simRankBadge.textContent = '🛡️ B-TIER WARRIOR';
+            simRankBadge.style.color = '#30d158';
+          }
+        }
+
+        playSynthSound('click');
+        if (currentMiniBossHp <= 0) {
+          playSynthSound('victory');
+        }
+      });
+    }
+
+    if (resetMiniBossBtn) {
+      resetMiniBossBtn.addEventListener('click', function () {
+        currentMiniBossHp = 100;
+        totalPlayerDmg = 0;
+        comboCount = 0;
+        if (playerTotalDmg) playerTotalDmg.textContent = '0';
+        if (playerComboVal) playerComboVal.textContent = '1.0x';
+        if (miniBossHpVal) miniBossHpVal.textContent = '100%';
+        if (miniBossHpFill) miniBossHpFill.style.width = '100%';
+        if (simRankBadge) {
+          simRankBadge.textContent = 'BRONZE CONTENDER';
+          simRankBadge.style.color = '#30d158';
+        }
+        playSynthSound('click');
+      });
+    }
+
+    // 2. Code Speed Reflex Trial
+    var startCodeTrialBtn = document.getElementById('startCodeTrialBtn');
+    var codeTrialInput = document.getElementById('codeTrialInput');
+    var codeTrialTimer = document.getElementById('codeTrialTimer');
+    var codeTargetSnippet = document.getElementById('codeTargetSnippet');
+    var codeTrialScoreVal = document.getElementById('codeTrialScoreVal');
+    var codeTrialAccVal = document.getElementById('codeTrialAccVal');
+
+    var sampleSnippets = [
+      'const bossHP = Math.max(0, currentHP - playerDamage);',
+      'function executeGauntlet(player) { return player.score >= 800; }',
+      'const prizePool = { first: 1000, second: 750, third: 500 };',
+      'export default async function authenticateSoloContender(pass) {}'
+    ];
+
+    var trialInterval = null;
+    var trialSeconds = 15.0;
+    var trialActive = false;
+
+    if (startCodeTrialBtn && codeTrialInput) {
+      startCodeTrialBtn.addEventListener('click', function () {
+        if (trialActive) return;
+        trialActive = true;
+        trialSeconds = 15.0;
+        codeTrialInput.disabled = false;
+        codeTrialInput.value = '';
+        codeTrialInput.focus();
+        startCodeTrialBtn.disabled = true;
+        startCodeTrialBtn.textContent = 'Trial Running...';
+
+        var randomSnippet = sampleSnippets[Math.floor(Math.random() * sampleSnippets.length)];
+        codeTargetSnippet.textContent = randomSnippet;
+
+        trialInterval = setInterval(function () {
+          trialSeconds -= 0.1;
+          if (trialSeconds <= 0) {
+            trialSeconds = 0;
+            clearInterval(trialInterval);
+            trialActive = false;
+            codeTrialInput.disabled = true;
+            startCodeTrialBtn.disabled = false;
+            startCodeTrialBtn.textContent = '▶️ Retry Trial';
+
+            var typed = codeTrialInput.value;
+            var target = codeTargetSnippet.textContent;
+            var matchCount = 0;
+            for (var i = 0; i < Math.min(typed.length, target.length); i++) {
+              if (typed[i] === target[i]) matchCount++;
+            }
+            var acc = target.length ? Math.round((matchCount / target.length) * 100) : 0;
+            var words = typed.trim().split(/\s+/).length;
+            var wpm = Math.round(words * 4);
+
+            if (codeTrialScoreVal) codeTrialScoreVal.textContent = wpm;
+            if (codeTrialAccVal) codeTrialAccVal.textContent = acc + '%';
+            playSynthSound('victory');
+          }
+          if (codeTrialTimer) codeTrialTimer.textContent = '⏱️ ' + trialSeconds.toFixed(1) + 's';
+        }, 100);
+      });
+    }
+
+    // 3. Calculator
+    var calcQuizSlider = document.getElementById('calcQuizSlider');
+    var calcCodeSlider = document.getElementById('calcCodeSlider');
+    var calcQuizVal = document.getElementById('calcQuizVal');
+    var calcCodeVal = document.getElementById('calcCodeVal');
+    var calcTotalDmgResult = document.getElementById('calcTotalDmgResult');
+
+    function updateCalculator() {
+      if (!calcQuizSlider || !calcCodeSlider) return;
+      var q = parseInt(calcQuizSlider.value, 10);
+      var c = parseInt(calcCodeSlider.value, 10);
+      if (calcQuizVal) calcQuizVal.textContent = q + '%';
+      if (calcCodeVal) calcCodeVal.textContent = c + '%';
+
+      var total = Math.round((q * 4.5) + (c * 5.5));
+      var tier = 'C-Tier';
+      if (total >= 800) tier = 'S-Tier Champion';
+      else if (total >= 600) tier = 'A-Tier Elite';
+      else if (total >= 400) tier = 'B-Tier Contender';
+
+      if (calcTotalDmgResult) {
+        calcTotalDmgResult.textContent = total + ' DMG (' + tier + ')';
+      }
+    }
+
+    if (calcQuizSlider && calcCodeSlider) {
+      calcQuizSlider.addEventListener('input', updateCalculator);
+      calcCodeSlider.addEventListener('input', updateCalculator);
+    }
+
+    // 4. Pass Lookup
+    var passLookupBtn = document.getElementById('passLookupBtn');
+    var passLookupInput = document.getElementById('passLookupInput');
+    var passLookupResult = document.getElementById('passLookupResult');
+
+    if (passLookupBtn && passLookupInput) {
+      passLookupBtn.addEventListener('click', async function () {
+        var query = passLookupInput.value.trim().toUpperCase();
+        if (!query) {
+          alert('Please enter your Register Number.');
+          return;
+        }
+
+        passLookupBtn.disabled = true;
+        passLookupBtn.textContent = 'Searching...';
+        passLookupResult.style.display = 'block';
+        passLookupResult.innerHTML = '<div style="color:var(--text-secondary); text-align:center;">🔍 Querying tournament database...</div>';
+
+        try {
+          var regs = await window.TechBossSupabase.fetchRegistrations();
+          passLookupBtn.disabled = false;
+          passLookupBtn.textContent = '🔍 Check Status';
+
+          if (regs && Array.isArray(regs)) {
+            var found = regs.find(function (r) {
+              return (r.regNo && r.regNo.toUpperCase() === query);
+            });
+
+            if (found) {
+              var isVerified = (found.status === 'VERIFIED');
+              var statusBadge = isVerified ?
+                '<span class="apple-badge" style="background:rgba(48,209,88,0.15); color:var(--accent-green); border-color:rgba(48,209,88,0.3); margin-bottom:0;">✓ PASS VERIFIED</span>' :
+                '<span class="apple-badge" style="background:rgba(229,179,88,0.15); color:var(--accent-gold); border-color:rgba(229,179,88,0.3); margin-bottom:0;">⏳ PENDING VERIFICATION</span>';
+
+              passLookupResult.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">' +
+                '<h4 style="color:#ffffff; font-size:16px; margin:0;">' + escapeHtml(found.name) + '</h4>' +
+                statusBadge +
+                '</div>' +
+                '<div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">' +
+                '<div>Register No: <b class="mono" style="color:var(--accent-gold);">' + escapeHtml(found.regNo) + '</b></div>' +
+                '<div>Department: <span style="color:#ffffff;">' + escapeHtml(found.branch) + ' (' + escapeHtml(found.year) + ')</span></div>' +
+                '<div>Pass Tier: <span style="color:#ffffff;">All-Access Solo Pass (₹100)</span></div>' +
+                '<div>Arena Batch: <b style="color:var(--accent-blue);">Batch Alpha (09:00 AM)</b></div>' +
+                '</div>';
+              playSynthSound('victory');
+              return;
+            }
+          }
+
+          passLookupResult.innerHTML = '<div style="color:#ff453a; text-align:center;">⚠️ No registration record found for Register No: <b>' + escapeHtml(query) + '</b>. Please check the spelling or register above.</div>';
+          playSynthSound('click');
+        } catch (e) {
+          passLookupBtn.disabled = false;
+          passLookupBtn.textContent = '🔍 Check Status';
+          passLookupResult.innerHTML = '<div style="color:#ff453a; text-align:center;">⚠️ Lookup error: ' + escapeHtml(e.message) + '</div>';
+        }
+      });
+    }
+
+    // Sync Telemetry Boss HP from Cloud
+    async function loadTelemetry() {
+      if (window.TechBossSupabase) {
+        var state = await window.TechBossSupabase.fetchEventState();
+        if (state && state.bossHp) {
+          var hpEl = document.getElementById('dashboardBossHpText');
+          var fillEl = document.getElementById('dashboardBossHpFill');
+          if (hpEl) hpEl.textContent = state.bossHp + '%';
+          if (fillEl) fillEl.style.width = state.bossHp + '%';
+        }
+      }
+    }
+    loadTelemetry();
+  </script>
+
+</body>
+
+</html>
