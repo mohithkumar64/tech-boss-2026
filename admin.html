@@ -809,15 +809,14 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     if (adminPinInput) adminPinInput.focus();
   }, 120);
 
-  loginBtn.addEventListener('click', function() {
+  loginBtn.addEventListener('click', async function() {
     var entered = adminPinInput.value.trim();
     if (entered === getAdminPassword()) {
       authOverlay.style.display = 'none';
       authError.style.display = 'none';
       adminPinInput.value = '';
       showToast('⚡ Welcome, Organizer. Terminal Unlocked.');
-      loadData();
-      renderAll();
+      await loadData();
     } else {
       authError.style.display = 'block';
       adminPinInput.value = '';
