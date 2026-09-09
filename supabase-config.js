@@ -1,9 +1,8 @@
 // ========================================================
-// TECH BOSS 2026 — SUPABASE CLOUD SYNC CONFIGURATION
+// TECH BOSS 2026 — BACKEND API & CLOUD DATABASE ADAPTER
 // ========================================================
 
 (function () {
-  // Default Project Credentials (Hardcoded & configured for immediate cross-device sync)
   var DEFAULT_SUPABASE_URL = 'https://sgcqsfgjiofoqdylrvoi.supabase.co';
   var DEFAULT_SUPABASE_ANON_KEY = 'sb_publishable_OX9axwl6GT-p2twCa7lw3w_cadfJJJj';
 
@@ -39,9 +38,7 @@
             }
           }
         });
-        console.log('⚡ Tech Boss Supabase Client initialized successfully.');
       } catch (err) {
-        console.error('Failed to initialize Supabase client:', err);
         client = null;
       }
     } else {
@@ -50,7 +47,6 @@
     return client;
   }
 
-  // Attempt initial client initialization
   if (typeof window !== 'undefined') {
     if (document.readyState === 'loading') {
       window.addEventListener('DOMContentLoaded', initSupabaseClient);
@@ -60,14 +56,13 @@
   }
 
   // ==========================================
-  // REGISTRATIONS API (Dual SDK + Direct REST Fallback)
+  // 1. REGISTRATIONS API
   // ==========================================
 
   async function addRegistration(regData) {
-    var config = getSupabaseConfig();
     var payload = {
       name: regData.name || '',
-      reg_no: regData.regNo || '',
+      reg_no: (regData.regNo || regData.reg_no || '').trim().toUpperCase(),
       branch: regData.branch || '',
       year: regData.year || '',
       phone: regData.phone || '',
@@ -78,21 +73,28 @@
       status: regData.status || 'PENDING'
     };
 
-    // 1. Try Supabase SDK client if available
-    var cli = client || initSupabaseClient();
-    if (cli) {
-      try {
-        var res = await cli.from('registrations').insert([payload]).select();
-        if (!res.error && res.data && res.data.length > 0) {
-          console.log('✅ Supabase SDK: registration inserted', res.data[0]);
-          return { success: true, data: res.data[0] };
-        }
-      } catch (err) {
-        console.warn('Supabase SDK insert failed, falling back to direct REST API:', err);
+    // Step 1: Call Backend Server API endpoint (/api/register)
+    try {
+      var apiResp = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (apiResp.status === 200 || apiResp.status === 201) {
+        var apiResult = await apiResp.json();
+        console.log('✅ Backend API: Registration saved in database:', apiResult);
+        return { success: true, data: apiResult.participant || payload };
+      } else if (apiResp.status === 409 || apiResp.status === 400) {
+        var errJson = await apiResp.json();
+        return { success: false, error: errJson.error || 'Validation error' };
       }
+    } catch (apiErr) {
+      console.warn('Backend API endpoint not reachable directly, trying direct database connector:', apiErr);
     }
 
-    // 2. Direct REST API Fallback (Guaranteed 100% mobile compatibility)
+    // Step 2: Direct Database Fallback (if on static hosting / direct file access)
+    var config = getSupabaseConfig();
     if (config.url && config.key) {
       try {
         var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/registrations';
@@ -109,30 +111,33 @@
 
         if (resp.ok) {
           var data = await resp.json();
-          console.log('✅ Supabase REST API: registration inserted', data);
+          console.log('✅ Direct Database Insert Success:', data);
           return { success: true, data: data[0] || payload };
         } else {
           var errText = await resp.text();
-          console.error('Supabase REST error response:', errText);
+          try {
+            var parsed = JSON.parse(errText);
+            return { success: false, error: parsed.message || 'Database error' };
+          } catch (e) {
+            return { success: false, error: errText };
+          }
         }
       } catch (fErr) {
-        console.error('Supabase Direct REST fetch error:', fErr);
+        return { success: false, error: fErr.message };
       }
     }
 
-    return { success: false, reason: 'Failed to insert to Supabase' };
+    return { success: false, error: 'Database connection not configured' };
   }
 
   async function fetchRegistrations() {
-    var config = getSupabaseConfig();
-
-    // 1. Try Supabase SDK client
-    var cli = client || initSupabaseClient();
-    if (cli) {
-      try {
-        var res = await cli.from('registrations').select('*').order('created_at', { ascending: false });
-        if (!res.error && res.data) {
-          return res.data.map(function (row) {
+    // Step 1: Call Backend API (/api/registrations)
+    try {
+      var apiResp = await fetch('/api/registrations');
+      if (apiResp.ok) {
+        var apiResult = await apiResp.json();
+        if (apiResult.success && Array.isArray(apiResult.registrations)) {
+          return apiResult.registrations.map(function (row) {
             return {
               id: row.id,
               name: row.name,
@@ -149,12 +154,11 @@
             };
           });
         }
-      } catch (err) {
-        console.warn('Supabase SDK fetch registrations failed, trying REST:', err);
       }
-    }
+    } catch (e) {}
 
-    // 2. Direct REST Fallback
+    // Step 2: Direct Database Fetch Fallback
+    var config = getSupabaseConfig();
     if (config.url && config.key) {
       try {
         var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/registrations?select=*&order=created_at.desc';
@@ -185,24 +189,23 @@
           });
         }
       } catch (fErr) {
-        console.warn('Direct REST fetch registrations error:', fErr);
+        console.warn('Direct Database fetch error:', fErr);
       }
     }
     return null;
   }
 
   async function updateRegistrationStatus(id, newStatus) {
-    var config = getSupabaseConfig();
-    var cli = client || initSupabaseClient();
-    if (cli && id) {
-      try {
-        var res = await cli.from('registrations').update({ status: newStatus }).eq('id', id);
-        if (!res.error) return true;
-      } catch (err) {
-        console.warn('Supabase SDK update failed, trying REST:', err);
-      }
-    }
+    try {
+      var apiResp = await fetch('/api/registrations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id, status: newStatus })
+      });
+      if (apiResp.ok) return true;
+    } catch (e) {}
 
+    var config = getSupabaseConfig();
     if (config.url && config.key && id) {
       try {
         var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/registrations?id=eq.' + id;
@@ -222,17 +225,14 @@
   }
 
   async function deleteRegistration(id) {
-    var config = getSupabaseConfig();
-    var cli = client || initSupabaseClient();
-    if (cli && id) {
-      try {
-        var res = await cli.from('registrations').delete().eq('id', id);
-        if (!res.error) return true;
-      } catch (err) {
-        console.warn('Supabase SDK delete failed, trying REST:', err);
-      }
-    }
+    try {
+      var apiResp = await fetch('/api/registrations?id=' + encodeURIComponent(id), {
+        method: 'DELETE'
+      });
+      if (apiResp.ok) return true;
+    } catch (e) {}
 
+    var config = getSupabaseConfig();
     if (config.url && config.key && id) {
       try {
         var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/registrations?id=eq.' + id;
@@ -250,17 +250,16 @@
   }
 
   // ==========================================
-  // LEADERBOARD API
+  // 2. LEADERBOARD API
   // ==========================================
 
   async function fetchLeaderboard() {
-    var config = getSupabaseConfig();
-    var cli = client || initSupabaseClient();
-    if (cli) {
-      try {
-        var res = await cli.from('leaderboard').select('*').order('rank', { ascending: true });
-        if (!res.error && res.data && res.data.length > 0) {
-          return res.data.map(function (row) {
+    try {
+      var apiResp = await fetch('/api/leaderboard');
+      if (apiResp.ok) {
+        var apiResult = await apiResp.json();
+        if (apiResult.success && Array.isArray(apiResult.leaderboard)) {
+          return apiResult.leaderboard.map(function (row) {
             return {
               id: row.id,
               rank: row.rank,
@@ -274,11 +273,10 @@
             };
           });
         }
-      } catch (err) {
-        console.warn('Supabase fetch leaderboard failed:', err);
       }
-    }
+    } catch (e) {}
 
+    var config = getSupabaseConfig();
     if (config.url && config.key) {
       try {
         var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/leaderboard?select=*&order=rank.asc';
@@ -287,21 +285,19 @@
         });
         if (resp.ok) {
           var rows = await resp.json();
-          if (rows.length > 0) {
-            return rows.map(function (row) {
-              return {
-                id: row.id,
-                rank: row.rank,
-                handle: row.handle,
-                name: row.name,
-                score: row.score,
-                bossDmg: row.boss_dmg,
-                streak: row.streak,
-                avatar: row.avatar,
-                badge: row.badge
-              };
-            });
-          }
+          return rows.map(function (row) {
+            return {
+              id: row.id,
+              rank: row.rank,
+              handle: row.handle,
+              name: row.name,
+              score: row.score,
+              bossDmg: row.boss_dmg,
+              streak: row.streak,
+              avatar: row.avatar,
+              badge: row.badge
+            };
+          });
         }
       } catch (e) {}
     }
@@ -309,6 +305,15 @@
   }
 
   async function saveLeaderboard(boardData) {
+    try {
+      var apiResp = await fetch('/api/leaderboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leaderboard: boardData })
+      });
+      if (apiResp.ok) return true;
+    } catch (e) {}
+
     var config = getSupabaseConfig();
     var cli = client || initSupabaseClient();
     if (cli && Array.isArray(boardData)) {
@@ -327,43 +332,65 @@
               badge: item.badge || ''
             };
           });
-          var res = await cli.from('leaderboard').insert(payload);
-          if (!res.error) return true;
+          await cli.from('leaderboard').insert(payload);
         }
-      } catch (err) {
-        console.warn('Supabase save leaderboard failed:', err);
-      }
+        return true;
+      } catch (err) {}
     }
     return false;
   }
 
   // ==========================================
-  // EVENT STATE API
+  // 3. EVENT STATE API
   // ==========================================
 
   async function fetchEventState() {
-    var config = getSupabaseConfig();
-    var cli = client || initSupabaseClient();
-    if (cli) {
-      try {
-        var res = await cli.from('event_state').select('*').eq('id', 'global').maybeSingle();
-        if (!res.error && res.data) {
+    try {
+      var apiResp = await fetch('/api/event-state');
+      if (apiResp.ok) {
+        var apiResult = await apiResp.json();
+        if (apiResult.success && apiResult.event_state) {
           return {
-            bossHp: res.data.boss_hp,
-            broadcastMsg: res.data.broadcast_msg
+            bossHp: apiResult.event_state.boss_hp,
+            broadcastMsg: apiResult.event_state.broadcast_msg
           };
         }
-      } catch (err) {
-        console.warn('Supabase fetch event state failed:', err);
       }
+    } catch (e) {}
+
+    var config = getSupabaseConfig();
+    if (config.url && config.key) {
+      try {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state?id=eq.global';
+        var resp = await fetch(apiUrl, {
+          headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
+        });
+        if (resp.ok) {
+          var rows = await resp.json();
+          if (rows.length > 0) {
+            return {
+              bossHp: rows[0].boss_hp,
+              broadcastMsg: rows[0].broadcast_msg
+            };
+          }
+        }
+      } catch (e) {}
     }
     return null;
   }
 
   async function saveEventState(bossHp, broadcastMsg) {
+    try {
+      var apiResp = await fetch('/api/event-state', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ boss_hp: bossHp, broadcast_msg: broadcastMsg })
+      });
+      if (apiResp.ok) return true;
+    } catch (e) {}
+
     var config = getSupabaseConfig();
-    var cli = client || initSupabaseClient();
-    if (cli) {
+    if (config.url && config.key) {
       try {
         var payload = {
           id: 'global',
@@ -371,17 +398,25 @@
           broadcast_msg: broadcastMsg !== undefined ? String(broadcastMsg) : '',
           updated_at: new Date().toISOString()
         };
-        var res = await cli.from('event_state').upsert(payload);
-        if (!res.error) return true;
-      } catch (err) {
-        console.warn('Supabase save event state failed:', err);
-      }
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state';
+        await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'apikey': config.key,
+            'Authorization': 'Bearer ' + config.key,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify(payload)
+        });
+        return true;
+      } catch (e) {}
     }
     return false;
   }
 
   // ==========================================
-  // REAL-TIME SUBSCRIPTIONS
+  // 4. REAL-TIME SUBSCRIPTIONS
   // ==========================================
 
   function subscribeToRegistrations(onEvent) {
@@ -392,14 +427,12 @@
       var channel = cli
         .channel('public:registrations:' + Date.now())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'registrations' }, function (payload) {
-          console.log('⚡ Realtime Registration Event:', payload);
           if (typeof onEvent === 'function') onEvent(payload);
         })
         .subscribe();
 
       return channel;
     } catch (e) {
-      console.warn('Supabase realtime subscribe error:', e);
       return null;
     }
   }
@@ -412,7 +445,6 @@
       var channel = cli
         .channel('public:leaderboard:' + Date.now())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, function (payload) {
-          console.log('⚡ Realtime Leaderboard Event:', payload);
           if (typeof onEvent === 'function') onEvent(payload);
         })
         .subscribe();
@@ -431,7 +463,6 @@
       var channel = cli
         .channel('public:event_state:' + Date.now())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'event_state' }, function (payload) {
-          console.log('⚡ Realtime Event State:', payload);
           if (typeof onEvent === 'function') onEvent(payload);
         })
         .subscribe();

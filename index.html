@@ -2474,31 +2474,29 @@
           date: new Date().toLocaleString()
         };
 
-        try {
-          var existingRegs = [];
-          var savedRegs = localStorage.getItem('techboss_registrations');
-          if (savedRegs) existingRegs = JSON.parse(savedRegs);
-          existingRegs.unshift(newRegistration);
-          localStorage.setItem('techboss_registrations', JSON.stringify(existingRegs));
-        } catch (e) {
-          console.error('Storage quota error:', e);
+        // Transmit registration to Backend & Database
+        var cloudRes = await window.TechBossSupabase.addRegistration(newRegistration);
+        
+        if (!cloudRes || !cloudRes.success) {
+          registerBtn.disabled = false;
+          registerBtn.innerHTML = origBtnText;
+          regErrorMsg.style.display = 'block';
+          regErrorMsg.textContent = (cloudRes && cloudRes.error) ? ('⚠️ ' + cloudRes.error) : '⚠️ Could not save registration to database. Please check your connection and try again.';
+          playSynthSound('click');
+          return;
         }
 
-        // Send to Supabase Cloud Database (Instantly syncs across devices)
-        var cloudSyncMsg = '';
-        if (window.TechBossSupabase) {
-          try {
-            var cloudRes = await window.TechBossSupabase.addRegistration(newRegistration);
-            if (cloudRes && cloudRes.success) {
-              console.log('⚡ Successfully sent registration to Supabase cloud!');
-              cloudSyncMsg = '🟢 Synced to Organizer Cloud Database';
-            }
-          } catch (err) {
-            console.warn('Supabase cloud send error:', err);
-          }
-        }
+        var participantData = cloudRes.data || newRegistration;
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = origBtnText;
 
-        // Automatically sync registration row to connected Google Spreadsheet (if configured)
+        // Display database-verified data on the Pass Modal
+        document.getElementById('passChallengerName').textContent = participantData.name;
+        document.getElementById('passRegNo').textContent = participantData.reg_no || participantData.regNo || regNo;
+        document.getElementById('passBranchYear').textContent = (participantData.branch || branch) + ' (' + (participantData.year || year) + ')';
+        passModal.classList.add('show');
+
+        // Optional sync to Google Spreadsheet if configured
         var sheetWebhookUrl = localStorage.getItem('techboss_sheets_url') || '';
         if (sheetWebhookUrl) {
           try {
@@ -2508,32 +2506,19 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 timestamp: new Date().toLocaleString(),
-                name: name,
-                regNo: regNo,
-                branch: branch,
-                year: year,
-                phone: phone,
+                name: participantData.name,
+                regNo: participantData.reg_no || participantData.regNo || regNo,
+                branch: participantData.branch || branch,
+                year: participantData.year || year,
+                phone: participantData.phone || phone,
                 fee: '100',
                 pass: 'All-Access Solo Pass',
                 status: 'PENDING',
                 screenshot: currentScreenshotDataUrl ? 'Uploaded' : 'None'
               })
-            }).catch(function (err) {
-              console.warn('Google Sheets sync background error:', err);
-            });
-          } catch (err) {
-            console.warn('Google Sheets sync error:', err);
-          }
+            }).catch(function () {});
+          } catch (e) {}
         }
-
-        registerBtn.disabled = false;
-        registerBtn.innerHTML = origBtnText;
-
-        // Show Success Modal
-        document.getElementById('passChallengerName').textContent = name;
-        document.getElementById('passRegNo').textContent = regNo;
-        document.getElementById('passBranchYear').textContent = branch + ' (' + year + ')';
-        passModal.classList.add('show');
 
         // Trigger Confetti & Audio
         playSynthSound('victory');
