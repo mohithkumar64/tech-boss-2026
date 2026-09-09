@@ -1286,6 +1286,117 @@
       }
     }
 
+    /* MINIMAL EVENT COUNTDOWN COMPONENT */
+    .countdown-section-card {
+      padding: clamp(36px, 5vw, 60px) 20px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(16, 16, 22, 0.9), rgba(8, 8, 12, 0.95));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .minimal-countdown-row {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: flex-start !important;
+      justify-content: center !important;
+      gap: clamp(8px, 2.5vw, 24px) !important;
+      margin: 0 auto clamp(20px, 3.5vw, 36px) !important;
+      text-align: center !important;
+    }
+
+    .time-unit-box {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      min-width: clamp(55px, 10vw, 110px) !important;
+    }
+
+    .time-digit {
+      font-family: 'Outfit', 'Inter', -apple-system, sans-serif !important;
+      font-size: clamp(40px, 8vw, 80px) !important;
+      font-weight: 800 !important;
+      color: #ffffff !important;
+      line-height: 1 !important;
+      letter-spacing: -1.5px !important;
+      display: block !important;
+    }
+
+    .time-colon-sep {
+      font-family: 'Outfit', 'Inter', -apple-system, sans-serif !important;
+      font-size: clamp(32px, 6.5vw, 68px) !important;
+      font-weight: 700 !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+      line-height: 1 !important;
+      user-select: none !important;
+      margin-top: clamp(2px, 0.5vw, 6px) !important;
+      display: block !important;
+    }
+
+    .time-unit-label {
+      font-size: clamp(12px, 1.6vw, 15px) !important;
+      font-weight: 500 !important;
+      color: #86868b !important;
+      margin-top: 10px !important;
+      text-align: center !important;
+      display: block !important;
+    }
+
+    .tech-boss-live-banner {
+      display: none;
+      padding: clamp(28px, 5vw, 44px) 20px;
+      background: radial-gradient(circle, rgba(229, 179, 88, 0.2) 0%, rgba(0, 0, 0, 0.8) 75%);
+      border: 2px solid rgba(229, 179, 88, 0.7);
+      border-radius: 20px;
+      margin: 0 auto 28px;
+      max-width: 760px;
+      box-shadow: 0 0 50px rgba(229, 179, 88, 0.35);
+      animation: tbGlowPulse 2.5s infinite ease-in-out;
+      text-align: center;
+    }
+
+    @keyframes tbGlowPulse {
+      0%, 100% { box-shadow: 0 0 30px rgba(229, 179, 88, 0.25); border-color: rgba(229, 179, 88, 0.5); }
+      50% { box-shadow: 0 0 65px rgba(229, 179, 88, 0.6); border-color: rgba(229, 179, 88, 0.9); }
+    }
+
+    .tb-boss-title {
+      font-family: 'Outfit', -apple-system, sans-serif;
+      font-size: clamp(48px, 10vw, 84px);
+      font-weight: 900;
+      letter-spacing: 4px;
+      line-height: 1.05;
+      background: linear-gradient(180deg, #ffffff 20%, #e5b358 75%, #ff8800 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 40px rgba(229, 179, 88, 0.5);
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 480px) {
+      .minimal-countdown-row {
+        gap: 4px !important;
+      }
+      .time-unit-box {
+        min-width: 46px !important;
+      }
+      .time-digit {
+        font-size: 34px !important;
+      }
+      .time-colon-sep {
+        font-size: 28px !important;
+      }
+      .time-unit-label {
+        font-size: 11px !important;
+        margin-top: 6px !important;
+      }
+    }
+
     /* COMPREHENSIVE MULTI-COLUMN ARENA FOOTER */
     footer {
       padding: 70px 0 35px;
