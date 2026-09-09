@@ -2430,7 +2430,7 @@
     var regErrorMsg = document.getElementById('regErrorMsg');
 
     if (registerBtn) {
-      registerBtn.addEventListener('click', function () {
+      registerBtn.addEventListener('click', async function () {
         var name = document.getElementById('rName').value.trim();
         var regNo = document.getElementById('rRegNo').value.trim();
         var branch = document.getElementById('rBranch').value.trim();
@@ -2452,6 +2452,9 @@
         }
 
         regErrorMsg.style.display = 'none';
+        var origBtnText = registerBtn.innerHTML;
+        registerBtn.disabled = true;
+        registerBtn.innerHTML = '⚡ TRANSMITTING PASS TO ARENA CLOUD...';
 
         var autoHandle = '@' + name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12);
         if (autoHandle === '@') autoHandle = '@challenger_' + Math.floor(Math.random() * 900 + 100);
@@ -2483,13 +2486,12 @@
 
         // Send to Supabase Cloud Database (Instantly syncs across devices)
         if (window.TechBossSupabase) {
-          window.TechBossSupabase.addRegistration(newRegistration).then(function (res) {
-            if (res && res.success) {
-              console.log('⚡ Successfully sent registration to Supabase cloud!');
-            }
-          }).catch(function (err) {
+          try {
+            await window.TechBossSupabase.addRegistration(newRegistration);
+            console.log('⚡ Successfully sent registration to Supabase cloud!');
+          } catch (err) {
             console.warn('Supabase cloud send error:', err);
-          });
+          }
         }
 
         // Automatically sync registration row to connected Google Spreadsheet (if configured)
@@ -2520,7 +2522,8 @@
           }
         }
 
-        // Registration complete - scores are awarded only during Phase 02 Gameplay Moments in the Organizer Terminal
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = origBtnText;
 
         // Show Success Modal
         document.getElementById('passChallengerName').textContent = name;

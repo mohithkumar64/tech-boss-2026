@@ -499,6 +499,7 @@
         <p style="font-size:13px; color:var(--text-muted);">Inspect uploaded UPI payment screenshots, verify student details, and approve tournament passes.</p>
       </div>
       <div style="display:flex; gap:10px;">
+        <button class="btn btn-green btn-sm" id="refreshCloudDataBtn">🔄 Refresh Cloud Data</button>
         <button class="btn btn-ghost btn-sm" id="exportCsvBtn">📥 Export CSV</button>
       </div>
     </div>
@@ -1706,11 +1707,34 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     }
   }
 
+  var refreshCloudDataBtn = document.getElementById('refreshCloudDataBtn');
+  if (refreshCloudDataBtn) {
+    refreshCloudDataBtn.addEventListener('click', async function() {
+      showToast('🔄 Refreshing cloud data from Supabase...');
+      await loadData();
+      showToast('✅ Cloud data refreshed (' + regData.length + ' registrations loaded)');
+    });
+  }
+
   function initDashboard() {
     loadSupabaseInputs();
     loadData();
     loadSheetUrl();
     initRealtimeListeners();
+
+    // Background Auto-Sync (Every 3 seconds) for 100% real-time reliability
+    setInterval(function() {
+      if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+        window.TechBossSupabase.fetchRegistrations().then(function(cloudRegs) {
+          if (cloudRegs !== null && JSON.stringify(cloudRegs) !== JSON.stringify(regData)) {
+            regData = cloudRegs;
+            localStorage.setItem('techboss_registrations', JSON.stringify(regData));
+            renderRegistrationsTable();
+            renderMetrics();
+          }
+        });
+      }
+    }, 3000);
   }
 
   initDashboard();
