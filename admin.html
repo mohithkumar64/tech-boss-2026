@@ -9,6 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700;800&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Supabase CDN & Cloud Sync -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 
 <style>
   :root {
@@ -411,6 +414,11 @@
     </div>
 
     <div style="display:flex; align-items:center; gap:14px;">
+      <!-- Supabase Live Status Badge -->
+      <div id="supabaseStatusBadge" style="cursor:pointer; display:inline-flex; align-items:center; gap:8px; font-size:11.5px; padding:6px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.15); background:rgba(0,0,0,0.6);" title="Click to view Supabase Cloud Settings" onclick="document.querySelector('[data-tab=\'tab-data\']').click(); document.getElementById('supabaseConfigCard').scrollIntoView({behavior:'smooth'});">
+        <span id="supabaseStatusDot" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#888;"></span>
+        <span id="supabaseStatusLabel" style="font-family:'JetBrains Mono', monospace; font-weight:600; color:var(--text-muted);">Supabase: Checking...</span>
+      </div>
       <a class="btn btn-ghost btn-sm" href="index.html" target="_blank">🌐 Live Arena View ↗</a>
       <button class="btn btn-pink btn-sm" id="logoutBtn">🔒 Lock Terminal</button>
     </div>
@@ -541,6 +549,104 @@
 
   <!-- TAB 4: DATA BACKUP & RESET -->
   <div class="tab-content" id="tab-data">
+    <div class="cyber-card" id="supabaseConfigCard" style="padding:28px; max-width:750px; margin-bottom:24px; border-color:rgba(0,240,255,0.4); box-shadow:0 0 20px rgba(0,240,255,0.1);">
+      <!-- Supabase Real-Time Cloud Connector -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+        <div>
+          <h3 style="font-size:18px; font-weight:800; color:var(--cyan); display:flex; align-items:center; gap:8px;">
+            ⚡ SUPABASE REAL-TIME CLOUD DATABASE
+          </h3>
+          <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">
+            Enables instant cross-device synchronization: registrations submitted on any mobile phone appear here live.
+          </p>
+        </div>
+        <div id="supabaseCardBadge" class="badge-status status-pending" style="font-size:11px;">Offline Mode</div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px;">
+        <label for="sbUrlInput">Supabase Project URL</label>
+        <input type="text" id="sbUrlInput" placeholder="https://xyzcompany.supabase.co" class="mono" style="font-size:13px;">
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px;">
+        <label for="sbKeyInput">Supabase Anon Public Key</label>
+        <input type="password" id="sbKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="mono" style="font-size:13px;">
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
+        <button class="btn btn-primary btn-sm" id="saveSupabaseBtn">💾 Save & Connect Supabase</button>
+        <button class="btn btn-green btn-sm" id="testSupabaseBtn">⚡ Test Real-time Connection</button>
+        <button class="btn btn-ghost btn-sm" id="pushAllToSupabaseBtn">⬆️ Push Local Data to Cloud</button>
+        <button class="btn btn-ghost btn-sm" id="pullFromSupabaseBtn">⬇️ Pull Cloud Data</button>
+      </div>
+
+      <details style="background:rgba(0,0,0,0.5); border:1px solid rgba(0,240,255,0.25); border-radius:var(--radius-sm); padding:14px; font-size:13px;">
+        <summary style="font-weight:700; color:var(--cyan); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center;">
+          <span>📋 One-Time Supabase SQL Setup Script (Click to view & copy)</span>
+          <span>▼</span>
+        </summary>
+        <div style="margin-top:12px; color:var(--text-muted); line-height:1.6;">
+          <p style="margin-bottom:8px;">1. Open your Supabase Dashboard (<a href="https://supabase.com/dashboard" target="_blank" style="color:var(--cyan);">supabase.com</a>) → <b>SQL Editor</b> → <b>New query</b>.</p>
+          <p style="margin-bottom:10px;">2. Paste the SQL below and click <b>RUN</b>:</p>
+          <div style="position:relative;">
+            <button class="btn btn-primary btn-sm" id="copySqlBtn" style="position:absolute; top:8px; right:8px; padding:4px 10px; font-size:11px;">📋 Copy SQL</button>
+            <pre id="supabaseSqlCode" style="background:#09090b; padding:14px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:11.5px; color:#00f0ff; overflow-x:auto; border:1px solid rgba(255,255,255,0.1); max-height:220px;">-- 1. Create Registrations Table
+CREATE TABLE IF NOT EXISTS registrations (
+  id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  name TEXT NOT NULL,
+  reg_no TEXT NOT NULL,
+  branch TEXT,
+  year TEXT,
+  phone TEXT,
+  handle TEXT,
+  pass TEXT DEFAULT 'All-Access Solo Pass',
+  fee TEXT DEFAULT '100',
+  screenshot TEXT,
+  status TEXT DEFAULT 'PENDING',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. Create Leaderboard Table
+CREATE TABLE IF NOT EXISTS leaderboard (
+  id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  rank INT,
+  handle TEXT NOT NULL,
+  name TEXT NOT NULL,
+  score INT DEFAULT 0,
+  boss_dmg TEXT DEFAULT '0 DMG',
+  streak TEXT DEFAULT '0 WINS',
+  avatar TEXT,
+  badge TEXT,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 3. Create Event State Table (Boss HP, Broadcasts)
+CREATE TABLE IF NOT EXISTS event_state (
+  id TEXT PRIMARY KEY,
+  boss_hp TEXT DEFAULT '78',
+  broadcast_msg TEXT DEFAULT '',
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 4. Enable Row Level Security with Public Access for the tournament
+ALTER TABLE registrations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
+ALTER TABLE event_state ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public all access on registrations" ON registrations FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all access on leaderboard" ON leaderboard FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all access on event_state" ON event_state FOR ALL USING (true) WITH CHECK (true);
+
+-- 5. Enable Realtime Publications
+ALTER PUBLICATION supabase_realtime ADD TABLE registrations;
+ALTER PUBLICATION supabase_realtime ADD TABLE leaderboard;
+ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
+          </div>
+          <p style="margin-top:10px;">3. Copy your <b>Project URL</b> and <b>anon public key</b> from Project Settings → API and paste above!</p>
+        </div>
+      </details>
+    </div>
+
     <div class="cyber-card" style="padding:28px; max-width:750px;">
       <!-- Google Sheets Live Connector -->
       <h3 style="font-size:18px; font-weight:800; margin-bottom:6px; color:var(--green);">📊 GOOGLE SPREADSHEET LIVE SYNC</h3>
@@ -775,7 +881,37 @@
   var boardData = [];
   var regData = [];
 
-  function loadData() {
+  function updateSupabaseStatusUI(isConnected) {
+    var dot = document.getElementById('supabaseStatusDot');
+    var label = document.getElementById('supabaseStatusLabel');
+    var cardBadge = document.getElementById('supabaseCardBadge');
+
+    if (isConnected) {
+      if (dot) dot.style.background = '#00f59b';
+      if (label) {
+        label.textContent = 'Supabase: Live Connected';
+        label.style.color = '#00f59b';
+      }
+      if (cardBadge) {
+        cardBadge.textContent = '🟢 Cloud Live Connected';
+        cardBadge.className = 'badge-status status-verified';
+      }
+    } else {
+      var isConfigured = window.TechBossSupabase && window.TechBossSupabase.isConfigured();
+      if (dot) dot.style.background = isConfigured ? '#f5ba13' : '#ff2a85';
+      if (label) {
+        label.textContent = isConfigured ? 'Supabase: Connecting...' : 'Supabase: Offline/Local';
+        label.style.color = isConfigured ? '#f5ba13' : '#ff2a85';
+      }
+      if (cardBadge) {
+        cardBadge.textContent = isConfigured ? '🟡 Connecting...' : '🔴 Offline / Local Mode';
+        cardBadge.className = 'badge-status status-pending';
+      }
+    }
+  }
+
+  async function loadData() {
+    // 1. Initial instant load from localStorage
     try {
       var savedBoard = localStorage.getItem('techboss_solo_leaderboard');
       boardData = savedBoard ? JSON.parse(savedBoard) : [];
@@ -788,6 +924,51 @@
       regData = savedReg ? JSON.parse(savedReg) : [];
     } catch (e) {
       regData = [];
+    }
+
+    renderMetrics();
+    renderLeaderboardTable();
+    renderRegistrationsTable();
+
+    // 2. Fetch fresh data from Supabase Cloud if configured
+    if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+      updateSupabaseStatusUI(true);
+      try {
+        var cloudRegs = await window.TechBossSupabase.fetchRegistrations();
+        if (cloudRegs !== null) {
+          regData = cloudRegs;
+          localStorage.setItem('techboss_registrations', JSON.stringify(regData));
+          renderRegistrationsTable();
+          renderMetrics();
+        }
+
+        var cloudBoard = await window.TechBossSupabase.fetchLeaderboard();
+        if (cloudBoard !== null && cloudBoard.length > 0) {
+          boardData = cloudBoard;
+          localStorage.setItem('techboss_solo_leaderboard', JSON.stringify(boardData));
+          renderLeaderboardTable();
+          renderMetrics();
+        }
+
+        var cloudState = await window.TechBossSupabase.fetchEventState();
+        if (cloudState !== null) {
+          if (cloudState.bossHp) {
+            localStorage.setItem('techboss_boss_hp', cloudState.bossHp);
+            document.getElementById('metBossHealth').textContent = cloudState.bossHp + '%';
+            document.getElementById('bossHealthSlider').value = cloudState.bossHp;
+            document.getElementById('bossHealthVal').textContent = cloudState.bossHp + '%';
+          }
+          if (cloudState.broadcastMsg) {
+            localStorage.setItem('techboss_custom_broadcast', cloudState.broadcastMsg);
+            var bMsg = document.getElementById('broadcastMsg');
+            if (bMsg) bMsg.value = cloudState.broadcastMsg;
+          }
+        }
+      } catch (err) {
+        console.warn('Supabase initial fetch warning:', err);
+      }
+    } else {
+      updateSupabaseStatusUI(false);
     }
   }
 
@@ -814,6 +995,11 @@
     } catch (e) {}
     broadcastScoreUpdate();
     renderMetrics();
+
+    // Sync to Supabase Cloud
+    if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+      window.TechBossSupabase.saveLeaderboard(boardData);
+    }
   }
 
   function tierFor(score) {
@@ -1154,19 +1340,29 @@
   // ---------- REGISTRATION ACTIONS ----------
   window.verifyReg = function(idx) {
     if (regData[idx]) {
-      regData[idx].status = 'VERIFIED';
+      var item = regData[idx];
+      item.status = 'VERIFIED';
       saveData();
       renderRegistrationsTable();
-      showToast('Payment verified & pass approved for ' + (regData[idx].name || regData[idx].handle));
+      if (window.TechBossSupabase && window.TechBossSupabase.isConfigured() && item.id) {
+        window.TechBossSupabase.updateRegistrationStatus(item.id, 'VERIFIED');
+      }
+      showToast('Payment verified & pass approved for ' + (item.name || item.handle));
     }
   };
 
   window.deleteReg = function(idx) {
-    if (confirm('Delete registration record for ' + (regData[idx].name || regData[idx].handle) + '?')) {
-      regData.splice(idx, 1);
-      saveData();
-      renderRegistrationsTable();
-      showToast('Registration record deleted.');
+    if (regData[idx]) {
+      var item = regData[idx];
+      if (confirm('Delete registration record for ' + (item.name || item.handle) + '?')) {
+        if (window.TechBossSupabase && window.TechBossSupabase.isConfigured() && item.id) {
+          window.TechBossSupabase.deleteRegistration(item.id);
+        }
+        regData.splice(idx, 1);
+        saveData();
+        renderRegistrationsTable();
+        showToast('Registration record deleted.');
+      }
     }
   };
 
@@ -1220,6 +1416,10 @@
       return;
     }
     localStorage.setItem('techboss_custom_broadcast', msg);
+    if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+      var hp = localStorage.getItem('techboss_boss_hp') || '78';
+      window.TechBossSupabase.saveEventState(hp, msg);
+    }
     showToast('Announcement broadcasted to live arena feed.');
     document.getElementById('broadcastMsg').value = '';
   });
@@ -1231,6 +1431,10 @@
   document.getElementById('applyHealthBtn').addEventListener('click', function() {
     var hp = document.getElementById('bossHealthSlider').value;
     localStorage.setItem('techboss_boss_hp', hp);
+    if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+      var msg = localStorage.getItem('techboss_custom_broadcast') || '';
+      window.TechBossSupabase.saveEventState(hp, msg);
+    }
     renderMetrics();
     showToast('Boss Health overridden to ' + hp + '%');
   });
@@ -1383,12 +1587,130 @@
     });
   }
 
+  // ---------- SUPABASE CLOUD HANDLERS & REAL-TIME ----------
+  var sbUrlInput = document.getElementById('sbUrlInput');
+  var sbKeyInput = document.getElementById('sbKeyInput');
+  var saveSupabaseBtn = document.getElementById('saveSupabaseBtn');
+  var testSupabaseBtn = document.getElementById('testSupabaseBtn');
+  var pushAllToSupabaseBtn = document.getElementById('pushAllToSupabaseBtn');
+  var pullFromSupabaseBtn = document.getElementById('pullFromSupabaseBtn');
+  var copySqlBtn = document.getElementById('copySqlBtn');
+
+  function loadSupabaseInputs() {
+    if (window.TechBossSupabase) {
+      var cfg = window.TechBossSupabase.getConfig();
+      if (sbUrlInput) sbUrlInput.value = cfg.url || '';
+      if (sbKeyInput) sbKeyInput.value = cfg.key || '';
+      updateSupabaseStatusUI(window.TechBossSupabase.isConfigured());
+    }
+  }
+
+  if (saveSupabaseBtn && sbUrlInput && sbKeyInput) {
+    saveSupabaseBtn.addEventListener('click', async function() {
+      var url = sbUrlInput.value.trim();
+      var key = sbKeyInput.value.trim();
+      window.TechBossSupabase.setConfig(url, key);
+      showToast(url ? '✅ Supabase credentials saved! Connecting...' : 'Supabase credentials cleared.');
+      await loadData();
+      initRealtimeListeners();
+    });
+  }
+
+  if (testSupabaseBtn) {
+    testSupabaseBtn.addEventListener('click', async function() {
+      if (!window.TechBossSupabase || !window.TechBossSupabase.isConfigured()) {
+        alert('Please enter both Supabase Project URL and Anon Key first.');
+        return;
+      }
+      showToast('Testing Supabase Real-time connection...');
+      try {
+        var regs = await window.TechBossSupabase.fetchRegistrations();
+        if (regs !== null) {
+          updateSupabaseStatusUI(true);
+          showToast('✅ Supabase connected successfully! Found ' + regs.length + ' registrations in cloud.');
+        } else {
+          alert('Could not query Supabase "registrations" table.\n\nPlease make sure you ran the SQL setup script in your Supabase SQL editor.');
+        }
+      } catch (err) {
+        alert('Supabase connection error: ' + err.message);
+      }
+    });
+  }
+
+  if (pushAllToSupabaseBtn) {
+    pushAllToSupabaseBtn.addEventListener('click', async function() {
+      if (!window.TechBossSupabase || !window.TechBossSupabase.isConfigured()) {
+        alert('Please connect Supabase first.');
+        return;
+      }
+      if (!confirm('Push all local registrations and scoreboard data to Supabase cloud?')) return;
+      showToast('Pushing data to Supabase cloud...');
+      var count = 0;
+      for (var i = 0; i < regData.length; i++) {
+        await window.TechBossSupabase.addRegistration(regData[i]);
+        count++;
+      }
+      await window.TechBossSupabase.saveLeaderboard(boardData);
+      showToast('✅ Successfully pushed ' + count + ' registrations and scoreboard to Supabase!');
+      await loadData();
+    });
+  }
+
+  if (pullFromSupabaseBtn) {
+    pullFromSupabaseBtn.addEventListener('click', async function() {
+      if (!window.TechBossSupabase || !window.TechBossSupabase.isConfigured()) {
+        alert('Please connect Supabase first.');
+        return;
+      }
+      showToast('Pulling fresh data from Supabase...');
+      await loadData();
+      showToast('✅ Synced with Supabase cloud!');
+    });
+  }
+
+  if (copySqlBtn) {
+    copySqlBtn.addEventListener('click', function() {
+      var code = document.getElementById('supabaseSqlCode').innerText;
+      navigator.clipboard.writeText(code).then(function() {
+        showToast('✅ SQL script copied to clipboard!');
+      });
+    });
+  }
+
+  // Set up real-time listener
+  function initRealtimeListeners() {
+    if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+      window.TechBossSupabase.subscribeToRegistrations(async function(payload) {
+        console.log('Realtime registration update:', payload);
+        var cloudRegs = await window.TechBossSupabase.fetchRegistrations();
+        if (cloudRegs !== null) {
+          regData = cloudRegs;
+          localStorage.setItem('techboss_registrations', JSON.stringify(regData));
+          renderRegistrationsTable();
+          renderMetrics();
+          if (payload.eventType === 'INSERT') {
+            showToast('⚡ New Registration: ' + (payload.new.name || 'Participant') + ' (' + (payload.new.reg_no || '') + ')');
+          }
+        }
+      });
+
+      window.TechBossSupabase.subscribeToLeaderboard(async function() {
+        var cloudBoard = await window.TechBossSupabase.fetchLeaderboard();
+        if (cloudBoard !== null) {
+          boardData = cloudBoard;
+          localStorage.setItem('techboss_solo_leaderboard', JSON.stringify(boardData));
+          renderLeaderboardTable();
+          renderMetrics();
+        }
+      });
+    }
+  }
+
   function initDashboard() {
+    loadSupabaseInputs();
     loadData();
     loadSheetUrl();
-    renderMetrics();
-    renderLeaderboardTable();
-    renderRegistrationsTable();
+    initRealtimeListeners();
   }
 
   initDashboard();

@@ -17,6 +17,9 @@
   <!-- QR Code & Confetti CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <!-- Supabase Cloud Sync -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
 
   <style>
     :root {
@@ -2238,6 +2241,35 @@
       } catch (err) { }
     }
 
+    // Supabase Cloud Realtime Leaderboard Sync
+    async function loadCloudLeaderboard() {
+      if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+        var cloudBoard = await window.TechBossSupabase.fetchLeaderboard();
+        if (cloudBoard && Array.isArray(cloudBoard) && cloudBoard.length > 0) {
+          memoryBoard = cloudBoard;
+          localStorage.setItem('techboss_solo_leaderboard', JSON.stringify(cloudBoard));
+          renderLeaderboard();
+        }
+      }
+    }
+    loadCloudLeaderboard();
+
+    if (window.TechBossSupabase) {
+      window.TechBossSupabase.subscribeToLeaderboard(function () {
+        loadCloudLeaderboard();
+      });
+      window.TechBossSupabase.subscribeToEventState(function (payload) {
+        if (payload && payload.new) {
+          if (payload.new.broadcast_msg !== undefined) {
+            localStorage.setItem('techboss_custom_broadcast', payload.new.broadcast_msg);
+          }
+          if (payload.new.boss_hp !== undefined) {
+            localStorage.setItem('techboss_boss_hp', payload.new.boss_hp);
+          }
+        }
+      });
+    }
+
     // Cross-Window Storage Listener
     window.addEventListener('storage', function (e) {
       if (e.key === 'techboss_solo_leaderboard' || e.key === 'techboss_board_updated_at') {
@@ -2245,10 +2277,10 @@
       }
     });
 
-    // Background Heartbeat (every 1 second) to guarantee automatic live update across all tabs and windows
+    // Background Heartbeat (every 2 seconds) to guarantee automatic live update across all tabs and windows
     setInterval(function () {
       loadPersistedBoard();
-    }, 1000);
+    }, 2000);
 
     // Search input
     var searchInput = document.getElementById('boardSearch');
@@ -2449,7 +2481,18 @@
           console.error('Storage quota error:', e);
         }
 
-        // Automatically sync registration row to connected Google Spreadsheet
+        // Send to Supabase Cloud Database (Instantly syncs across devices)
+        if (window.TechBossSupabase) {
+          window.TechBossSupabase.addRegistration(newRegistration).then(function (res) {
+            if (res && res.success) {
+              console.log('⚡ Successfully sent registration to Supabase cloud!');
+            }
+          }).catch(function (err) {
+            console.warn('Supabase cloud send error:', err);
+          });
+        }
+
+        // Automatically sync registration row to connected Google Spreadsheet (if configured)
         var sheetWebhookUrl = localStorage.getItem('techboss_sheets_url') || '';
         if (sheetWebhookUrl) {
           try {
