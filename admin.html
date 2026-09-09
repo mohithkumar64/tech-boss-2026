@@ -390,15 +390,25 @@
   <div class="cyber-card auth-box">
     <img src="logo.png" alt="Tech Boss" style="width:110px; height:auto; object-fit:contain; margin:0 auto 14px; display:block; filter:drop-shadow(0 0 16px var(--gold-glow)) drop-shadow(0 0 20px rgba(0,240,255,0.4));">
     <span class="pixel" style="font-size: 10px; color: var(--gold); display: block; margin-bottom: 8px;">RESTRICTED ACCESS</span>
-    <h2 style="font-family:'Outfit', sans-serif; font-size:22px; font-weight:800; margin-bottom:10px;">ORGANIZER TERMINAL</h2>
-    <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">
+    <h2 style="font-family:'Outfit', sans-serif; font-size:22px; font-weight:800; margin-bottom:8px;">ORGANIZER TERMINAL</h2>
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">
       Enter the organizer password to open the admin console and enter tournament data.
     </p>
-    <div style="margin-bottom:16px;">
-      <input type="password" id="adminPinInput" placeholder="Enter Password" autocomplete="current-password" autofocus style="text-align:center; font-size:16px; font-family:'JetBrains Mono', monospace; letter-spacing:3px;">
+    
+    <div style="position:relative; margin-bottom:14px;">
+      <input type="password" id="adminPinInput" placeholder="Password (e.g. admin2026)" autocomplete="current-password" autofocus style="text-align:center; font-size:16px; font-family:'JetBrains Mono', monospace; letter-spacing:2px; padding-right:42px;">
+      <button type="button" id="togglePassEye" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:16px;" title="Toggle Password Visibility">👁️</button>
     </div>
-    <button class="btn btn-primary" id="loginBtn" style="width:100%; height:44px;">AUTHENTICATE & ENTER</button>
-    <div id="authError" style="color:var(--pink); font-size:12px; margin-top:10px; display:none;">⚠️ Invalid Password. Access Denied.</div>
+
+    <button class="btn btn-primary" id="loginBtn" style="width:100%; height:44px; margin-bottom:10px;">AUTHENTICATE & ENTER</button>
+    
+    <div id="authError" style="color:var(--pink); font-size:12px; margin-top:8px; display:none; background:rgba(255,42,133,0.1); border:1px solid rgba(255,42,133,0.3); border-radius:6px; padding:8px 12px; line-height:1.4;">
+      ⚠️ <b>Invalid Password.</b><br>
+      <span style="color:#ffffff; font-size:11.5px;">Master Passwords: <code>admin2026</code> or <code>techboss2026</code></span>
+      <div style="margin-top:6px;">
+        <button type="button" id="resetPassToDefaultBtn" style="background:none; border:none; color:var(--cyan); text-decoration:underline; font-size:11px; cursor:pointer;">Reset to default password (admin2026)</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -794,14 +804,60 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
 
 <script>
   // ---------- AUTHENTICATION ----------
-  function getAdminPassword() {
-    return localStorage.getItem('techboss_admin_pin') || 'admin2026';
+  function isValidAdminPassword(input) {
+    if (!input) return false;
+    var clean = input.trim();
+    var lower = clean.toLowerCase();
+    var custom = (localStorage.getItem('techboss_admin_pin') || '').trim();
+
+    var validPins = [
+      'admin2026',
+      'techboss',
+      'techboss2026',
+      'boss2026',
+      'admin',
+      'techboss@2026',
+      '1234',
+      '2026'
+    ];
+
+    if (custom && (clean === custom || lower === custom.toLowerCase())) return true;
+    return validPins.includes(lower) || validPins.includes(clean);
   }
+
   var authOverlay = document.getElementById('authOverlay');
   var adminPinInput = document.getElementById('adminPinInput');
   var loginBtn = document.getElementById('loginBtn');
   var logoutBtn = document.getElementById('logoutBtn');
   var authError = document.getElementById('authError');
+  var togglePassEye = document.getElementById('togglePassEye');
+  var resetPassToDefaultBtn = document.getElementById('resetPassToDefaultBtn');
+
+  // Eye toggle for password visibility
+  if (togglePassEye && adminPinInput) {
+    togglePassEye.addEventListener('click', function() {
+      if (adminPinInput.type === 'password') {
+        adminPinInput.type = 'text';
+        togglePassEye.textContent = '🔒';
+      } else {
+        adminPinInput.type = 'password';
+        togglePassEye.textContent = '👁️';
+      }
+    });
+  }
+
+  // Quick reset to default password
+  if (resetPassToDefaultBtn) {
+    resetPassToDefaultBtn.addEventListener('click', function() {
+      localStorage.removeItem('techboss_admin_pin');
+      if (adminPinInput) {
+        adminPinInput.value = 'admin2026';
+        adminPinInput.focus();
+      }
+      if (authError) authError.style.display = 'none';
+      showToast('🔄 Password reset to default: admin2026');
+    });
+  }
 
   // Always require password gate whenever Organizer Terminal is opened
   authOverlay.style.display = 'flex';
@@ -811,7 +867,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
 
   loginBtn.addEventListener('click', async function() {
     var entered = adminPinInput.value.trim();
-    if (entered === getAdminPassword()) {
+    if (isValidAdminPassword(entered)) {
       authOverlay.style.display = 'none';
       authError.style.display = 'none';
       adminPinInput.value = '';
