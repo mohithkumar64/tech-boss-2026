@@ -1796,6 +1796,7 @@
       </a>
 
       <div class="nav-links-center" style="display: flex; gap: 20px; align-items: center;">
+        <a href="#gamezone" style="color: var(--text-secondary); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color 0.2s;">Countdown</a>
         <a href="#prizes" style="color: var(--text-secondary); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color 0.2s;">Prizes</a>
         <a href="#schedule" style="color: var(--text-secondary); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color 0.2s;">Timeline</a>
         <a href="#leaderboard" style="color: var(--text-secondary); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color 0.2s;">Leaderboard</a>
@@ -1852,6 +1853,63 @@
       </div>
     </div>
   </div>
+
+  <!-- GAME ZONE & EVENT COUNTDOWN SECTION -->
+  <section id="gamezone" class="gamezone-section" style="padding: 60px 0 80px; position: relative;">
+    <div class="wrap">
+      <div class="countdown-section-card">
+        
+        <!-- Glowing Ambient Ring -->
+        <div style="position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 450px; height: 180px; background: radial-gradient(ellipse, rgba(229, 179, 88, 0.2), transparent 70%); filter: blur(35px); pointer-events: none;"></div>
+
+        <!-- Minimalist Countdown Component matching User's Design -->
+        <div class="minimal-countdown-row" id="eventCountdownGrid">
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdDays">00</div>
+            <div class="time-unit-label">Days</div>
+          </div>
+          <div class="time-colon-sep">:</div>
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdHours">00</div>
+            <div class="time-unit-label">Hours</div>
+          </div>
+          <div class="time-colon-sep">:</div>
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdMins">00</div>
+            <div class="time-unit-label">Minutes</div>
+          </div>
+          <div class="time-colon-sep">:</div>
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdSecs">00</div>
+            <div class="time-unit-label">Seconds</div>
+          </div>
+        </div>
+
+        <!-- TECH BOSS Live Celebration Banner (Revealed when Countdown Ends) -->
+        <div class="tech-boss-live-banner" id="eventLiveBanner">
+          <div class="tb-boss-title">TECH BOSS</div>
+          <p style="font-size: clamp(16px, 2.5vw, 20px); font-weight: 700; color: #ffffff; margin-bottom: 6px;">
+            👑 THE ARENA IS LIVE — THE CHAMPIONSHIP HAS BEGUN!
+          </p>
+          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 0;">
+            September 16, 2026 Solo Engineering Championship in session.
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
+          <a href="gamezone.html" class="btn btn-white" style="font-size: 15px; font-weight: 700; padding: 14px 34px; height: auto; border-radius: 980px; box-shadow: 0 4px 24px rgba(229, 179, 88, 0.35); display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+            <span>🎮 Proceed to Game Zone & Dashboard</span>
+            <span style="font-size: 18px;">↗</span>
+          </a>
+          <a href="gamezone.html" class="btn btn-dark" style="font-size: 14px; font-weight: 600; padding: 13px 26px; height: auto; border-radius: 980px; text-decoration: none;">
+            <span>🛡️ Verify Pass Details</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
 
   <!-- Prize Showcase Section -->
   <section id="prizes">
@@ -2171,62 +2229,48 @@
 
 
 
-  <!-- GAME ZONE & EVENT COUNTDOWN SECTION -->
-  <section id="gamezone" class="gamezone-section" style="padding: 70px 0 90px; position: relative;">
-    <div class="wrap">
-      <div class="countdown-section-card">
-        
-        <!-- Glowing Ambient Ring -->
-        <div style="position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 450px; height: 180px; background: radial-gradient(ellipse, rgba(229, 179, 88, 0.2), transparent 70%); filter: blur(35px); pointer-events: none;"></div>
+  <!-- Confirmation Modal -->
+  <div class="pass-modal" id="passModal">
+    <div class="pass-sheet">
+      <img src="logo.png?v=2" alt="Tech Boss Logo"
+        style="width:64px; height:auto; object-fit:contain; margin:0 auto 12px; display:block;">
+      <span class="apple-badge" style="margin-bottom:12px;">Registration Confirmed</span>
+      <h2 style="font-size:24px; font-weight:800; margin-bottom:6px; color:#ffffff;">You're in the Arena.</h2>
+      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:20px;">
+        Your All-Access Championship Pass has been generated.
+      </p>
 
-        <!-- Minimalist Countdown Component matching User's Design -->
-        <div class="minimal-countdown-row" id="eventCountdownGrid">
-          <div class="time-unit-box">
-            <div class="time-digit" id="cdDays">00</div>
-            <div class="time-unit-label">Days</div>
-          </div>
-          <div class="time-colon-sep">:</div>
-          <div class="time-unit-box">
-            <div class="time-digit" id="cdHours">00</div>
-            <div class="time-unit-label">Hours</div>
-          </div>
-          <div class="time-colon-sep">:</div>
-          <div class="time-unit-box">
-            <div class="time-digit" id="cdMins">00</div>
-            <div class="time-unit-label">Minutes</div>
-          </div>
-          <div class="time-colon-sep">:</div>
-          <div class="time-unit-box">
-            <div class="time-digit" id="cdSecs">00</div>
-            <div class="time-unit-label">Seconds</div>
-          </div>
+      <div class="apple-card"
+        style="padding:18px; text-align:left; font-size:13px; margin-bottom:20px; background:rgba(0,0,0,0.4);">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--text-secondary);">Participant:</span>
+          <b id="passChallengerName" style="color:#ffffff;">--</b>
         </div>
-
-        <!-- TECH BOSS Live Celebration Banner (Revealed when Countdown Ends) -->
-        <div class="tech-boss-live-banner" id="eventLiveBanner">
-          <div class="tb-boss-title">TECH BOSS</div>
-          <p style="font-size: clamp(16px, 2.5vw, 20px); font-weight: 700; color: #ffffff; margin-bottom: 6px;">
-            👑 THE ARENA IS LIVE — THE CHAMPIONSHIP HAS BEGUN!
-          </p>
-          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 0;">
-            September 16, 2026 Solo Engineering Championship in session.
-          </p>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--text-secondary);">Register No:</span>
+          <b id="passRegNo" class="mono" style="color:var(--accent-gold);">--</b>
         </div>
-
-        <!-- Action Buttons -->
-        <div style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
-          <a href="gamezone.html" class="btn btn-white" style="font-size: 15px; font-weight: 700; padding: 14px 34px; height: auto; border-radius: 980px; box-shadow: 0 4px 24px rgba(229, 179, 88, 0.35); display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
-            <span>🎮 Proceed to Game Zone & Dashboard</span>
-            <span style="font-size: 18px;">↗</span>
-          </a>
-          <a href="gamezone.html" class="btn btn-dark" style="font-size: 14px; font-weight: 600; padding: 13px 26px; height: auto; border-radius: 980px; text-decoration: none;">
-            <span>🛡️ Verify Pass Details</span>
-          </a>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--text-secondary);">Branch & Year:</span>
+          <span id="passBranchYear" style="color:#ffffff;">--</span>
         </div>
-
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--text-secondary);">Pass:</span>
+          <b style="color:var(--accent-gold);">All-Access Solo Pass (₹100)</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--text-secondary);">Payment Proof:</span>
+          <span style="color:var(--accent-green); font-weight:600;">✓ Screenshot Uploaded</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-secondary);">Check-In:</span>
+          <span style="color:#ffffff;">16 Sep 2026 · 09:00 AM</span>
+        </div>
       </div>
+
+      <button class="btn btn-white" id="closePassBtn" style="width:100%;">Done</button>
     </div>
-  </section>
+  </div>
 
   <!-- Footer with Multi-Column Organizer & Committee Directory -->
   <footer id="footer-committee">
