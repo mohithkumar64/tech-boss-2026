@@ -738,7 +738,8 @@
 
     <div style="margin-top:auto; padding-top:20px; border-top:1px solid var(--border-subtle); font-size:11.5px; color:var(--text-tertiary); text-align:center;">
       <div style="color:var(--accent-gold); font-weight:600;">🗓️ 16 Sep 2026 · ₹2,250 Cash Pool</div>
-      <div style="margin-top:4px;">Solo Engineering Championship</div>
+      <div style="color:var(--accent-blue); margin-top:4px; font-weight:500;">📍 Tech Centre 2nd Floor, 1st Lab (SRKR)</div>
+      <div style="margin-top:2px;">Solo Engineering Championship</div>
     </div>
   </aside>
 
@@ -1011,10 +1012,11 @@
 
   <footer>
     <div class="wrap" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
         <img src="logo.png?v=2" alt="Tech Boss Logo" style="height:24px; width:auto; object-fit:contain;">
         <span style="font-weight:600; color:#ffffff;">Tech Boss 2026</span>
         <span>— The Solo Championship.</span>
+        <span style="color:var(--accent-gold); font-size:12px; margin-left:8px;">📍 Tech Centre 2nd Flr, 1st Lab, SRKR</span>
       </div>
       <div>
         <a href="index.html" style="color:var(--text-secondary); text-decoration:none; margin-right:16px;">Main Arena</a>
@@ -1340,10 +1342,11 @@
                 statusBadge +
                 '</div>' +
                 '<div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">' +
-                '<div>Register No: <b class="mono" style="color:var(--accent-gold);">' + escapeHtml(found.regNo) + '</b></div>' +
+                '<div>Register No: <b class="mono" style="color:var(--accent-gold);">' + escapeHtml(found.reg_no || found.regNo) + '</b></div>' +
                 '<div>Department: <span style="color:#ffffff;">' + escapeHtml(found.branch) + ' (' + escapeHtml(found.year) + ')</span></div>' +
                 '<div>Pass Tier: <span style="color:#ffffff;">All-Access Solo Pass (₹60)</span></div>' +
                 '<div>Arena Batch: <b style="color:var(--accent-blue);">Batch Alpha (09:00 AM)</b></div>' +
+                '<div style="margin-top:4px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.1);">Venue: <b style="color:#ffffff;">Tech Centre 2nd Floor, 1st Lab</b> <span style="color:var(--text-tertiary);">(CSD & CSIT, SRKR Eng College)</span></div>' +
                 '</div>';
               playSynthSound('victory');
               return;
