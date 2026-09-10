@@ -47,6 +47,11 @@ def supabase_request(endpoint, method="GET", data=None, headers=None):
         return 500, {"message": str(e)}
 
 class TechBossHandler(SimpleHTTPRequestHandler):
+    def guess_type(self, path):
+        if "WhatsApp Image 2026-09-10 at 12.48.46" in str(path):
+            return "audio/mpeg"
+        return super().guess_type(path)
+
     def end_headers(self):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")

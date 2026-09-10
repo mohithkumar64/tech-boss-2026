@@ -2735,6 +2735,28 @@
       }
     }
 
+    function playRegistrationSuccessSound() {
+      try {
+        var audio = new Audio('WhatsApp Image 2026-09-10 at 12.48.46.jpeg');
+        audio.volume = 1.0;
+        var promise = audio.play();
+        if (promise !== undefined) {
+          promise.catch(function (err) {
+            console.log('Trying fallback sound path:', err);
+            var fallback = new Audio('success-sound.mp3');
+            fallback.volume = 1.0;
+            fallback.play().catch(function (fErr) {
+              console.warn('Playback fallback error, falling back to synth victory:', fErr);
+              playSynthSound('victory');
+            });
+          });
+        }
+      } catch (e) {
+        console.warn('Audio play exception:', e);
+        playSynthSound('victory');
+      }
+    }
+
     var audioToggle = document.getElementById('audioToggle');
     var audioIcon = document.getElementById('audioIcon');
     var audioText = document.getElementById('audioText');
@@ -3168,7 +3190,7 @@
                 branch: participantData.branch || branch,
                 year: participantData.year || year,
                 phone: participantData.phone || phone,
-                fee: '100',
+                fee: '60',
                 pass: 'All-Access Solo Pass',
                 status: 'PENDING',
                 screenshot: currentScreenshotDataUrl ? 'Uploaded' : 'None'
@@ -3177,8 +3199,8 @@
           } catch (e) {}
         }
 
-        // Trigger Confetti & Audio
-        playSynthSound('victory');
+        // Trigger Confetti & Success Audio
+        playRegistrationSuccessSound();
         if (typeof confetti === 'function') {
           confetti({
             particleCount: 80,
