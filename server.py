@@ -158,7 +158,7 @@ class TechBossHandler(SimpleHTTPRequestHandler):
                 "phone": phone,
                 "handle": handle,
                 "pass": body.get("pass", "All-Access Solo Pass"),
-                "fee": body.get("fee", "100"),
+                "fee": body.get("fee", "60"),
                 "screenshot": screenshot,
                 "status": "PENDING"
             }

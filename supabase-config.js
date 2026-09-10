@@ -68,7 +68,7 @@
       phone: regData.phone || '',
       handle: regData.handle || '',
       pass: regData.pass || 'All-Access Solo Pass',
-      fee: regData.fee || '100',
+      fee: regData.fee || '60',
       screenshot: regData.screenshot || '',
       status: regData.status || 'PENDING'
     };

@@ -446,7 +446,7 @@
     <div class="cyber-card metric-card">
       <div class="metric-lbl">Total Revenue Collected</div>
       <div class="metric-val" id="metRevenue">₹0</div>
-      <div class="metric-sub">₹100 Unified Pass Payments</div>
+      <div class="metric-sub">₹60 Unified Pass Payments</div>
     </div>
     <div class="cyber-card metric-card">
       <div class="metric-lbl">Leaderboard Contenders</div>
@@ -611,7 +611,7 @@ CREATE TABLE IF NOT EXISTS registrations (
   phone TEXT,
   handle TEXT,
   pass TEXT DEFAULT 'All-Access Solo Pass',
-  fee TEXT DEFAULT '100',
+  fee TEXT DEFAULT '60',
   screenshot TEXT,
   status TEXT DEFAULT 'PENDING',
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -1076,7 +1076,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     var regCount = regData.length;
     var rev = 0;
     regData.forEach(function(r) {
-      rev += parseInt(r.fee || '100', 10) || 100;
+      rev += parseInt(r.fee || '60', 10) || 60;
     });
     document.getElementById('metRegCount').textContent = regCount;
     document.getElementById('tabRegBadge').textContent = regCount;
@@ -1448,7 +1448,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
         '"' + (r.phone || '') + '"',
         '"' + (r.handle || '') + '"',
         '"' + (r.pass || 'All-Access Solo Pass') + '"',
-        '"' + (r.fee || '100') + '"',
+        '"' + (r.fee || '60') + '"',
         '"' + (r.status || 'PENDING') + '"',
         '"' + (r.date || '') + '"'
       ].join(',');
@@ -1527,7 +1527,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
         handle: '@binarybeast',
         screenshot: '',
         pass: 'All-Access Solo Pass',
-        fee: '100',
+        fee: '60',
         status: 'VERIFIED',
         date: new Date().toLocaleString()
       }
@@ -1589,7 +1589,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
           branch: 'CSD',
           year: '3rd Year',
           phone: '9999999999',
-          fee: '100',
+          fee: '60',
           pass: 'All-Access Solo Pass',
           status: 'TEST_PING',
           screenshot: 'Test Ping Successful'
@@ -1628,7 +1628,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
               branch: r.branch || '',
               year: r.year || '',
               phone: r.phone || '',
-              fee: r.fee || '100',
+              fee: r.fee || '60',
               pass: r.pass || 'All-Access Solo Pass',
               status: r.status || 'PENDING',
               screenshot: r.screenshot ? 'Uploaded' : 'None'
