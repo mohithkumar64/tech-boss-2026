@@ -970,7 +970,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     // 1. Initial instant load from localStorage
     try {
       var savedBoard = localStorage.getItem('techboss_solo_leaderboard');
-      boardData = savedBoard ? JSON.parse(savedBoard) : [];
+      boardData = deduplicateBoard(savedBoard ? JSON.parse(savedBoard) : []);
     } catch (e) {
       boardData = [];
     }
@@ -1000,7 +1000,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
 
         var cloudBoard = await window.TechBossSupabase.fetchLeaderboard();
         if (cloudBoard !== null && cloudBoard.length > 0) {
-          boardData = cloudBoard;
+          boardData = deduplicateBoard(cloudBoard);
           localStorage.setItem('techboss_solo_leaderboard', JSON.stringify(boardData));
           renderLeaderboardTable();
           renderMetrics();
@@ -1028,6 +1028,51 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     }
   }
 
+  function deduplicateBoard(list) {
+    if (!Array.isArray(list)) return [];
+    var map = new Map();
+    list.forEach(function(item) {
+      if (!item) return;
+      var rawHandle = (item.handle || '').trim();
+      var handle = rawHandle ? (rawHandle.startsWith('@') ? rawHandle : ('@' + rawHandle)) : '';
+      var name = (item.name || '').trim();
+      var scoreVal = parseInt(item.score || 0, 10);
+      if (isNaN(scoreVal)) scoreVal = 0;
+
+      var normH = handle.toLowerCase().replace(/[^a-z0-9_]/g, '');
+      var normN = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      var key = normH || normN || ('id_' + (item.id || Math.random()));
+
+      if (map.has(key)) {
+        var ex = map.get(key);
+        if (scoreVal > ex.score) {
+          ex.score = scoreVal;
+        }
+        if (name && !ex.name) ex.name = name;
+        if (item.track) ex.track = item.track;
+        if (item.tier) ex.tier = item.tier;
+        if (item.avatar) ex.avatar = item.avatar;
+      } else {
+        map.set(key, {
+          id: item.id,
+          handle: handle || (name ? ('@' + name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12)) : '@challenger'),
+          name: name,
+          track: item.track || item.tier || 'Solo Boss Battle',
+          score: scoreVal,
+          tier: item.tier || item.track || 'Vanguard',
+          avatar: item.avatar || '',
+          bossDmg: item.bossDmg || item.boss_dmg || (scoreVal + ' DMG'),
+          streak: item.streak || ''
+        });
+      }
+    });
+
+    var result = Array.from(map.values());
+    result.sort(function(a, b) { return b.score - a.score; });
+    result.forEach(function(c, idx) { c.rank = idx + 1; });
+    return result;
+  }
+
   var syncChannel = null;
   if (typeof BroadcastChannel !== 'undefined') {
     try {
@@ -1045,6 +1090,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
   }
 
   function saveData() {
+    boardData = deduplicateBoard(boardData);
     try {
       localStorage.setItem('techboss_solo_leaderboard', JSON.stringify(boardData));
       localStorage.setItem('techboss_registrations', JSON.stringify(regData));
@@ -1253,26 +1299,41 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     var cleanHandle = handle.startsWith('@') ? handle : ('@' + handle);
     var cleanScore = Math.max(0, Math.min(1000, scoreVal));
 
-    if (editingIdx >= 0) {
-      boardData[editingIdx] = {
-        handle: cleanHandle,
-        name: name,
-        track: track,
-        score: cleanScore
-      };
+    var normH = cleanHandle.toLowerCase().replace(/[^a-z0-9_]/g, '');
+    var normN = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    // Look for existing single contender by handle or name if not explicitly editing a known index
+    var targetIdx = editingIdx;
+    if (targetIdx < 0) {
+      targetIdx = boardData.findIndex(function(b) {
+        var bH = (b.handle || '').toLowerCase().replace(/[^a-z0-9_]/g, '');
+        var bN = (b.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        return (normH && bH === normH) || (normN && bN === normN);
+      });
+    }
+
+    if (targetIdx >= 0) {
+      // Update existing single contender record in-place
+      boardData[targetIdx].handle = cleanHandle;
+      if (name) boardData[targetIdx].name = name;
+      boardData[targetIdx].track = track;
+      boardData[targetIdx].score = cleanScore;
+      showToast('✅ Updated score for ' + cleanHandle + ' (' + cleanScore + ' DMG)');
     } else {
+      // Add new unique contender
       boardData.push({
         handle: cleanHandle,
         name: name || 'Solo Challenger',
         track: track,
         score: cleanScore
       });
+      showToast('✅ Added contender ' + cleanHandle + ' (' + cleanScore + ' DMG)');
     }
 
+    boardData = deduplicateBoard(boardData);
     saveData();
     renderLeaderboardTable();
     scoreModal.classList.remove('show');
-    showToast('Scoreboard updated successfully.');
   });
 
   // ---------- FILE UPLOAD SCORES (CSV / EXCEL / JSON) ----------
@@ -1424,11 +1485,31 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
 
   window.promoteToBoard = function(idx) {
     var reg = regData[idx];
-    editingIdx = -1;
-    document.getElementById('modalTitle').textContent = 'ADD ' + (reg.name || reg.handle) + ' TO SCOREBOARD';
-    document.getElementById('modalHandle').value = reg.handle || ('@' + (reg.name || 'player').toLowerCase().replace(/\s+/g, ''));
-    document.getElementById('modalName').value = reg.name || '';
-    document.getElementById('modalScore').value = '450';
+    if (!reg) return;
+    var rawH = reg.handle || ('@' + (reg.name || 'player').toLowerCase().replace(/[^a-z0-9]/g, ''));
+    if (!rawH.startsWith('@')) rawH = '@' + rawH;
+    var normH = rawH.toLowerCase().replace(/[^a-z0-9_]/g, '');
+    var normN = (reg.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    var existingIdx = boardData.findIndex(function(b) {
+      var bH = (b.handle || '').toLowerCase().replace(/[^a-z0-9_]/g, '');
+      var bN = (b.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      return (normH && bH === normH) || (normN && bN === normN);
+    });
+
+    if (existingIdx >= 0) {
+      editingIdx = existingIdx;
+      document.getElementById('modalTitle').textContent = 'UPDATE SCORE: ' + (boardData[existingIdx].handle || reg.name);
+      document.getElementById('modalHandle').value = boardData[existingIdx].handle;
+      document.getElementById('modalName').value = boardData[existingIdx].name || reg.name;
+      document.getElementById('modalScore').value = boardData[existingIdx].score;
+    } else {
+      editingIdx = -1;
+      document.getElementById('modalTitle').textContent = 'ADD ' + (reg.name || reg.handle) + ' TO SCOREBOARD';
+      document.getElementById('modalHandle').value = rawH;
+      document.getElementById('modalName').value = reg.name || '';
+      document.getElementById('modalScore').value = '450';
+    }
     scoreModal.classList.add('show');
   };
 

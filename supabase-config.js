@@ -253,13 +253,63 @@
   // 2. LEADERBOARD API
   // ==========================================
 
+  function deduplicateBoardItems(list) {
+    if (!Array.isArray(list)) return [];
+    var map = new Map();
+    list.forEach(function (item) {
+      if (!item) return;
+      var rawH = (item.handle || '').trim();
+      var handle = rawH ? (rawH.startsWith('@') ? rawH : ('@' + rawH)) : '';
+      var name = (item.name || '').trim();
+      var scoreVal = parseInt(item.score || 0, 10);
+      if (isNaN(scoreVal)) scoreVal = 0;
+
+      var normH = handle.toLowerCase().replace(/[^a-z0-9_]/g, '');
+      var normN = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      var key = normH || normN || ('id_' + (item.id || Math.random()));
+
+      if (map.has(key)) {
+        var ex = map.get(key);
+        if (scoreVal > ex.score) {
+          ex.score = scoreVal;
+          ex.bossDmg = scoreVal + ' DMG';
+          ex.boss_dmg = scoreVal + ' DMG';
+        }
+        if (!ex.name && name) ex.name = name;
+        if (item.avatar) ex.avatar = item.avatar;
+        if (item.badge) ex.badge = item.badge;
+      } else {
+        map.set(key, {
+          id: item.id,
+          rank: item.rank,
+          handle: handle || (name ? ('@' + name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12)) : '@challenger'),
+          name: name,
+          score: scoreVal,
+          bossDmg: item.bossDmg || item.boss_dmg || (scoreVal + ' DMG'),
+          boss_dmg: item.boss_dmg || item.bossDmg || (scoreVal + ' DMG'),
+          streak: item.streak || '0 WINS',
+          avatar: item.avatar || '',
+          badge: item.badge || ''
+        });
+      }
+    });
+
+    var result = Array.from(map.values());
+    result.sort(function (a, b) { return b.score - a.score; });
+    result.forEach(function (item, idx) {
+      item.rank = idx + 1;
+      if (!item.avatar) item.avatar = '0' + ((idx % 8) + 1);
+    });
+    return result;
+  }
+
   async function fetchLeaderboard() {
     try {
       var apiResp = await fetch('/api/leaderboard');
       if (apiResp.ok) {
         var apiResult = await apiResp.json();
         if (apiResult.success && Array.isArray(apiResult.leaderboard)) {
-          return apiResult.leaderboard.map(function (row) {
+          var mapped = apiResult.leaderboard.map(function (row) {
             return {
               id: row.id,
               rank: row.rank,
@@ -272,6 +322,7 @@
               badge: row.badge
             };
           });
+          return deduplicateBoardItems(mapped);
         }
       }
     } catch (e) {}
@@ -285,7 +336,7 @@
         });
         if (resp.ok) {
           var rows = await resp.json();
-          return rows.map(function (row) {
+          var mapped = rows.map(function (row) {
             return {
               id: row.id,
               rank: row.rank,
@@ -298,6 +349,7 @@
               badge: row.badge
             };
           });
+          return deduplicateBoardItems(mapped);
         }
       } catch (e) {}
     }
@@ -305,28 +357,29 @@
   }
 
   async function saveLeaderboard(boardData) {
+    var cleanBoard = deduplicateBoardItems(boardData);
     try {
       var apiResp = await fetch('/api/leaderboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ leaderboard: boardData })
+        body: JSON.stringify({ leaderboard: cleanBoard })
       });
       if (apiResp.ok) return true;
     } catch (e) {}
 
     var config = getSupabaseConfig();
     var cli = client || initSupabaseClient();
-    if (cli && Array.isArray(boardData)) {
+    if (cli && Array.isArray(cleanBoard)) {
       try {
         await cli.from('leaderboard').delete().neq('id', 0);
-        if (boardData.length > 0) {
-          var payload = boardData.map(function (item, idx) {
+        if (cleanBoard.length > 0) {
+          var payload = cleanBoard.map(function (item, idx) {
             return {
               rank: item.rank || (idx + 1),
               handle: item.handle || '',
               name: item.name || '',
               score: parseInt(item.score, 10) || 0,
-              boss_dmg: item.bossDmg || item.boss_dmg || '0 DMG',
+              boss_dmg: item.bossDmg || item.boss_dmg || (item.score + ' DMG'),
               streak: item.streak || '0 WINS',
               avatar: item.avatar || ('0' + ((idx % 8) + 1)),
               badge: item.badge || ''

@@ -187,22 +187,50 @@ class TechBossHandler(SimpleHTTPRequestHandler):
         elif path == "/api/leaderboard":
             body = self._get_body_json()
             board = body.get("leaderboard", [])
-            supabase_request("leaderboard?id=neq.0", method="DELETE")
-            if board:
-                payload = []
-                for idx, item in enumerate(board):
-                    payload.append({
-                        "rank": item.get("rank", idx + 1),
-                        "handle": item.get("handle", ""),
-                        "name": item.get("name", ""),
-                        "score": int(item.get("score", 0)),
-                        "boss_dmg": item.get("bossDmg") or item.get("boss_dmg", "0 DMG"),
+            dedup_map = {}
+            for item in board:
+                if not item:
+                    continue
+                raw_handle = (item.get("handle") or "").strip()
+                if raw_handle and not raw_handle.startswith("@"):
+                    raw_handle = f"@{raw_handle}"
+                name = (item.get("name") or "").strip()
+                key = (raw_handle or name).lower().replace(" ", "")
+                if not key:
+                    continue
+
+                score_val = int(item.get("score", 0))
+                if key in dedup_map:
+                    if score_val > dedup_map[key]["score"]:
+                        dedup_map[key]["score"] = score_val
+                    if name and not dedup_map[key]["name"]:
+                        dedup_map[key]["name"] = name
+                else:
+                    dedup_map[key] = {
+                        "handle": raw_handle or (f"@{name.lower()[:10]}" if name else "@challenger"),
+                        "name": name,
+                        "score": score_val,
+                        "boss_dmg": item.get("bossDmg") or item.get("boss_dmg", f"{score_val} DMG"),
                         "streak": item.get("streak", "0 WINS"),
-                        "avatar": item.get("avatar", f"0{(idx % 8) + 1}"),
+                        "avatar": item.get("avatar", "01"),
                         "badge": item.get("badge", "")
-                    })
-                supabase_request("leaderboard", method="POST", data=payload)
-            self._send_json(200, {"success": True, "message": "Leaderboard updated"})
+                    }
+
+            deduped_board = sorted(dedup_map.values(), key=lambda x: x["score"], reverse=True)
+            for idx, entry in enumerate(deduped_board):
+                entry["rank"] = idx + 1
+                if not entry.get("avatar"):
+                    entry["avatar"] = f"0{(idx % 8) + 1}"
+
+            supabase_request("leaderboard?id=neq.0", method="DELETE")
+            if deduped_board:
+                supabase_request("leaderboard", method="POST", data=deduped_board)
+
+            self._send_json(200, {
+                "success": True,
+                "message": f"Leaderboard updated with {len(deduped_board)} unique contenders",
+                "leaderboard": deduped_board
+            })
             return
 
         elif path == "/api/event-state":
