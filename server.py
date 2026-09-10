@@ -7,12 +7,13 @@ and serves frontend static files.
 
 import os
 import json
+import socket
 import urllib.request
 import urllib.parse
 import urllib.error
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
-PORT = 3000
+PORT = int(os.environ.get("PORT", 3000))
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://sgcqsfgjiofoqdylrvoi.supabase.co").rstrip("/")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "sb_publishable_OX9axwl6GT-p2twCa7lw3w_cadfJJJj")
 
@@ -105,6 +106,13 @@ class TechBossHandler(SimpleHTTPRequestHandler):
         elif path == "/api/health":
             self._send_json(200, {"status": "healthy", "database": "connected", "server": "multi-threaded"})
             return
+
+        # Clean URL rewrite support (e.g. /admin -> /admin.html, /gamezone -> /gamezone.html)
+        rel_path = path.lstrip("/")
+        if rel_path and not os.path.splitext(rel_path)[1]:
+            html_candidate = rel_path + ".html"
+            if os.path.exists(html_candidate):
+                self.path = "/" + html_candidate
 
         # Default: Serve static files
         super().do_GET()
@@ -289,12 +297,34 @@ class ThreadedHTTPServer(ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = True
 
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return "127.0.0.1"
+
 if __name__ == "__main__":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     server_address = ("0.0.0.0", PORT)
     httpd = ThreadedHTTPServer(server_address, TechBossHandler)
-    print(f"🚀 Tech Boss 2026 Multi-Threaded Backend & Web Server live on:")
+    local_ip = get_local_ip()
+
+    print("=" * 66)
+    print("🚀 TECH BOSS 2026 — CROSS-DEVICE LOCAL SERVER")
+    print("=" * 66)
+    print(f"💻 On this computer:")
     print(f"   👉 http://localhost:{PORT}")
     print(f"   👉 http://127.0.0.1:{PORT}")
-    print(f"📡 Connected to Supabase Cloud Database: {SUPABASE_URL}")
+    print(f"\n📱 On OTHER DEVICES (Mobile phones, tablets, other laptops on Wi-Fi):")
+    print(f"   👉 http://{local_ip}:{PORT}")
+    print(f"   👉 http://{local_ip}:{PORT}/admin.html   (Organizer Terminal)")
+    print(f"   👉 http://{local_ip}:{PORT}/gamezone.html (Game Zone & Dashboard)")
+    print("-" * 66)
+    print(f"📡 Supabase PostgreSQL Database: {SUPABASE_URL}")
+    print("=" * 66)
+    print(f"⚡ Ready and accepting connections from any device on your Wi-Fi...")
     httpd.serve_forever()
