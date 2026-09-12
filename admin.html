@@ -180,7 +180,7 @@
   /* METRICS GRID */
   .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 18px;
     margin: 28px 0;
   }
@@ -439,6 +439,14 @@
       <div class="metric-val" id="metRegCount">0</div>
       <div class="metric-sub">Solo Challengers Signed Up</div>
     </div>
+    <div class="cyber-card metric-card" style="border-color: rgba(48,209,88,0.4); background: rgba(48,209,88,0.05); box-shadow: 0 0 20px rgba(48,209,88,0.1);">
+      <div class="metric-lbl" style="color:var(--green); display:flex; align-items:center; gap:6px;">
+        <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green);"></span>
+        In-House Checked In
+      </div>
+      <div class="metric-val" id="metInHouseCount" style="color:var(--green);">0</div>
+      <div class="metric-sub" id="metInHouseSub" style="color:rgba(48,209,88,0.85);">0 In Arena Tech Centre</div>
+    </div>
     <div class="cyber-card metric-card">
       <div class="metric-lbl">Total Revenue Collected</div>
       <div class="metric-val" id="metRevenue">₹0</div>
@@ -520,6 +528,7 @@
             <th>Phone</th>
             <th>Payment Screenshot</th>
             <th>Status</th>
+            <th>In-House Entry</th>
             <th style="text-align:right;">Actions</th>
           </tr>
         </thead>
@@ -532,24 +541,44 @@
 
   <!-- TAB 3: TELEMETRY & BATTLE FEED -->
   <div class="tab-content" id="tab-telemetry">
-    <div class="cyber-card" style="padding:28px; max-width:700px;">
-      <h3 style="font-size:18px; font-weight:800; margin-bottom:6px;">LIVE TOURNAMENT TELEMETRY</h3>
-      <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Broadcast announcement messages directly to the live battle feed on the main website.</p>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; align-items: start;">
+      <div class="cyber-card" style="padding:28px;">
+        <h3 style="font-size:18px; font-weight:800; margin-bottom:6px;">LIVE TOURNAMENT TELEMETRY</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Broadcast announcement messages directly to the live battle feed on the main website.</p>
 
-      <div class="form-group">
-        <label for="broadcastMsg">Custom Battle Feed Announcement</label>
-        <textarea id="broadcastMsg" rows="3" placeholder="e.g. ⚡ Stage 2 Coding Battle officially commenced! 120 minutes remaining!"></textarea>
+        <div class="form-group">
+          <label for="broadcastMsg">Custom Battle Feed Announcement</label>
+          <textarea id="broadcastMsg" rows="3" placeholder="e.g. ⚡ Stage 2 Coding Battle officially commenced! 120 minutes remaining!"></textarea>
+        </div>
+
+        <button class="btn btn-primary" id="broadcastBtn">📢 Broadcast to Main Screen</button>
+
+        <hr style="border:0; border-top:1px solid var(--line); margin:28px 0;">
+
+        <h4 style="font-size:15px; font-weight:700; margin-bottom:12px;">BOSS HEALTH OVERRIDE</h4>
+        <div style="display:flex; align-items:center; gap:16px;">
+          <input type="range" id="bossHealthSlider" min="0" max="100" value="78" style="flex:1;">
+          <span class="mono" id="bossHealthVal" style="font-size:18px; font-weight:800; color:var(--pink); width:60px;">78%</span>
+          <button class="btn btn-ghost btn-sm" id="applyHealthBtn">Apply HP</button>
+        </div>
       </div>
 
-      <button class="btn btn-primary" id="broadcastBtn">📢 Broadcast to Main Screen</button>
+      <!-- In-House Admissions Stream -->
+      <div class="cyber-card" style="padding:28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <h3 style="font-size:18px; font-weight:800; color:var(--green); display:flex; align-items:center; gap:8px;">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green);"></span>
+            LIVE IN-HOUSE ADMISSIONS
+          </h3>
+          <span class="badge-status status-verified" id="inHouseLiveBadge">0 Present</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Real-time stream of contenders who entered the In-House Arena (Tech Centre 2nd Floor, 1st Lab).</p>
 
-      <hr style="border:0; border-top:1px solid var(--line); margin:28px 0;">
+        <div id="inHouseLogContainer" style="max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.4); border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px;">
+          <!-- Populated by JS -->
+        </div>
 
-      <h4 style="font-size:15px; font-weight:700; margin-bottom:12px;">BOSS HEALTH OVERRIDE</h4>
-      <div style="display:flex; align-items:center; gap:16px;">
-        <input type="range" id="bossHealthSlider" min="0" max="100" value="78" style="flex:1;">
-        <span class="mono" id="bossHealthVal" style="font-size:18px; font-weight:800; color:var(--pink); width:60px;">78%</span>
-        <button class="btn btn-ghost btn-sm" id="applyHealthBtn">Apply HP</button>
+        <button class="btn btn-ghost btn-sm" id="clearAllInHouseBtn" style="color:var(--pink); border-color:rgba(255,42,133,0.3); width:100%;">🔄 Reset All In-House Admissions</button>
       </div>
     </div>
   </div>
@@ -1099,6 +1128,98 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     return div.innerHTML;
   }
 
+  // ---------- IN-HOUSE CHECK-IN MANAGEMENT ----------
+  function getInHouseCheckins() {
+    try {
+      var saved = localStorage.getItem('techboss_inhouse_checkins');
+      return saved ? JSON.parse(saved) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveInHouseCheckins(data) {
+    try {
+      localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(data));
+      if (syncChannel) {
+        syncChannel.postMessage({ type: 'INHOUSE_UPDATE', data: data, timestamp: Date.now() });
+      }
+    } catch (e) {}
+    renderMetrics();
+    renderRegistrationsTable();
+    renderInHouseLog();
+  }
+
+  window.admitInHouse = function(handle) {
+    if (!handle) return;
+    var norm = handle.toLowerCase().trim();
+    if (!norm.startsWith('@')) norm = '@' + norm;
+    
+    var reg = regData.find(function(r) {
+      var rH = (r.handle || '').toLowerCase().trim();
+      if (!rH.startsWith('@')) rH = '@' + rH;
+      return rH === norm;
+    });
+
+    var inHouse = getInHouseCheckins();
+    inHouse[norm] = {
+      handle: (reg && reg.handle) ? reg.handle : norm,
+      name: (reg && reg.name) ? reg.name : 'Solo Gladiator',
+      regNo: (reg && (reg.regNo || reg.reg_no)) ? (reg.regNo || reg.reg_no) : '--',
+      branch: (reg && reg.branch) ? reg.branch : '',
+      year: (reg && reg.year) ? reg.year : '',
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      timestamp: Date.now()
+    };
+    saveInHouseCheckins(inHouse);
+    showToast('🚪 Admitted ' + norm + ' into In-House Arena.');
+    playSynthBeep();
+  };
+
+  window.resetInHouseEntry = function(handle) {
+    if (!handle) return;
+    var norm = handle.toLowerCase().trim();
+    if (!norm.startsWith('@')) norm = '@' + norm;
+
+    var inHouse = getInHouseCheckins();
+    if (inHouse[norm]) {
+      delete inHouse[norm];
+      saveInHouseCheckins(inHouse);
+      showToast('↩️ In-House check-in reset for ' + norm + ' (Re-entry unlocked).');
+    }
+  };
+
+  function renderInHouseLog() {
+    var container = document.getElementById('inHouseLogContainer');
+    var badge = document.getElementById('inHouseLiveBadge');
+    if (!container) return;
+
+    var inHouseMap = getInHouseCheckins();
+    var list = Object.values(inHouseMap);
+    list.sort(function(a, b) { return (b.timestamp || 0) - (a.timestamp || 0); });
+
+    if (badge) badge.textContent = list.length + ' Present';
+
+    if (!list.length) {
+      container.innerHTML = '<div style="color:var(--text-dim); font-size:12.5px; text-align:center; padding:20px 0;">No contenders have entered in-house yet.</div>';
+      return;
+    }
+
+    container.innerHTML = list.map(function(item) {
+      return '<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); border:1px solid var(--panel-border); border-radius:6px; padding:8px 12px; font-size:12.5px;">' +
+        '<div>' +
+          '<span style="font-weight:700; color:var(--gold);">' + escapeHtml(item.handle) + '</span> ' +
+          '<span style="color:var(--text-main);">(' + escapeHtml(item.name || 'Contender') + ')</span>' +
+          (item.regNo && item.regNo !== '--' ? ' <span class="mono" style="color:var(--cyan); font-size:11px;">[' + escapeHtml(item.regNo) + ']</span>' : '') +
+        '</div>' +
+        '<div style="display:flex; align-items:center; gap:8px;">' +
+          '<span class="mono" style="color:var(--green); font-size:11.5px;">' + escapeHtml(item.time) + '</span>' +
+          '<button class="btn btn-ghost btn-sm" onclick="resetInHouseEntry(\'' + escapeHtml(item.handle) + '\')" style="padding:2px 6px; font-size:10px; color:var(--pink);" title="Reset In-House Check-In">✕ Reset</button>' +
+        '</div>' +
+        '</div>';
+    }).join('');
+  }
+
   // ---------- RENDER FUNCTIONS ----------
   function renderMetrics() {
     var regCount = regData.length;
@@ -1110,6 +1231,13 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     document.getElementById('tabRegBadge').textContent = regCount;
     document.getElementById('metRevenue').textContent = '₹' + rev.toLocaleString();
     document.getElementById('metBoardCount').textContent = boardData.length;
+
+    var inHouseMap = getInHouseCheckins();
+    var inHouseCount = Object.keys(inHouseMap).length;
+    var inHouseEl = document.getElementById('metInHouseCount');
+    var inHouseSub = document.getElementById('metInHouseSub');
+    if (inHouseEl) inHouseEl.textContent = inHouseCount;
+    if (inHouseSub) inHouseSub.textContent = inHouseCount + ' In Arena (' + (regCount ? Math.round((inHouseCount / regCount) * 100) : 0) + '%)';
 
     var savedHp = localStorage.getItem('techboss_boss_hp') || '78';
     document.getElementById('metBossHealth').textContent = savedHp + '%';
@@ -1146,9 +1274,11 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
   function renderRegistrationsTable() {
     var tbody = document.getElementById('adminRegBody');
     if (!regData.length) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--text-dim);">No registration records submitted yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px; color:var(--text-dim);">No registration records submitted yet.</td></tr>';
       return;
     }
+
+    var inHouseMap = getInHouseCheckins();
 
     tbody.innerHTML = regData.map(function(item, idx) {
       var statusClass = item.status === 'VERIFIED' ? 'status-verified' : (item.status === 'REJECTED' ? 'status-rejected' : 'status-pending');
@@ -1166,15 +1296,32 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
         screenshotHtml = '<span style="font-size:12px; color:var(--text-dim); font-style:italic;">No Image</span>';
       }
 
+      var rawH = (item.handle || '').toLowerCase().trim();
+      if (rawH && !rawH.startsWith('@')) rawH = '@' + rawH;
+      var checkinInfo = inHouseMap[rawH];
+
+      var inHouseHtml = '';
+      if (checkinInfo) {
+        inHouseHtml = '<span class="badge-status" style="background:rgba(48,209,88,0.15); color:var(--green); border:1px solid rgba(48,209,88,0.35); font-weight:700; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green);"></span>IN-HOUSE (' + (checkinInfo.time || 'Entered') + ')</span>';
+      } else {
+        inHouseHtml = '<span class="badge-status" style="background:rgba(255,255,255,0.04); color:var(--text-dim); border:1px solid var(--panel-border); font-size:11.5px;">⚪ Not Entered</span>';
+      }
+
+      var inHouseActionBtn = checkinInfo ?
+        '<button class="btn btn-ghost btn-sm" onclick="resetInHouseEntry(\'' + escapeHtml(rawH) + '\')" title="Reset In-House Check-In (Allow Re-Entry)" style="color:var(--pink); border-color:rgba(255,42,133,0.3); font-size:11px; padding:3px 7px; margin-right:4px;">↩️ Reset Entry</button>' :
+        '<button class="btn btn-ghost btn-sm" onclick="admitInHouse(\'' + escapeHtml(rawH) + '\')" title="Manually admit into house" style="color:var(--green); border-color:rgba(48,209,88,0.3); font-size:11px; padding:3px 7px; margin-right:4px;">🚪 Check-In</button>';
+
       return '<tr>' +
-        '<td><div style="font-weight:700; color:var(--text-main);">' + escapeHtml(item.name || item.handle) + '</div><div style="font-size:12px; color:var(--gold);">' + escapeHtml(item.handle || '') + '</div></td>' +
+        '<td><div style="font-weight:700; color:var(--text-main);">' + escapeHtml(item.name || item.handle) + '</div><div style="font-size:12px; color:var(--gold); font-weight:700;">' + escapeHtml(item.handle || '') + '</div></td>' +
         '<td><b class="mono" style="color:var(--cyan); font-size:13px;">' + escapeHtml(item.regNo || '--') + '</b></td>' +
         '<td><span style="font-weight:500;">' + escapeHtml(branchYearDisplay) + '</span></td>' +
         '<td><div class="mono" style="font-size:12.5px;">' + escapeHtml(item.phone || '--') + '</div><div style="font-size:11px; color:var(--text-dim);">' + escapeHtml(item.date || '') + '</div></td>' +
         '<td>' + screenshotHtml + '</td>' +
         '<td><span class="badge-status ' + statusClass + '">' + (item.status || 'PENDING') + '</span></td>' +
+        '<td>' + inHouseHtml + '</td>' +
         '<td style="text-align:right;">' +
           (item.status !== 'VERIFIED' ? '<button class="btn btn-green btn-sm" onclick="verifyReg(' + idx + ')" style="margin-right:4px;">Approve</button>' : '') +
+          inHouseActionBtn +
           '<button class="btn btn-ghost btn-sm" onclick="promoteToBoard(' + idx + ')" title="Add to Scoreboard">⚡ Score</button> ' +
           '<button class="btn btn-pink btn-sm" onclick="deleteReg(' + idx + ')">🗑️</button>' +
         '</td>' +
@@ -1535,6 +1682,12 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
       return;
     }
     localStorage.setItem('techboss_custom_broadcast', msg);
+    localStorage.setItem('techboss_broadcast_updated_at', Date.now().toString());
+    if (syncChannel) {
+      try {
+        syncChannel.postMessage({ type: 'TELEMETRY_BROADCAST', message: msg, timestamp: Date.now() });
+      } catch (e) {}
+    }
     if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
       var hp = localStorage.getItem('techboss_boss_hp') || '78';
       window.TechBossSupabase.saveEventState(hp, msg);
@@ -1550,6 +1703,12 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
   document.getElementById('applyHealthBtn').addEventListener('click', function() {
     var hp = document.getElementById('bossHealthSlider').value;
     localStorage.setItem('techboss_boss_hp', hp);
+    localStorage.setItem('techboss_boss_updated_at', Date.now().toString());
+    if (syncChannel) {
+      try {
+        syncChannel.postMessage({ type: 'BOSS_HP_UPDATE', hp: hp, timestamp: Date.now() });
+      } catch (e) {}
+    }
     if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
       var msg = localStorage.getItem('techboss_custom_broadcast') || '';
       window.TechBossSupabase.saveEventState(hp, msg);
@@ -1834,11 +1993,57 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     });
   }
 
+  // Clear All In-House Entries Button
+  var clearAllInHouseBtn = document.getElementById('clearAllInHouseBtn');
+  if (clearAllInHouseBtn) {
+    clearAllInHouseBtn.addEventListener('click', function() {
+      if (confirm('Reset all In-House admissions? Contenders will need to re-check-in to enter.')) {
+        localStorage.removeItem('techboss_inhouse_checkins');
+        if (syncChannel) {
+          syncChannel.postMessage({ type: 'INHOUSE_UPDATE', data: {}, timestamp: Date.now() });
+        }
+        renderMetrics();
+        renderRegistrationsTable();
+        renderInHouseLog();
+        showToast('🔄 All In-House admissions have been reset.');
+      }
+    });
+  }
+
+  // In-House Sync Channel Listener
+  if (syncChannel) {
+    syncChannel.addEventListener('message', function(ev) {
+      if (ev.data) {
+        if (ev.data.type === 'INHOUSE_CHECKIN') {
+          renderMetrics();
+          renderRegistrationsTable();
+          renderInHouseLog();
+          var c = ev.data.contender;
+          showToast('🟢 ' + (c ? (c.handle + ' (' + c.name + ')') : 'Contender') + ' entered In-House Arena!');
+          playSynthBeep();
+        } else if (ev.data.type === 'INHOUSE_UPDATE') {
+          renderMetrics();
+          renderRegistrationsTable();
+          renderInHouseLog();
+        }
+      }
+    });
+  }
+
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'techboss_inhouse_checkins') {
+      renderMetrics();
+      renderRegistrationsTable();
+      renderInHouseLog();
+    }
+  });
+
   function initDashboard() {
     loadSupabaseInputs();
     loadData();
     loadSheetUrl();
     initRealtimeListeners();
+    renderInHouseLog();
 
     // Background Auto-Sync (Every 3 seconds) for 100% real-time reliability
     setInterval(function() {
@@ -1852,6 +2057,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
           }
         });
       }
+      renderInHouseLog();
     }, 3000);
   }
 

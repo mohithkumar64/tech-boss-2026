@@ -680,6 +680,47 @@
         display: none !important;
       }
     }
+
+    /* IN-HOUSE ENTRY & CHECK-IN MODAL */
+    .pass-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .pass-modal.show {
+      display: flex;
+    }
+
+    .pass-sheet {
+      max-width: 440px;
+      width: 100%;
+      padding: 36px 30px;
+      text-align: center;
+      background: #121216;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
+      animation: sheetPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes sheetPop {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
   </style>
 </head>
 
@@ -694,6 +735,12 @@
       </a>
 
       <div style="display: flex; align-items: center; gap: 10px;">
+        <div id="gzContenderHeaderBadge" style="display: flex; align-items: center; gap: 8px; background: rgba(229,179,88,0.12); border: 1px solid rgba(229,179,88,0.3); padding: 5px 12px; border-radius: var(--radius-pill); font-size: 12.5px; cursor: pointer; transition: all 0.2s;" title="Click to switch contender username">
+          <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #30d158; box-shadow: 0 0 8px #30d158;"></span>
+          <span style="color: var(--text-secondary); font-size: 11.5px;">In-House:</span>
+          <strong id="gzActiveUserDisplay" style="color: var(--accent-gold); font-weight: 700;">@contender</strong>
+          <span style="font-size: 11px; color: var(--text-secondary); margin-left: 2px;">✏️</span>
+        </div>
         <a class="btn btn-ghost btn-sm btn-ghost-header" href="index.html">← Arena Home</a>
         <a class="btn btn-white btn-sm" href="index.html#register">Register · ₹60</a>
         
@@ -720,18 +767,27 @@
       <button class="side-drawer-close" id="sideMenuCloseBtn" aria-label="Close Menu">✕</button>
     </div>
 
+    <!-- Active Contender Identity Box in Drawer -->
+    <div id="gzDrawerContenderCard" style="background: rgba(229,179,88,0.08); border: 1px solid rgba(229,179,88,0.22); border-radius: var(--radius-sm); padding: 12px 14px; margin: 12px 0 6px; display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <div style="font-size: 10px; font-weight: 700; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 0.5px;">IN-HOUSE CONTENDER</div>
+        <div id="gzDrawerActiveUser" style="font-size: 14px; font-weight: 800; color: #ffffff; margin-top: 2px;">@contender</div>
+      </div>
+      <button id="gzDrawerSwitchBtn" class="btn btn-ghost btn-sm" style="padding: 4px 10px; font-size: 11px; border-color: rgba(229,179,88,0.3); color: var(--accent-gold);">Switch</button>
+    </div>
+
     <div class="drawer-section-title">🕹️ GAME ZONE MODES</div>
     <ul class="drawer-nav-list">
       <li><button class="drawer-nav-item active" data-drawer-tab="leaderboard">🏆 Championship Leaderboard</button></li>
       <li><button class="drawer-nav-item" data-drawer-tab="boss-clicker">⚔️ Boss Rush Duel</button></li>
       <li><button class="drawer-nav-item" data-drawer-tab="code-trial">⚡ Code Speed Reflex</button></li>
       <li><button class="drawer-nav-item" data-drawer-tab="telemetry">📊 Live Arena Dashboard</button></li>
-      <li><button class="drawer-nav-item" data-drawer-tab="pass-search">🛡️ Pass Verification Portal</button></li>
     </ul>
 
     <div class="drawer-section-title">🔗 ARENA NAVIGATION</div>
     <ul class="drawer-nav-list">
       <li><a class="drawer-nav-item" href="index.html#register">🎟️ Register Pass (₹60)</a></li>
+      <li><a class="drawer-nav-item" href="index.html#pass-verification">🛡️ Pass Verification Portal ↗</a></li>
       <li><a class="drawer-nav-item" href="index.html">🏟️ Main Championship Arena</a></li>
       <li><a class="drawer-nav-item" href="admin.html" style="color:var(--accent-gold);">⚙️ Organizer Terminal ↗</a></li>
     </ul>
@@ -749,7 +805,7 @@
       <span class="apple-badge gold">🕹️ INTERACTIVE ARENA GAME ZONE & TELEMETRY</span>
       <h1 style="font-size: 36px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 8px;">Combat Zone & Live Dashboard</h1>
       <p style="color: var(--text-secondary); max-width: 680px; margin: 0 auto; font-size: 15px; line-height: 1.5;">
-        Test your combat speed against the Cyber Boss, monitor live tournament telemetry from the server, simulate your damage score, and verify your pass credentials in real time.
+        Test your combat speed against the Cyber Boss, monitor live tournament telemetry from the server, simulate your damage score, and climb the solo leaderboard.
       </p>
     </div>
 
@@ -759,7 +815,6 @@
       <button class="gz-tab-btn" data-gztag="boss-clicker">⚔️ Boss Rush Duel</button>
       <button class="gz-tab-btn" data-gztag="code-trial">⚡ Code Speed Reflex</button>
       <button class="gz-tab-btn" data-gztag="telemetry">📊 Live Arena Dashboard</button>
-      <button class="gz-tab-btn" data-gztag="pass-search">🛡️ Pass Verification Portal</button>
     </div>
 
     <!-- TAB 1: LIVE CHAMPIONSHIP LEADERBOARD & TOP UI -->
@@ -829,7 +884,14 @@
     <div class="gz-tab-content" id="gz-boss-clicker">
       <div class="gz-grid" style="grid-template-columns: 1.2fr 1fr; align-items: start;">
         <div class="gz-card" style="text-align: center; position: relative;">
-          <div style="font-size: 11px; font-weight: 700; color: var(--accent-gold); letter-spacing: 2px; margin-bottom: 6px;">INTERACTIVE ARENA COMBAT</div>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+            <div style="font-size: 11px; font-weight: 700; color: var(--accent-gold); letter-spacing: 2px;">INTERACTIVE ARENA COMBAT</div>
+            <span style="color: var(--text-tertiary);">•</span>
+            <div style="font-size: 12px; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); padding: 2px 10px; border-radius: var(--radius-pill);">
+              <span>⚔️ Battling as:</span>
+              <b id="bossContenderTag" style="color: var(--accent-gold);">@contender</b>
+            </div>
+          </div>
           <h2 style="font-size: 24px; font-weight: 800; color: #ffffff; margin-bottom: 4px;">CYBER TITAN BOSS</h2>
           <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 20px;">Click the Boss rapidly to deal DMG, trigger combos, and climb the battle tier.</p>
 
@@ -890,7 +952,11 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
           <div>
             <h3 style="font-size: 22px; font-weight: 800; color: #ffffff;">⚡ Rapid Syntax Reflex Trial</h3>
-            <p style="font-size: 13.5px; color: var(--text-secondary);">Type the target code syntax snippet accurately before the timer runs out.</p>
+            <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 6px;">Type the target code syntax snippet accurately before the timer runs out.</p>
+            <div style="font-size: 12px; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); padding: 2px 10px; border-radius: var(--radius-pill);">
+              <span>⚡ Reflex Contender:</span>
+              <b id="codeContenderTag" style="color: var(--accent-blue);">@contender</b>
+            </div>
           </div>
           <div>
             <span class="apple-badge" id="codeTrialTimer" style="font-size: 15px; font-weight: 800; background: rgba(255,42,133,0.15); color: #ff2a85; border-color: rgba(255,42,133,0.3); margin-bottom: 0;">⏱️ 15.0s</span>
@@ -989,25 +1055,6 @@
         </div>
       </div>
     </div>
-
-    <!-- TAB 4: PASS VERIFICATION PORTAL -->
-    <div class="gz-tab-content" id="gz-pass-search">
-      <div class="gz-card" style="max-width: 720px; margin: 0 auto;">
-        <div style="text-align: center; margin-bottom: 24px;">
-          <h3 style="font-size: 22px; font-weight: 800; color: #ffffff;">🛡️ Contender Pass Verification Lookup</h3>
-          <p style="font-size: 13.5px; color: var(--text-secondary); margin-top: 6px;">Enter your Register Number to verify your registration status and arena pass directly from the central database.</p>
-        </div>
-
-        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-          <input type="text" id="passLookupInput" placeholder="Enter Register No (e.g. 22BCE1001)" class="mono" style="flex: 1; min-width: 220px; font-size: 15px; text-transform: uppercase;">
-          <button class="btn btn-white" id="passLookupBtn">🔍 Check Status</button>
-        </div>
-
-        <div id="passLookupResult" style="display: none; padding: 20px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
-          <!-- Populated via JS -->
-        </div>
-      </div>
-    </div>
   </main>
 
   <footer>
@@ -1024,6 +1071,38 @@
       </div>
     </div>
   </footer>
+
+  <!-- In-House Check-In / Switch Contender Modal -->
+  <div class="pass-modal" id="gzCheckinModal">
+    <div class="pass-sheet" style="max-width: 450px; text-align: center; position: relative;">
+      <button type="button" class="btn-modal-close" id="gzCheckinCloseBtn" aria-label="Close" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.08); border: none; color: #86868b; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">✕</button>
+
+      <div style="font-size: 38px; margin-bottom: 8px;">🛡️</div>
+      <span class="apple-badge gold" style="margin-bottom: 10px;">IN-HOUSE ARENA GATE</span>
+      <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 8px; color: #ffffff;" id="gzModalTitle">Contender Check-In</h2>
+      <p style="color: var(--text-secondary); font-size: 13.5px; margin-bottom: 20px; line-height: 1.5;" id="gzModalDesc">
+        Enter your registered <b>Handle / Gamer Tag</b> to proceed into the in-house arena. <span style="color:var(--accent-gold); font-weight:600;">Single-entry policy enforced</span> (no re-entry permitted once entered).
+      </p>
+
+      <div style="text-align: left; margin-bottom: 18px;">
+        <label for="gzModalUsernameInput" style="display: block; font-size: 11.5px; font-weight: 700; color: #f5f5f7; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+          Registered Handle Only
+        </label>
+        <div style="position: relative;">
+          <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--accent-gold);">@</span>
+          <input type="text" id="gzModalUsernameInput" placeholder="e.g. @binarybeast or @CyberKnight" autocomplete="off" spellcheck="false" style="width: 100%; padding: 13px 14px 13px 38px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.18); border-radius: 12px; color: #ffffff; font-size: 14.5px; font-weight: 600; outline: none; box-sizing: border-box;">
+        </div>
+        <div id="gzModalError" style="display: none; color: #ff453a; font-size: 12.5px; margin-top: 8px; font-weight: 500; background: rgba(255,69,58,0.1); border: 1px solid rgba(255,69,58,0.25); border-radius: 8px; padding: 8px 12px; line-height: 1.4;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button type="button" class="btn btn-dark" id="gzModalCancelBtn" style="flex: 1; padding: 12px 16px; display: none;">Cancel</button>
+        <button type="button" class="btn btn-white" id="gzModalSubmitBtn" style="flex: 2; padding: 12px 18px; font-weight: 700;">Enter In-House Arena ⚡</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     function playSynthSound(type) {
@@ -1303,67 +1382,7 @@
       calcCodeSlider.addEventListener('input', updateCalculator);
     }
 
-    // 4. Pass Lookup
-    var passLookupBtn = document.getElementById('passLookupBtn');
-    var passLookupInput = document.getElementById('passLookupInput');
-    var passLookupResult = document.getElementById('passLookupResult');
-
-    if (passLookupBtn && passLookupInput) {
-      passLookupBtn.addEventListener('click', async function () {
-        var query = passLookupInput.value.trim().toUpperCase();
-        if (!query) {
-          alert('Please enter your Register Number.');
-          return;
-        }
-
-        passLookupBtn.disabled = true;
-        passLookupBtn.textContent = 'Searching...';
-        passLookupResult.style.display = 'block';
-        passLookupResult.innerHTML = '<div style="color:var(--text-secondary); text-align:center;">🔍 Querying tournament database...</div>';
-
-        try {
-          var regs = await window.TechBossSupabase.fetchRegistrations();
-          passLookupBtn.disabled = false;
-          passLookupBtn.textContent = '🔍 Check Status';
-
-          if (regs && Array.isArray(regs)) {
-            var found = regs.find(function (r) {
-              return (r.regNo && r.regNo.toUpperCase() === query);
-            });
-
-            if (found) {
-              var isVerified = (found.status === 'VERIFIED');
-              var statusBadge = isVerified ?
-                '<span class="apple-badge" style="background:rgba(48,209,88,0.15); color:var(--accent-green); border-color:rgba(48,209,88,0.3); margin-bottom:0;">✓ PASS VERIFIED</span>' :
-                '<span class="apple-badge" style="background:rgba(229,179,88,0.15); color:var(--accent-gold); border-color:rgba(229,179,88,0.3); margin-bottom:0;">⏳ PENDING VERIFICATION</span>';
-
-              passLookupResult.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">' +
-                '<h4 style="color:#ffffff; font-size:16px; margin:0;">' + escapeHtml(found.name) + '</h4>' +
-                statusBadge +
-                '</div>' +
-                '<div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">' +
-                '<div>Register No: <b class="mono" style="color:var(--accent-gold);">' + escapeHtml(found.reg_no || found.regNo) + '</b></div>' +
-                '<div>Department: <span style="color:#ffffff;">' + escapeHtml(found.branch) + ' (' + escapeHtml(found.year) + ')</span></div>' +
-                '<div>Pass Tier: <span style="color:#ffffff;">All-Access Solo Pass (₹60)</span></div>' +
-                '<div>Arena Batch: <b style="color:var(--accent-blue);">Batch Alpha (09:00 AM)</b></div>' +
-                '<div style="margin-top:4px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.1);">Venue: <b style="color:#ffffff;">Tech Centre 2nd Floor, 1st Lab</b> <span style="color:var(--text-tertiary);">(CSD & CSIT, SRKR Eng College)</span></div>' +
-                '</div>';
-              playSynthSound('victory');
-              return;
-            }
-          }
-
-          passLookupResult.innerHTML = '<div style="color:#ff453a; text-align:center;">⚠️ No registration record found for Register No: <b>' + escapeHtml(query) + '</b>. Please check the spelling or register above.</div>';
-          playSynthSound('click');
-        } catch (e) {
-          passLookupBtn.disabled = false;
-          passLookupBtn.textContent = '🔍 Check Status';
-          passLookupResult.innerHTML = '<div style="color:#ff453a; text-align:center;">⚠️ Lookup error: ' + escapeHtml(e.message) + '</div>';
-        }
-      });
-    }
-
-    // 5. Championship Leaderboard Rendering & Realtime Sync
+    // 4. Championship Leaderboard Rendering & Realtime Sync
     var gzMemoryBoard = [];
     var gzSearchQuery = '';
     var gzBoardBody = document.getElementById('gzBoardBody');
@@ -1582,6 +1601,349 @@
       }
     }
     loadTelemetry();
+
+    // ==========================================
+    // 6. IN-HOUSE CONTENDER PROFILE & CHECK-IN GATE
+    // ==========================================
+    var currentContenderUsername = '';
+
+    var gzCheckinModal = document.getElementById('gzCheckinModal');
+    var gzCheckinCloseBtn = document.getElementById('gzCheckinCloseBtn');
+    var gzModalUsernameInput = document.getElementById('gzModalUsernameInput');
+    var gzModalSubmitBtn = document.getElementById('gzModalSubmitBtn');
+    var gzModalCancelBtn = document.getElementById('gzModalCancelBtn');
+    var gzModalError = document.getElementById('gzModalError');
+    var gzContenderHeaderBadge = document.getElementById('gzContenderHeaderBadge');
+    var gzActiveUserDisplay = document.getElementById('gzActiveUserDisplay');
+    var gzDrawerActiveUser = document.getElementById('gzDrawerActiveUser');
+    var gzDrawerSwitchBtn = document.getElementById('gzDrawerSwitchBtn');
+    var bossContenderTag = document.getElementById('bossContenderTag');
+    var codeContenderTag = document.getElementById('codeContenderTag');
+
+    function getQueryParam(param) {
+      var urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    function setContenderUsername(username, saveStorage) {
+      if (!username) return;
+      var clean = username.trim();
+      currentContenderUsername = clean;
+      if (saveStorage !== false) {
+        localStorage.setItem('techboss_contender_username', clean);
+      }
+
+      var displayTag = clean.startsWith('@') ? clean : ('@' + clean);
+
+      if (gzActiveUserDisplay) gzActiveUserDisplay.textContent = displayTag;
+      if (gzDrawerActiveUser) gzDrawerActiveUser.textContent = displayTag;
+      if (bossContenderTag) bossContenderTag.textContent = displayTag;
+      if (codeContenderTag) codeContenderTag.textContent = displayTag;
+    }
+
+    function openContenderCheckinModal(isEditMode) {
+      if (gzModalError) gzModalError.style.display = 'none';
+      if (gzModalUsernameInput) {
+        gzModalUsernameInput.value = currentContenderUsername || localStorage.getItem('techboss_contender_username') || '';
+      }
+
+      var modalTitle = document.getElementById('gzModalTitle');
+      var modalDesc = document.getElementById('gzModalDesc');
+
+      if (gzCheckinCloseBtn) gzCheckinCloseBtn.style.display = 'flex';
+      if (gzModalCancelBtn) gzModalCancelBtn.style.display = 'block';
+
+      if (isEditMode) {
+        if (modalTitle) modalTitle.textContent = 'Switch Contender Profile';
+        if (modalDesc) modalDesc.textContent = 'Update your in-house username or register number to sync your combat stats.';
+      } else {
+        if (modalTitle) modalTitle.textContent = 'Contender Check-In';
+        if (modalDesc) modalDesc.textContent = 'Enter your registered handle or register number to enter in-house arena.';
+      }
+
+      if (gzCheckinModal) {
+        gzCheckinModal.classList.add('show');
+        playSynthSound('click');
+        setTimeout(function () {
+          if (gzModalUsernameInput) gzModalUsernameInput.focus();
+        }, 120);
+      }
+    }
+
+    function closeContenderCheckinModal() {
+      if (gzCheckinModal) {
+        gzCheckinModal.classList.remove('show');
+        playSynthSound('click');
+      }
+    }
+
+    async function getAllRegisteredContendersGz() {
+      var list = [];
+      try {
+        var localReg = localStorage.getItem('techboss_registrations');
+        if (localReg) {
+          var parsed = JSON.parse(localReg);
+          if (Array.isArray(parsed)) list = list.concat(parsed);
+        }
+      } catch (e) {}
+
+      if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+        try {
+          var cloudRegs = await window.TechBossSupabase.fetchRegistrations();
+          if (cloudRegs && Array.isArray(cloudRegs)) {
+            cloudRegs.forEach(function (cr) {
+              var exists = list.some(function (lr) {
+                return (lr.handle && lr.handle.toLowerCase() === (cr.handle || '').toLowerCase()) ||
+                       (lr.regNo && lr.regNo.toLowerCase() === (cr.regNo || '').toLowerCase());
+              });
+              if (!exists) list.push(cr);
+            });
+          }
+        } catch (e) {}
+      }
+
+      var defaultContenders = [
+        { handle: '@binarybeast', name: 'Devanshi K.', regNo: '22BCE1042', branch: 'CSE', year: '3rd Year' },
+        { handle: '@byteme', name: 'Rohan Sharma', regNo: '23BCE2015', branch: 'IT', year: '2nd Year' },
+        { handle: '@nullpointer', name: 'Aakash Verma', regNo: '21BCE3088', branch: 'CSD', year: '4th Year' }
+      ];
+      defaultContenders.forEach(function (d) {
+        if (!list.some(function (item) { return (item.handle || '').toLowerCase() === d.handle.toLowerCase(); })) {
+          list.push(d);
+        }
+      });
+
+      return list;
+    }
+
+    async function submitContenderCheckin() {
+      var rawInput = (gzModalUsernameInput ? gzModalUsernameInput.value : '').trim();
+      if (!rawInput) {
+        if (gzModalError) {
+          gzModalError.innerHTML = '⚠️ Please enter your registered handle (e.g. <b>@binarybeast</b>).';
+          gzModalError.style.display = 'block';
+        }
+        playSynthSound('click');
+        if (gzModalUsernameInput) gzModalUsernameInput.focus();
+        return;
+      }
+
+      var normHandle = rawInput.startsWith('@') ? rawInput : ('@' + rawInput);
+      var searchKey = normHandle.toLowerCase();
+
+      if (gzModalSubmitBtn) {
+        gzModalSubmitBtn.disabled = true;
+        gzModalSubmitBtn.textContent = 'Verifying Pass... 🔍';
+      }
+
+      var allContenders = await getAllRegisteredContendersGz();
+      var matched = allContenders.find(function (r) {
+        var h = (r.handle || '').toLowerCase().trim();
+        if (h && !h.startsWith('@')) h = '@' + h;
+        return h === searchKey;
+      });
+
+      if (!matched) {
+        if (gzModalSubmitBtn) {
+          gzModalSubmitBtn.disabled = false;
+          gzModalSubmitBtn.textContent = 'Enter In-House Arena ⚡';
+        }
+        if (gzModalError) {
+          gzModalError.innerHTML = '⚠️ Handle <b>' + escapeHtml(normHandle) + '</b> was not found in registered records.<br><span style="font-size:11px; color:#86868b;">Only registered contenders can enter in-house. Please enter your exact registered handle.</span>';
+          gzModalError.style.display = 'block';
+        }
+        playSynthSound('click');
+        return;
+      }
+
+      // Check single-entry lock
+      var inHouseMap = {};
+      try {
+        inHouseMap = JSON.parse(localStorage.getItem('techboss_inhouse_checkins') || '{}');
+      } catch (e) {
+        inHouseMap = {};
+      }
+
+      var activeLocalUser = (currentContenderUsername || localStorage.getItem('techboss_contender_username') || '').toLowerCase().trim();
+      if (activeLocalUser && !activeLocalUser.startsWith('@')) activeLocalUser = '@' + activeLocalUser;
+
+      if (inHouseMap[searchKey] && activeLocalUser !== searchKey) {
+        if (gzModalSubmitBtn) {
+          gzModalSubmitBtn.disabled = false;
+          gzModalSubmitBtn.textContent = 'Enter In-House Arena ⚡';
+        }
+        var entryTime = inHouseMap[searchKey].time || 'earlier today';
+        if (gzModalError) {
+          gzModalError.innerHTML = '🚫 <b>RE-ENTRY BLOCKED:</b><br>Handle <b>' + escapeHtml(normHandle) + '</b> has already checked into the In-House Arena at <b>' + escapeHtml(entryTime) + '</b>.<br><span style="font-size:11.5px; color:#ff9f0a;">Each pass permits a single in-house entry. Contact the Organizer Command Desk for clearance.</span>';
+          gzModalError.style.display = 'block';
+        }
+        playSynthSound('click');
+        return;
+      }
+
+      if (gzModalError) gzModalError.style.display = 'none';
+
+      var checkinTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      var checkinRecord = {
+        handle: matched.handle || normHandle,
+        name: matched.name || 'Gladiator',
+        regNo: matched.regNo || matched.reg_no || '--',
+        branch: matched.branch || '',
+        year: matched.year || '',
+        time: checkinTime,
+        timestamp: Date.now()
+      };
+
+      inHouseMap[searchKey] = checkinRecord;
+      localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(inHouseMap));
+
+      // Broadcast to Admin Terminal
+      if (typeof BroadcastChannel !== 'undefined') {
+        try {
+          var syncCh = new BroadcastChannel('techboss_sync_channel');
+          syncCh.postMessage({ type: 'INHOUSE_CHECKIN', contender: checkinRecord, timestamp: Date.now() });
+        } catch (e) {}
+      }
+
+      if (gzModalSubmitBtn) {
+        gzModalSubmitBtn.disabled = false;
+        gzModalSubmitBtn.textContent = 'Enter In-House Arena ⚡';
+      }
+
+      setContenderUsername(normHandle, true);
+      closeContenderCheckinModal();
+      playSynthSound('victory');
+    }
+
+    // Initialize Contender State on Load
+    function initContenderGate() {
+      var urlUser = getQueryParam('user');
+      var scanToken = getQueryParam('scan_token');
+      var isScan = getQueryParam('scan');
+      var storedUser = localStorage.getItem('techboss_contender_username');
+
+      if (urlUser) {
+        var cleanHandle = urlUser.trim();
+        if (!cleanHandle.startsWith('@')) cleanHandle = '@' + cleanHandle;
+        setContenderUsername(cleanHandle, true);
+
+        // Record In-House Attendance if arriving from QR pass
+        var searchKey = cleanHandle.toLowerCase();
+        var inHouseMap = {};
+        try {
+          inHouseMap = JSON.parse(localStorage.getItem('techboss_inhouse_checkins') || '{}');
+        } catch (e) {
+          inHouseMap = {};
+        }
+
+        var checkinTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        if (!inHouseMap[searchKey]) {
+          var checkinRecord = {
+            handle: cleanHandle,
+            name: cleanHandle.replace('@', ''),
+            regNo: '--',
+            branch: '',
+            year: '',
+            time: checkinTime,
+            token: scanToken || 'TB26-DIRECT',
+            timestamp: Date.now()
+          };
+          inHouseMap[searchKey] = checkinRecord;
+          localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(inHouseMap));
+        }
+
+        // Broadcast QR Scan Admission to Admin and Waiting Terminals
+        if (typeof BroadcastChannel !== 'undefined') {
+          try {
+            var syncCh = new BroadcastChannel('techboss_sync_channel');
+            syncCh.postMessage({
+              type: 'INHOUSE_QR_SCANNED',
+              handle: cleanHandle,
+              token: scanToken,
+              time: checkinTime,
+              timestamp: Date.now()
+            });
+            syncCh.postMessage({
+              type: 'INHOUSE_CHECKIN',
+              contender: inHouseMap[searchKey],
+              timestamp: Date.now()
+            });
+          } catch (e) {}
+        }
+
+        // Show celebratory toast if arrived via QR Scan
+        if (isScan === '1' || scanToken) {
+          showScanWelcomeToast(cleanHandle);
+        }
+      } else if (storedUser) {
+        setContenderUsername(storedUser, false);
+      } else {
+        // Open modal to ask handle to enter in house
+        openContenderCheckinModal(false);
+      }
+    }
+
+    function showScanWelcomeToast(handle) {
+      var toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:9999; background:linear-gradient(135deg, rgba(20,20,28,0.95), rgba(10,10,14,0.98)); border:1px solid rgba(0,240,255,0.4); border-radius:14px; padding:14px 24px; color:#ffffff; font-size:14px; font-weight:600; box-shadow:0 12px 36px rgba(0,240,255,0.25); display:flex; align-items:center; gap:12px; animation:sheetPop 0.3s ease; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);';
+      toast.innerHTML = '<span style="font-size:22px;">🎟️</span> <div><div style="color:var(--accent-cyan); font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">In-House Pass Verified</div><div>Welcome to the Arena, <b style="color:var(--accent-gold);">' + escapeHtml(handle) + '</b>!</div></div>';
+      document.body.appendChild(toast);
+
+      playSynthSound('victory');
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 80,
+          spread: 80,
+          origin: { y: 0.2 },
+          colors: ['#00f0ff', '#e5b358', '#30d158', '#ffffff']
+        });
+      }
+
+      setTimeout(function () {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s ease';
+        setTimeout(function () {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 500);
+      }, 4500);
+    }
+    initContenderGate();
+
+    if (gzContenderHeaderBadge) {
+      gzContenderHeaderBadge.addEventListener('click', function () {
+        openContenderCheckinModal(true);
+      });
+    }
+
+    if (gzDrawerSwitchBtn) {
+      gzDrawerSwitchBtn.addEventListener('click', function () {
+        closeSideMenu();
+        openContenderCheckinModal(true);
+      });
+    }
+
+    if (gzModalSubmitBtn) gzModalSubmitBtn.addEventListener('click', submitContenderCheckin);
+    if (gzCheckinCloseBtn) gzCheckinCloseBtn.addEventListener('click', closeContenderCheckinModal);
+    if (gzModalCancelBtn) gzModalCancelBtn.addEventListener('click', closeContenderCheckinModal);
+
+    if (gzModalUsernameInput) {
+      gzModalUsernameInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          submitContenderCheckin();
+        } else if (e.key === 'Escape') {
+          if (currentContenderUsername) closeContenderCheckinModal();
+        }
+      });
+    }
+
+    if (gzCheckinModal) {
+      gzCheckinModal.addEventListener('click', function (e) {
+        if (e.target === gzCheckinModal && currentContenderUsername) {
+          closeContenderCheckinModal();
+        }
+      });
+    }
   </script>
 
 </body>

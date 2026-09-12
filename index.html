@@ -16,6 +16,7 @@
     rel="stylesheet">
   <!-- QR Code & Confetti CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <!-- Supabase Cloud Sync -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1279,11 +1280,165 @@
         opacity: 0;
         transform: scale(0.95);
       }
-
       to {
         opacity: 1;
         transform: scale(1);
       }
+    }
+
+    /* IN-HOUSE ENTRY QR & SCANNER STYLES */
+    .gz-step-container {
+      display: flex;
+      flex-direction: column;
+      animation: sheetPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .gz-pass-card {
+      background: linear-gradient(145deg, rgba(22, 22, 30, 0.95), rgba(12, 12, 18, 0.98));
+      border: 1px solid rgba(229, 179, 88, 0.35);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), inset 0 0 24px rgba(229, 179, 88, 0.06);
+      border-radius: 18px;
+      padding: 18px 16px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .gz-pass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue), var(--accent-green));
+    }
+
+    .gz-qr-wrapper {
+      position: relative;
+      width: 194px;
+      height: 194px;
+      margin: 12px auto 14px;
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 16px;
+      box-shadow: 0 10px 32px rgba(0, 240, 255, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .gz-qr-wrapper img, .gz-qr-wrapper canvas {
+      display: block;
+      width: 170px !important;
+      height: 170px !important;
+      border-radius: 8px;
+    }
+
+    .gz-qr-laser {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #00f0ff, #2997ff, #00f0ff, transparent);
+      box-shadow: 0 0 12px #00f0ff, 0 0 20px rgba(0, 240, 255, 0.9);
+      animation: gzQrScanBeam 2.2s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    @keyframes gzQrScanBeam {
+      0% {
+        top: 8px;
+        opacity: 0.6;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        top: 182px;
+        opacity: 0.6;
+      }
+    }
+
+    .gz-status-radar {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      padding: 5px 14px;
+      border-radius: 9999px;
+      margin-bottom: 14px;
+    }
+
+    .gz-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00f0ff;
+      box-shadow: 0 0 8px #00f0ff;
+      animation: gzPulseDot 1.4s infinite ease-in-out;
+    }
+
+    @keyframes gzPulseDot {
+      0% { transform: scale(0.85); opacity: 0.5; }
+      50% { transform: scale(1.35); opacity: 1; }
+      100% { transform: scale(0.85); opacity: 0.5; }
+    }
+
+    .gz-camera-view {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #000000;
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .gz-camera-view video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gz-camera-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      background: radial-gradient(circle, transparent 45%, rgba(0,0,0,0.7) 90%);
+    }
+
+    .gz-camera-target {
+      width: 150px;
+      height: 150px;
+      border: 2px dashed rgba(0, 240, 255, 0.85);
+      border-radius: 14px;
+      box-shadow: 0 0 24px rgba(0, 240, 255, 0.35);
+      position: relative;
+    }
+
+    .gz-camera-target::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #00f0ff;
+      box-shadow: 0 0 10px #00f0ff;
+      animation: gzQrScanBeam 1.8s ease-in-out infinite alternate;
     }
 
     /* MINIMAL EVENT COUNTDOWN COMPONENT */
@@ -2241,11 +2396,11 @@
 
         <!-- Action Buttons -->
         <div style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
-          <a href="gamezone.html" class="btn btn-white" style="font-size: 15px; font-weight: 700; padding: 14px 34px; height: auto; border-radius: 980px; box-shadow: 0 4px 24px rgba(229, 179, 88, 0.35); display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
-            <span>🎮 Proceed to Game Zone & Dashboard</span>
-            <span style="font-size: 18px;">↗</span>
+          <a href="#" id="inhouseCheckinBtn" class="btn btn-white" style="font-size: 15px; font-weight: 700; padding: 14px 34px; height: auto; border-radius: 980px; box-shadow: 0 4px 24px rgba(229, 179, 88, 0.35); display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+            <span>🏟️ House Check-In</span>
+            <span style="font-size: 18px;">⚡</span>
           </a>
-          <a href="gamezone.html" class="btn btn-dark" style="font-size: 14px; font-weight: 600; padding: 13px 26px; height: auto; border-radius: 980px; text-decoration: none;">
+          <a href="#pass-verification" id="verifyPassBtn" class="btn btn-dark" style="font-size: 14px; font-weight: 600; padding: 13px 26px; height: auto; border-radius: 980px; text-decoration: none;">
             <span>🛡️ Verify Pass Details</span>
           </a>
         </div>
@@ -2312,7 +2467,7 @@
           <h2 class="sec-title">Championship Scoreboard.</h2>
           <p class="sec-desc">Live damage telemetry synced directly with the Organizer Command Center.</p>
         </div>
-        <a class="btn btn-dark btn-sm" href="admin.html">Organizer Terminal ↗</a>
+        <a class="btn btn-dark btn-sm" href="scoreboard.html" id="gameDashboardBtn" target="_blank" rel="noopener noreferrer">Game Dashboard ↗</a>
       </div>
 
 
@@ -2514,7 +2669,32 @@
     </div>
   </section>
 
+  <!-- Pass Verification Portal Section (Homepage) -->
+  <section id="pass-verification" style="padding: 70px 0 90px; position: relative; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+    <div class="wrap">
+      <div class="sec-header">
+        <span class="apple-badge gold" style="margin-bottom: 10px;">🛡️ OFFICIAL VERIFICATION GATEWAY</span>
+        <h2 class="sec-title">Contender Pass Verification.</h2>
+        <p class="sec-desc">Verify your contender credentials, arena clearance, and ₹60 pass status directly from the central tournament registry.</p>
+      </div>
 
+      <div class="apple-card" style="max-width: 720px; margin: 0 auto; background: rgba(18, 18, 20, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 16px 48px rgba(0,0,0,0.6); backdrop-filter: blur(20px); border-radius: var(--radius-lg); padding: 32px 28px;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h3 style="font-size: 20px; font-weight: 800; color: #ffffff;">Contender Pass Status Lookup</h3>
+          <p style="font-size: 13.5px; color: var(--text-secondary); margin-top: 6px;">Enter your <b>Register Number</b> (e.g. <span class="mono" style="color:var(--accent-gold);">22BCE1042</span>) or registered <b>Handle</b> (e.g. <span class="mono" style="color:var(--accent-gold);">@binarybeast</span>).</p>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+          <input type="text" id="passLookupInput" placeholder="Enter Register No or @Handle..." class="mono" style="flex: 1; min-width: 240px; font-size: 15px; text-transform: uppercase;">
+          <button class="btn btn-white" id="passLookupBtn" style="padding: 12px 24px; font-weight: 700; white-space: nowrap;">🔍 Check Status</button>
+        </div>
+
+        <div id="passLookupResult" style="display: none; padding: 22px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md);">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Confirmation Modal -->
   <div class="pass-modal" id="passModal">
@@ -2563,6 +2743,137 @@
       </div>
 
       <button class="btn btn-white" id="closePassBtn" style="width:100%;">Done</button>
+    </div>
+  </div>
+
+  <!-- In-House Game Zone & Dashboard Contender Entry Modal -->
+  <div class="pass-modal" id="gamezoneEntryModal">
+    <div class="pass-sheet" style="max-width: 460px; text-align: center; position: relative;">
+      <button type="button" class="btn-modal-close" id="closeGamezoneModalBtn" aria-label="Close" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.08); border: none; color: #86868b; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 10;">✕</button>
+      
+      <!-- STEP 1: Handle Entry Gate -->
+      <div id="gzStep1Handle" class="gz-step-container">
+        <div style="font-size: 38px; margin-bottom: 8px;">🏟️</div>
+        <span class="apple-badge gold" style="margin-bottom: 10px;">IN-HOUSE CONTENDER GATE</span>
+        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 8px; color: #ffffff;">Enter In-House Arena</h2>
+        <p style="color: var(--text-secondary); font-size: 13.5px; margin-bottom: 20px; line-height: 1.5;">
+          Enter your registered <b>Handle / Gamer Tag</b>. The handle must match an approved pass. <span style="color:var(--accent-gold); font-weight:600;">Single-entry policy enforced</span> (no re-entry permitted once entered).
+        </p>
+
+        <div style="text-align: left; margin-bottom: 18px;">
+          <label for="gzContenderUsername" style="display: block; font-size: 11.5px; font-weight: 700; color: #f5f5f7; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+            Registered Handle Only
+          </label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--accent-gold);">@</span>
+            <input type="text" id="gzContenderUsername" placeholder="e.g. @binarybeast or @CyberKnight" autocomplete="off" spellcheck="false" style="width: 100%; padding: 13px 14px 13px 38px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.18); border-radius: 12px; color: #ffffff; font-size: 14.5px; font-weight: 600; outline: none; box-sizing: border-box;">
+          </div>
+          <div id="gzRecentUserPill" style="display: none; margin-top: 8px; font-size: 12px; color: var(--text-secondary);">
+            <span>Registered handle: </span>
+            <button type="button" id="gzQuickSelectBtn" style="background: rgba(229,179,88,0.12); color: var(--accent-gold); border: 1px solid rgba(229,179,88,0.3); border-radius: 980px; padding: 2px 10px; font-size: 11.5px; font-weight: 600; cursor: pointer;"></button>
+          </div>
+          <div id="gzEntryError" style="display: none; color: #ff453a; font-size: 12.5px; margin-top: 8px; font-weight: 500; background: rgba(255,69,58,0.1); border: 1px solid rgba(255,69,58,0.25); border-radius: 8px; padding: 8px 12px; line-height: 1.4;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 12px 14px; margin-bottom: 20px; text-align: left; font-size: 12px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: var(--accent-gold);">🛡️</span>
+            <span>Generates In-House QR Pass with single-entry lock</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: var(--accent-blue);">⚡</span>
+            <span>Real-time scan admission synced to Organizer Terminal</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn btn-dark" id="cancelGamezoneModalBtn" style="flex: 1; padding: 12px 16px;">Cancel</button>
+          <button type="button" class="btn btn-white" id="submitGamezoneEntryBtn" style="flex: 2; padding: 12px 18px; font-weight: 700;">Proceed to House ⚡</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: In-House Arena Device Camera Scanner -->
+      <div id="gzStep2ScanPass" class="gz-step-container" style="display: none;">
+        <span class="apple-badge cyan" style="margin-bottom: 8px;">⚡ IN-HOUSE ARENA GATE SCANNER</span>
+        <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 4px; color: #ffffff;">Arena Device Scanner</h2>
+        <p style="color: var(--text-secondary); font-size: 12.5px; margin-bottom: 12px;">
+          Aim your camera at the arena entrance pass or QR to verify check-in.
+        </p>
+
+        <!-- Contender Pass Badge Card -->
+        <div class="gz-pass-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 15px;">🏟️</span>
+              <span style="font-size: 12px; font-weight: 700; color: #ffffff; letter-spacing: 0.5px;">TECH BOSS ARENA</span>
+            </div>
+            <span class="badge-status status-verified" style="font-size: 10px; padding: 2px 7px;">VERIFIED PASS</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; margin-bottom: 8px;">
+            <div>
+              <div style="color: var(--text-secondary); font-size: 10.5px;">CONTENDER</div>
+              <div id="gzPassContenderName" style="font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">--</div>
+            </div>
+            <div>
+              <div style="color: var(--text-secondary); font-size: 10.5px;">HANDLE / TAG</div>
+              <div id="gzPassContenderHandle" class="mono" style="font-weight: 700; color: var(--accent-gold);">--</div>
+            </div>
+            <div>
+              <div style="color: var(--text-secondary); font-size: 10.5px;">REGISTRATION</div>
+              <div id="gzPassContenderReg" class="mono" style="font-weight: 600; color: #ffffff;">--</div>
+            </div>
+            <div>
+              <div style="color: var(--text-secondary); font-size: 10.5px;">PASS TOKEN</div>
+              <div id="gzPassContenderToken" class="mono" style="font-weight: 700; color: var(--accent-cyan);">--</div>
+            </div>
+          </div>
+
+          <div style="font-size: 11px; color: var(--text-secondary); border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px; display: flex; justify-content: space-between;">
+            <span>📍 Tech Centre 2nd Flr, Lab 1</span>
+            <span style="color: var(--accent-green); font-weight: 600;">Single-Entry Active</span>
+          </div>
+        </div>
+
+        <!-- Device Camera Scanner View (Primary) -->
+        <div id="gzCameraScannerView" class="gz-camera-view" style="display: block; margin-bottom: 12px; height: 230px;">
+          <video id="gzScannerVideo" playsinline autoplay muted></video>
+          <canvas id="gzScannerCanvas" style="display: none;"></canvas>
+          <div class="gz-camera-overlay">
+            <div class="gz-camera-target"></div>
+            <div id="gzCameraStatusMsg" style="font-size: 11.5px; color: #00f0ff; margin-top: 8px; font-weight: 600; text-shadow: 0 0 6px #000;">
+              Align Arena QR inside scanner frame
+            </div>
+          </div>
+        </div>
+
+        <!-- Radar Status -->
+        <div class="gz-status-radar" style="margin-bottom: 12px;">
+          <span class="gz-status-dot"></span>
+          <span id="gzScanStatusText">Live camera active — scanning QR pass...</span>
+        </div>
+
+        <!-- Scan Success / Error Banner -->
+        <div id="gzScanFeedbackBanner" style="display: none; padding: 10px 14px; border-radius: 10px; font-size: 12.5px; font-weight: 600; margin-bottom: 12px;"></div>
+
+        <!-- Actions (No Proceed Into House button) -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button type="button" class="btn btn-white" id="gzDoneBtn" style="width: 100%; padding: 12px 18px; font-weight: 700; display: none; background: #30d158; color: #000000;">
+            ✓ In-House Checked In (Close Pass)
+          </button>
+
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-dark" id="gzToggleCameraBtn" style="flex: 1; padding: 10px 12px; font-size: 12px; font-weight: 600;">
+              📷 Restart Camera
+            </button>
+            <button type="button" class="btn btn-dark" id="gzBackToHandleBtn" style="flex: 1; padding: 10px 12px; font-size: 12px; font-weight: 600;">
+              ← Change Handle
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2651,7 +2962,7 @@
           <ul class="footer-links-list">
             <li><a href="#register">🎟️ Register (₹60 Pass)</a></li>
             <li><a href="gamezone.html">🎮 Game Zone & Live Dashboard</a></li>
-            <li><a href="gamezone.html#pass-search">🛡️ Pass Verification</a></li>
+            <li><a href="#pass-verification">🛡️ Pass Verification Portal</a></li>
             <li><a href="#leaderboard">🏆 Championship Standings</a></li>
             <li><a href="admin.html" style="color:var(--accent-gold); font-weight:600;">⚙️ Organizer Command Center ↗</a></li>
           </ul>
@@ -3204,6 +3515,9 @@
         registerBtn.disabled = false;
         registerBtn.innerHTML = origBtnText;
 
+        // Store active contender username in localStorage for instant Game Zone access
+        localStorage.setItem('techboss_contender_username', autoHandle || name);
+
         // Display database-verified data on the Pass Modal
         document.getElementById('passChallengerName').textContent = participantData.name;
         document.getElementById('passRegNo').textContent = participantData.reg_no || participantData.regNo || regNo;
@@ -3273,7 +3587,763 @@
     }
 
     // ==========================================
-    // 6. LIVE EVENT COUNTDOWN TIMER & TECH BOSS REVEAL
+    // 6. IN-HOUSE GAME ZONE & DASHBOARD CONTENDER GATE & QR SCANNER
+    // ==========================================
+    var gamezoneEntryModal = document.getElementById('gamezoneEntryModal');
+    var inhouseCheckinBtn = document.getElementById('inhouseCheckinBtn');
+    var proceedGamezoneBtn = document.getElementById('proceedGamezoneBtn');
+    var verifyPassBtn = document.getElementById('verifyPassBtn');
+    var closeGamezoneModalBtn = document.getElementById('closeGamezoneModalBtn');
+    var cancelGamezoneModalBtn = document.getElementById('cancelGamezoneModalBtn');
+    var submitGamezoneEntryBtn = document.getElementById('submitGamezoneEntryBtn');
+    var gzContenderUsername = document.getElementById('gzContenderUsername');
+    var gzEntryError = document.getElementById('gzEntryError');
+    var gzRecentUserPill = document.getElementById('gzRecentUserPill');
+    var gzQuickSelectBtn = document.getElementById('gzQuickSelectBtn');
+
+    var gzStep1Handle = document.getElementById('gzStep1Handle');
+    var gzStep2ScanPass = document.getElementById('gzStep2ScanPass');
+    var gzPassContenderName = document.getElementById('gzPassContenderName');
+    var gzPassContenderHandle = document.getElementById('gzPassContenderHandle');
+    var gzPassContenderReg = document.getElementById('gzPassContenderReg');
+    var gzPassContenderToken = document.getElementById('gzPassContenderToken');
+    var gzQrPassContent = document.getElementById('gzQrPassContent');
+    var gzQrBox = document.getElementById('gzQrBox');
+    var gzScanStatusText = document.getElementById('gzScanStatusText');
+    var gzCameraScannerView = document.getElementById('gzCameraScannerView');
+    var gzScannerVideo = document.getElementById('gzScannerVideo');
+    var gzCameraStatusMsg = document.getElementById('gzCameraStatusMsg');
+    var gzScanFeedbackBanner = document.getElementById('gzScanFeedbackBanner');
+    var gzDirectAdmitBtn = document.getElementById('gzDirectAdmitBtn');
+    var gzToggleCameraBtn = document.getElementById('gzToggleCameraBtn');
+    var gzCopyQrLinkBtn = document.getElementById('gzCopyQrLinkBtn');
+    var gzBackToHandleBtn = document.getElementById('gzBackToHandleBtn');
+
+    var targetGzUrl = 'gamezone.html';
+    var currentPendingPass = null;
+    var cameraStream = null;
+    var cameraScanTimer = null;
+    var syncBroadcastChannel = null;
+
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        syncBroadcastChannel = new BroadcastChannel('techboss_sync_channel');
+        syncBroadcastChannel.onmessage = handleSyncChannelMessage;
+      }
+    } catch (e) {}
+
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'techboss_inhouse_checkins' && currentPendingPass) {
+        try {
+          var updated = JSON.parse(e.newValue || '{}');
+          var searchKey = currentPendingPass.handle.toLowerCase();
+          if (updated[searchKey]) {
+            handlePassScannedSuccess(currentPendingPass.handle, 'Storage Sync');
+          }
+        } catch (err) {}
+      }
+    });
+
+    function handleSyncChannelMessage(ev) {
+      if (!ev || !ev.data) return;
+      var data = ev.data;
+      if (data.type === 'INHOUSE_QR_SCANNED' || data.type === 'INHOUSE_CHECKIN') {
+        var scannedHandle = (data.handle || (data.contender && data.contender.handle) || '').toLowerCase().trim();
+        if (scannedHandle && !scannedHandle.startsWith('@')) scannedHandle = '@' + scannedHandle;
+
+        var scannedToken = data.token || '';
+
+        if (currentPendingPass) {
+          var curH = currentPendingPass.handle.toLowerCase().trim();
+          if (curH === scannedHandle || (scannedToken && currentPendingPass.token === scannedToken)) {
+            handlePassScannedSuccess(currentPendingPass.handle, 'Mobile Scanner');
+          }
+        }
+      }
+    }
+
+    function handlePassScannedSuccess(handle, source) {
+      if (!currentPendingPass) return;
+      playSynthSound('victory');
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 80,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#00f0ff', '#e5b358', '#30d158', '#ffffff']
+        });
+      }
+
+      if (gzScanStatusText) {
+        gzScanStatusText.innerHTML = '✅ <b>IN-HOUSE CHECK-IN VERIFIED!</b>';
+        gzScanStatusText.style.color = '#30d158';
+      }
+
+      if (gzScanFeedbackBanner) {
+        gzScanFeedbackBanner.style.display = 'block';
+        gzScanFeedbackBanner.style.background = 'rgba(48,209,88,0.15)';
+        gzScanFeedbackBanner.style.border = '1px solid rgba(48,209,88,0.35)';
+        gzScanFeedbackBanner.style.color = '#30d158';
+        gzScanFeedbackBanner.innerHTML = '🎉 <b>In-House Entry Granted!</b> Contender <b style="color:#ffffff;">' + escapeHtml(handle) + '</b> is checked in to the House.<br><span style="font-size:11.5px; color:rgba(255,255,255,0.75);">📍 Tech Centre 2nd Floor, 1st Lab · Attendance recorded live.</span>';
+      }
+
+      if (gzDoneBtn) {
+        gzDoneBtn.style.display = 'block';
+        gzDoneBtn.textContent = '✓ Admitted to House (Close)';
+      }
+    }
+
+    function openGamezoneEntryModal(destUrl) {
+      targetGzUrl = destUrl || 'gamezone.html';
+      stopCameraScanner();
+
+      if (gzStep1Handle) gzStep1Handle.style.display = 'block';
+      if (gzStep2ScanPass) gzStep2ScanPass.style.display = 'none';
+      if (gzScanFeedbackBanner) gzScanFeedbackBanner.style.display = 'none';
+
+      if (gzDoneBtn) {
+        gzDoneBtn.style.display = 'none';
+      }
+
+      var savedUser = localStorage.getItem('techboss_contender_username') || '';
+      if (gzContenderUsername) {
+        gzContenderUsername.value = savedUser;
+      }
+      if (gzEntryError) gzEntryError.style.display = 'none';
+
+      if (savedUser && gzRecentUserPill && gzQuickSelectBtn) {
+        gzQuickSelectBtn.textContent = savedUser;
+        gzRecentUserPill.style.display = 'block';
+      } else if (gzRecentUserPill) {
+        gzRecentUserPill.style.display = 'none';
+      }
+
+      if (submitGamezoneEntryBtn) {
+        submitGamezoneEntryBtn.disabled = false;
+        submitGamezoneEntryBtn.textContent = 'Proceed to House ⚡';
+      }
+
+      if (gamezoneEntryModal) {
+        gamezoneEntryModal.classList.add('show');
+        playSynthSound('click');
+        setTimeout(function () {
+          if (gzContenderUsername) gzContenderUsername.focus();
+        }, 120);
+      }
+    }
+
+    function closeGamezoneEntryModal() {
+      stopCameraScanner();
+      if (gamezoneEntryModal) {
+        gamezoneEntryModal.classList.remove('show');
+        playSynthSound('click');
+      }
+    }
+
+    async function getAllRegisteredContenders() {
+      var list = [];
+      // 1. Try local registrations
+      try {
+        var localReg = localStorage.getItem('techboss_registrations');
+        if (localReg) {
+          var parsed = JSON.parse(localReg);
+          if (Array.isArray(parsed)) list = list.concat(parsed);
+        }
+      } catch (e) {}
+
+      // 2. Try Supabase cloud if connected
+      if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+        try {
+          var cloudRegs = await window.TechBossSupabase.fetchRegistrations();
+          if (cloudRegs && Array.isArray(cloudRegs)) {
+            cloudRegs.forEach(function (cr) {
+              var exists = list.some(function (lr) {
+                return (lr.handle && lr.handle.toLowerCase() === (cr.handle || '').toLowerCase()) ||
+                       (lr.regNo && lr.regNo.toLowerCase() === (cr.regNo || '').toLowerCase());
+              });
+              if (!exists) list.push(cr);
+            });
+          }
+        } catch (e) {}
+      }
+
+      // 3. Fallback demo contestants if fresh session
+      var defaultContenders = [
+        { handle: '@binarybeast', name: 'Devanshi K.', regNo: '22BCE1042', branch: 'CSE', year: '3rd Year' },
+        { handle: '@byteme', name: 'Rohan Sharma', regNo: '23BCE2015', branch: 'IT', year: '2nd Year' },
+        { handle: '@nullpointer', name: 'Aakash Verma', regNo: '21BCE3088', branch: 'CSD', year: '4th Year' }
+      ];
+      defaultContenders.forEach(function (d) {
+        if (!list.some(function (item) { return (item.handle || '').toLowerCase() === d.handle.toLowerCase(); })) {
+          list.push(d);
+        }
+      });
+
+      return list;
+    }
+
+    async function submitGamezoneEntry() {
+      var rawInput = (gzContenderUsername ? gzContenderUsername.value : '').trim();
+      if (!rawInput) {
+        if (gzEntryError) {
+          gzEntryError.innerHTML = '⚠️ Please enter your registered handle (e.g. <b>@binarybeast</b>).';
+          gzEntryError.style.display = 'block';
+        }
+        playSynthSound('click');
+        if (gzContenderUsername) gzContenderUsername.focus();
+        return;
+      }
+
+      var normHandle = rawInput.startsWith('@') ? rawInput : ('@' + rawInput);
+      var searchKey = normHandle.toLowerCase();
+
+      if (submitGamezoneEntryBtn) {
+        submitGamezoneEntryBtn.disabled = true;
+        submitGamezoneEntryBtn.textContent = 'Verifying Pass... 🔍';
+      }
+
+      var allContenders = await getAllRegisteredContenders();
+
+      var matched = allContenders.find(function (r) {
+        var h = (r.handle || '').toLowerCase().trim();
+        if (h && !h.startsWith('@')) h = '@' + h;
+        return h === searchKey;
+      });
+
+      // Strict Handle Matching Check
+      if (!matched) {
+        if (submitGamezoneEntryBtn) {
+          submitGamezoneEntryBtn.disabled = false;
+          submitGamezoneEntryBtn.textContent = 'Proceed to House ⚡';
+        }
+        if (gzEntryError) {
+          gzEntryError.innerHTML = '⚠️ Handle <b>' + escapeHtml(normHandle) + '</b> was not found in registered records.<br><span style="font-size:11px; color:#86868b;">Only registered contenders can enter in-house. Please enter your exact registered handle or register for a pass below.</span>';
+          gzEntryError.style.display = 'block';
+        }
+        playSynthSound('click');
+        return;
+      }
+
+      // Check In-House Single-Entry Policy (Prevent Re-Entry)
+      var inHouseMap = {};
+      try {
+        inHouseMap = JSON.parse(localStorage.getItem('techboss_inhouse_checkins') || '{}');
+      } catch (e) {
+        inHouseMap = {};
+      }
+
+      var activeLocalUser = (localStorage.getItem('techboss_contender_username') || '').toLowerCase().trim();
+      if (activeLocalUser && !activeLocalUser.startsWith('@')) activeLocalUser = '@' + activeLocalUser;
+
+      if (inHouseMap[searchKey] && activeLocalUser !== searchKey) {
+        if (submitGamezoneEntryBtn) {
+          submitGamezoneEntryBtn.disabled = false;
+          submitGamezoneEntryBtn.textContent = 'Proceed to House ⚡';
+        }
+        var entryTime = inHouseMap[searchKey].time || 'earlier today';
+        if (gzEntryError) {
+          gzEntryError.innerHTML = '🚫 <b>RE-ENTRY BLOCKED:</b><br>Handle <b>' + escapeHtml(normHandle) + '</b> has already checked into the In-House Arena at <b>' + escapeHtml(entryTime) + '</b>.<br><span style="font-size:11.5px; color:#ff9f0a;">Each pass permits only a single in-house entry. Please report to the Organizer Command Desk (Tech Centre 2nd Flr, 1st Lab) for clearance.</span>';
+          gzEntryError.style.display = 'block';
+        }
+        playSynthSound('click');
+        return;
+      }
+
+      if (gzEntryError) gzEntryError.style.display = 'none';
+
+      // Generate Unique In-House Pass Token & Admission URL
+      var token = 'TB26-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+      var origin = window.location.origin;
+      var path = window.location.pathname;
+      var basePath = path.substring(0, path.lastIndexOf('/') + 1);
+      var finalDest = targetGzUrl || 'gamezone.html';
+      var finalUrl = '';
+
+      if (finalDest.includes('#')) {
+        var parts = finalDest.split('#');
+        var sep = parts[0].includes('?') ? '&' : '?';
+        finalUrl = origin + basePath + parts[0] + sep + 'user=' + encodeURIComponent(normHandle) + '&scan_token=' + encodeURIComponent(token) + '&scan=1#' + parts[1];
+      } else {
+        var sep = finalDest.includes('?') ? '&' : '?';
+        finalUrl = origin + basePath + finalDest + sep + 'user=' + encodeURIComponent(normHandle) + '&scan_token=' + encodeURIComponent(token) + '&scan=1';
+      }
+
+      currentPendingPass = {
+        handle: normHandle,
+        record: matched,
+        token: token,
+        url: finalUrl
+      };
+
+      // Populate Step 2 Pass Details
+      if (gzPassContenderName) gzPassContenderName.textContent = matched.name || 'Gladiator';
+      if (gzPassContenderHandle) gzPassContenderHandle.textContent = normHandle;
+      if (gzPassContenderReg) gzPassContenderReg.textContent = matched.regNo || matched.reg_no || 'TB26-CHAMP';
+      if (gzPassContenderToken) gzPassContenderToken.textContent = token;
+
+      if (gzScanStatusText) {
+        gzScanStatusText.textContent = 'Live camera active — point at Arena QR...';
+        gzScanStatusText.style.color = 'var(--accent-cyan)';
+      }
+
+      if (gzDoneBtn) {
+        gzDoneBtn.style.display = 'none';
+      }
+
+      // Transition to Step 2 & Launch Device Camera Scanner
+      if (gzStep1Handle) gzStep1Handle.style.display = 'none';
+      if (gzStep2ScanPass) gzStep2ScanPass.style.display = 'block';
+      if (gzCameraScannerView) gzCameraScannerView.style.display = 'block';
+      if (gzScanFeedbackBanner) gzScanFeedbackBanner.style.display = 'none';
+
+      playSynthSound('click');
+      startCameraScanner();
+    }
+
+    function admitContenderDirectly(sourceName) {
+      if (!currentPendingPass) return;
+      var normHandle = currentPendingPass.handle;
+      var searchKey = normHandle.toLowerCase();
+      var matched = currentPendingPass.record || {};
+      var token = currentPendingPass.token;
+
+      var inHouseMap = {};
+      try {
+        inHouseMap = JSON.parse(localStorage.getItem('techboss_inhouse_checkins') || '{}');
+      } catch (e) {
+        inHouseMap = {};
+      }
+
+      var checkinTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      var checkinRecord = {
+        handle: matched.handle || normHandle,
+        name: matched.name || 'Gladiator',
+        regNo: matched.regNo || matched.reg_no || '--',
+        branch: matched.branch || '',
+        year: matched.year || '',
+        time: checkinTime,
+        token: token,
+        timestamp: Date.now()
+      };
+
+      inHouseMap[searchKey] = checkinRecord;
+      localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(inHouseMap));
+      localStorage.setItem('techboss_contender_username', normHandle);
+
+      if (syncBroadcastChannel) {
+        try {
+          syncBroadcastChannel.postMessage({ type: 'INHOUSE_CHECKIN', contender: checkinRecord, timestamp: Date.now() });
+          syncBroadcastChannel.postMessage({ type: 'INHOUSE_QR_SCANNED', handle: normHandle, token: token, time: checkinTime, timestamp: Date.now() });
+        } catch (e) {}
+      }
+
+      handlePassScannedSuccess(normHandle, sourceName || 'Device Camera Scanner');
+    }
+
+    // Camera Scanner Implementation using jsQR and BarcodeDetector
+    async function toggleCameraScanner() {
+      stopCameraScanner();
+      startCameraScanner();
+    }
+
+    async function startCameraScanner() {
+      if (cameraStream) {
+        stopCameraScanner();
+      }
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (gzCameraStatusMsg) gzCameraStatusMsg.textContent = '⚠️ Camera not supported in this browser.';
+        return;
+      }
+
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }
+        });
+
+        if (gzScannerVideo) {
+          gzScannerVideo.srcObject = cameraStream;
+          gzScannerVideo.setAttribute('playsinline', 'true');
+          gzScannerVideo.play();
+        }
+
+        if (gzCameraScannerView) gzCameraScannerView.style.display = 'block';
+        if (gzCameraStatusMsg) gzCameraStatusMsg.textContent = 'Align Arena QR inside scanner frame';
+
+        var canvas = document.getElementById('gzScannerCanvas') || document.createElement('canvas');
+        canvas.id = 'gzScannerCanvas';
+        var ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+        // Real-time camera decode loop (supports jsQR and native BarcodeDetector)
+        cameraScanTimer = setInterval(async function () {
+          if (!cameraStream || !gzScannerVideo || gzScannerVideo.readyState < 2) return;
+
+          // 1. Try BarcodeDetector if available
+          if ('BarcodeDetector' in window) {
+            try {
+              var detector = new BarcodeDetector({ formats: ['qr_code'] });
+              var barcodes = await detector.detect(gzScannerVideo);
+              if (barcodes && barcodes.length > 0) {
+                var rawValue = barcodes[0].rawValue || '';
+                handleCameraScanResult(rawValue);
+                return;
+              }
+            } catch (err) {}
+          }
+
+          // 2. Try jsQR on canvas frame
+          if (typeof jsQR !== 'undefined') {
+            try {
+              var vWidth = gzScannerVideo.videoWidth || 320;
+              var vHeight = gzScannerVideo.videoHeight || 240;
+              if (canvas.width !== vWidth) canvas.width = vWidth;
+              if (canvas.height !== vHeight) canvas.height = vHeight;
+
+              ctx.drawImage(gzScannerVideo, 0, 0, vWidth, vHeight);
+              var imgData = ctx.getImageData(0, 0, vWidth, vHeight);
+              var code = jsQR(imgData.data, imgData.width, imgData.height, {
+                inversionAttempts: 'dontInvert'
+              });
+
+              if (code && code.data) {
+                handleCameraScanResult(code.data);
+                return;
+              }
+            } catch (err) {}
+          }
+        }, 180);
+
+      } catch (err) {
+        if (gzCameraStatusMsg) gzCameraStatusMsg.textContent = '⚠️ Camera permission denied or in use.';
+        if (gzCameraScannerView) gzCameraScannerView.style.display = 'block';
+      }
+    }
+
+    function stopCameraScanner() {
+      if (cameraScanTimer) {
+        clearInterval(cameraScanTimer);
+        cameraScanTimer = null;
+      }
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(function (t) { t.stop(); });
+        cameraStream = null;
+      }
+      if (gzScannerVideo) {
+        gzScannerVideo.srcObject = null;
+      }
+    }
+
+    var lastInvalidScanNoticeTime = 0;
+
+    function isOfficialArenaQr(scannedText) {
+      if (!scannedText || typeof scannedText !== 'string') return false;
+      var cleaned = scannedText.trim().toLowerCase().replace(/\s+/g, ' ');
+      // Official Arena Pass QR code (1st photo): "tech boss pass"
+      return cleaned === 'tech boss pass' || cleaned === 'tech boss pass;' || cleaned.startsWith('tech boss pass');
+    }
+
+    function handleCameraScanResult(scannedText) {
+      if (!scannedText) return;
+
+      if (isOfficialArenaQr(scannedText)) {
+        stopCameraScanner();
+        if (gzCameraStatusMsg) {
+          gzCameraStatusMsg.textContent = '✓ Official Arena QR Verified!';
+          gzCameraStatusMsg.style.color = '#30d158';
+        }
+        admitContenderDirectly('Arena QR Pass Scan');
+      } else {
+        // Reject non-matching QR code
+        var now = Date.now();
+        if (now - lastInvalidScanNoticeTime > 1600) {
+          lastInvalidScanNoticeTime = now;
+          if (gzCameraStatusMsg) {
+            gzCameraStatusMsg.textContent = '⚠️ Invalid QR: Point at official Arena Gate QR';
+            gzCameraStatusMsg.style.color = '#ff453a';
+          }
+          if (gzScanStatusText) {
+            gzScanStatusText.innerHTML = '<span style="color:#ff453a;">❌ Unrecognized QR code. Please scan official Arena QR.</span>';
+          }
+          if (gzScanFeedbackBanner) {
+            gzScanFeedbackBanner.style.display = 'block';
+            gzScanFeedbackBanner.style.background = 'rgba(255,69,58,0.15)';
+            gzScanFeedbackBanner.style.border = '1px solid rgba(255,69,58,0.35)';
+            gzScanFeedbackBanner.style.color = '#ff453a';
+            gzScanFeedbackBanner.innerHTML = '❌ <b>Invalid QR Pass:</b> Scanned QR code is not the official <b>Tech Boss Arena Pass</b>. Please aim your camera at the official Arena Gate QR.';
+          }
+          try { playSynthSound('click'); } catch (e) {}
+
+          setTimeout(function () {
+            if (cameraStream && gzCameraStatusMsg) {
+              gzCameraStatusMsg.textContent = 'Align Arena QR inside scanner frame';
+              gzCameraStatusMsg.style.color = '#00f0ff';
+            }
+            if (cameraStream && gzScanStatusText) {
+              gzScanStatusText.innerHTML = 'Live camera active — point at Arena QR...';
+              gzScanStatusText.style.color = 'var(--accent-cyan)';
+            }
+          }, 2500);
+        }
+      }
+    }
+
+    function returnToStep1() {
+      stopCameraScanner();
+      if (gzStep2ScanPass) gzStep2ScanPass.style.display = 'none';
+      if (gzStep1Handle) gzStep1Handle.style.display = 'block';
+      if (submitGamezoneEntryBtn) {
+        submitGamezoneEntryBtn.disabled = false;
+        submitGamezoneEntryBtn.textContent = 'Proceed to House ⚡';
+      }
+      if (gzContenderUsername) gzContenderUsername.focus();
+    }
+
+    // Modal Action Bindings
+    var gzDoneBtn = document.getElementById('gzDoneBtn');
+    var gzSimulateScanBtn = document.getElementById('gzSimulateScanBtn');
+
+    if (gzDoneBtn) gzDoneBtn.addEventListener('click', closeGamezoneEntryModal);
+    if (gzSimulateScanBtn) {
+      gzSimulateScanBtn.addEventListener('click', function () {
+        if (gzCameraStatusMsg) {
+          gzCameraStatusMsg.textContent = '⚡ Point camera at official Arena Gate QR';
+          gzCameraStatusMsg.style.color = 'var(--accent-gold)';
+        }
+      });
+    }
+    if (gzToggleCameraBtn) gzToggleCameraBtn.addEventListener('click', toggleCameraScanner);
+    if (gzBackToHandleBtn) gzBackToHandleBtn.addEventListener('click', returnToStep1);
+
+    if (gzQuickSelectBtn) {
+      gzQuickSelectBtn.addEventListener('click', function () {
+        if (gzContenderUsername) {
+          gzContenderUsername.value = gzQuickSelectBtn.textContent.trim();
+          submitGamezoneEntry();
+        }
+      });
+    }
+
+    if (submitGamezoneEntryBtn) submitGamezoneEntryBtn.addEventListener('click', submitGamezoneEntry);
+    if (closeGamezoneModalBtn) closeGamezoneModalBtn.addEventListener('click', closeGamezoneEntryModal);
+    if (cancelGamezoneModalBtn) cancelGamezoneModalBtn.addEventListener('click', closeGamezoneEntryModal);
+
+    if (gzContenderUsername) {
+      gzContenderUsername.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          submitGamezoneEntry();
+        } else if (e.key === 'Escape') {
+          closeGamezoneEntryModal();
+        }
+      });
+    }
+
+    if (gamezoneEntryModal) {
+      gamezoneEntryModal.addEventListener('click', function (e) {
+        if (e.target === gamezoneEntryModal) {
+          closeGamezoneEntryModal();
+        }
+      });
+    }
+
+    if (inhouseCheckinBtn) {
+      inhouseCheckinBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        openGamezoneEntryModal('gamezone.html');
+      });
+    }
+
+    if (proceedGamezoneBtn) {
+      proceedGamezoneBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        openGamezoneEntryModal('gamezone.html');
+      });
+    }
+
+    if (verifyPassBtn) {
+      verifyPassBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var targetSec = document.getElementById('pass-verification');
+        if (targetSec) {
+          targetSec.scrollIntoView({ behavior: 'smooth' });
+          playSynthSound('click');
+          setTimeout(function () {
+            var input = document.getElementById('passLookupInput');
+            if (input) input.focus();
+          }, 400);
+        }
+      });
+    }
+
+    function openGamezoneEntryModalWithHandle(handle, autoSubmit) {
+      openGamezoneEntryModal('gamezone.html');
+      if (handle && gzContenderUsername) {
+        gzContenderUsername.value = handle;
+        if (autoSubmit) {
+          setTimeout(function () {
+            submitGamezoneEntry();
+          }, 80);
+        }
+      }
+    }
+    window.openGamezoneEntryModalWithHandle = openGamezoneEntryModalWithHandle;
+
+    // ==========================================
+    // 6B. HOMEPAGE PASS VERIFICATION LOOKUP
+    // ==========================================
+    var passLookupBtn = document.getElementById('passLookupBtn');
+    var passLookupInput = document.getElementById('passLookupInput');
+    var passLookupResult = document.getElementById('passLookupResult');
+
+    async function performPassLookup() {
+      if (!passLookupInput || !passLookupResult) return;
+      var query = passLookupInput.value.trim().toUpperCase();
+      if (!query) {
+        alert('Please enter your Register Number (e.g. 22BCE1042) or Handle (e.g. @binarybeast).');
+        passLookupInput.focus();
+        return;
+      }
+
+      var normQuery = query.startsWith('@') ? query.slice(1) : query;
+      var searchKeyNoAt = normQuery.toLowerCase();
+
+      if (passLookupBtn) {
+        passLookupBtn.disabled = true;
+        passLookupBtn.textContent = 'Searching... 🔍';
+      }
+      passLookupResult.style.display = 'block';
+      passLookupResult.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:12px;">🔍 Querying tournament database...</div>';
+
+      try {
+        var allContenders = await getAllRegisteredContenders();
+        if (passLookupBtn) {
+          passLookupBtn.disabled = false;
+          passLookupBtn.textContent = '🔍 Check Status';
+        }
+
+        var found = allContenders.find(function (r) {
+          var reg = (r.regNo || r.reg_no || '').toUpperCase();
+          var handle = (r.handle || '').toLowerCase().replace(/^@/, '');
+          return reg === query || handle === searchKeyNoAt;
+        });
+
+        if (found) {
+          var isVerified = (found.status === 'VERIFIED' || !found.status);
+          var statusBadge = isVerified ?
+            '<span class="apple-badge" style="background:rgba(48,209,88,0.15); color:var(--accent-green); border-color:rgba(48,209,88,0.3); margin-bottom:0;">✓ PASS VERIFIED</span>' :
+            '<span class="apple-badge" style="background:rgba(229,179,88,0.15); color:var(--accent-gold); border-color:rgba(229,179,88,0.3); margin-bottom:0;">⏳ PENDING VERIFICATION</span>';
+
+          var handleDisplay = found.handle ? (found.handle.startsWith('@') ? found.handle : ('@' + found.handle)) : '@contender';
+          var regNoDisplay = found.regNo || found.reg_no || 'N/A';
+          var branchYearDisplay = (found.branch || 'CSE') + (found.year ? (' · ' + found.year) : '');
+
+          // Check In-House status
+          var inHouseMap = {};
+          try {
+            inHouseMap = JSON.parse(localStorage.getItem('techboss_inhouse_checkins') || '{}');
+          } catch (e) {
+            inHouseMap = {};
+          }
+          var lowerHandle = handleDisplay.toLowerCase();
+          var inHouseData = inHouseMap[lowerHandle];
+          var inHouseBadge = inHouseData ?
+            '<div style="margin-top:10px; padding:8px 12px; background:rgba(48,209,88,0.1); border:1px solid rgba(48,209,88,0.25); border-radius:6px; font-size:12.5px; color:var(--accent-green); display:flex; align-items:center; gap:8px;"><span>🏠</span> <span><b>In-House Checked In:</b> ' + escapeHtml(inHouseData.time || 'Admitted') + '</span></div>' :
+            '<div style="margin-top:10px; padding:8px 12px; background:rgba(229,179,88,0.1); border:1px solid rgba(229,179,88,0.25); border-radius:6px; font-size:12.5px; color:var(--accent-gold); display:flex; align-items:center; gap:8px;"><span>⏳</span> <span><b>In-House Status:</b> Ready for QR Admission</span></div>';
+
+          passLookupResult.innerHTML = 
+            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">' +
+              '<div>' +
+                '<h4 style="color:#ffffff; font-size:17px; margin:0; font-weight:800;">' + escapeHtml(found.name || 'Contender') + '</h4>' +
+                '<div class="mono" style="font-size:13px; color:var(--accent-gold); font-weight:700;">' + escapeHtml(handleDisplay) + '</div>' +
+              '</div>' +
+              statusBadge +
+            '</div>' +
+            '<div style="font-size:13.5px; color:var(--text-secondary); line-height:1.7; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:8px;">' +
+              '<div>Register No: <b class="mono" style="color:#ffffff;">' + escapeHtml(regNoDisplay) + '</b></div>' +
+              '<div>Branch / Year: <span style="color:#ffffff;">' + escapeHtml(branchYearDisplay) + '</span></div>' +
+              '<div>Pass Tier: <span style="color:var(--accent-gold); font-weight:600;">All-Access Solo Pass (₹60)</span></div>' +
+              '<div>Arena Batch: <b style="color:var(--accent-blue);">Batch Alpha (09:30 AM)</b></div>' +
+            '</div>' +
+            '<div style="margin-top:12px; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.12); font-size:13px; color:var(--text-secondary);">' +
+              '<div>📍 Venue: <b style="color:#ffffff;">Tech Centre 2nd Floor, 1st Lab</b> <span style="color:var(--text-tertiary);">(CSD & CSIT, SRKR Eng College)</span></div>' +
+              inHouseBadge +
+            '</div>' +
+            '<button type="button" class="btn btn-white" id="passLookupProceedHouseBtn" style="margin-top:16px; width:100%; padding:13px 18px; font-weight:700; font-size:14px; box-shadow:0 4px 20px rgba(229,179,88,0.3); border-radius:10px; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;">' +
+              '<span>Proceed to House & Generate QR Pass</span>' +
+              '<span style="font-size:16px;">⚡</span>' +
+            '</button>';
+
+          var proceedHouseBtn = document.getElementById('passLookupProceedHouseBtn');
+          if (proceedHouseBtn) {
+            proceedHouseBtn.addEventListener('click', function () {
+              openGamezoneEntryModalWithHandle(handleDisplay, true);
+            });
+          }
+
+          playSynthSound('victory');
+          return;
+        }
+
+        passLookupResult.innerHTML = '<div style="color:#ff453a; text-align:center; line-height:1.5;">⚠️ No registration record found matching <b>' + escapeHtml(query) + '</b>.<br><span style="font-size:12px; color:var(--text-secondary);">Please verify your Register No or register for a ₹60 pass above.</span></div>';
+        playSynthSound('click');
+      } catch (e) {
+        if (passLookupBtn) {
+          passLookupBtn.disabled = false;
+          passLookupBtn.textContent = '🔍 Check Status';
+        }
+        passLookupResult.innerHTML = '<div style="color:#ff453a; text-align:center;">⚠️ Lookup error: ' + escapeHtml(e.message) + '</div>';
+      }
+    }
+
+    if (passLookupBtn) {
+      passLookupBtn.addEventListener('click', performPassLookup);
+    }
+    if (passLookupInput) {
+      passLookupInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          performPassLookup();
+        }
+      });
+    }
+
+
+
+    if (closeGamezoneModalBtn) closeGamezoneModalBtn.addEventListener('click', closeGamezoneEntryModal);
+    if (cancelGamezoneModalBtn) cancelGamezoneModalBtn.addEventListener('click', closeGamezoneEntryModal);
+    if (submitGamezoneEntryBtn) submitGamezoneEntryBtn.addEventListener('click', submitGamezoneEntry);
+
+    if (gzQuickSelectBtn) {
+      gzQuickSelectBtn.addEventListener('click', function () {
+        var u = gzQuickSelectBtn.textContent.trim();
+        if (gzContenderUsername && u) {
+          gzContenderUsername.value = u;
+          submitGamezoneEntry();
+        }
+      });
+    }
+
+    if (gzContenderUsername) {
+      gzContenderUsername.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          submitGamezoneEntry();
+        } else if (e.key === 'Escape') {
+          closeGamezoneEntryModal();
+        }
+      });
+    }
+
+    if (gamezoneEntryModal) {
+      gamezoneEntryModal.addEventListener('click', function (e) {
+        if (e.target === gamezoneEntryModal) {
+          closeGamezoneEntryModal();
+        }
+      });
+    }
+
+    // ==========================================
+    // 7. LIVE EVENT COUNTDOWN TIMER & TECH BOSS REVEAL
     // ==========================================
     (function initEventCountdown() {
       // Event Date: September 16, 2026, 09:00:00 AM IST (+05:30)
