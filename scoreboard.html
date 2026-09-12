@@ -817,6 +817,180 @@
       margin-top: auto;
       letter-spacing: 0.3px;
     }
+
+    /* FULLSCREEN APPLE KEYNOTE ANNOUNCEMENT OVERLAY */
+    .keynote-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      animation: keynoteFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .keynote-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(50px) saturate(220%);
+      -webkit-backdrop-filter: blur(50px) saturate(220%);
+      cursor: pointer;
+    }
+
+    .keynote-modal-card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 960px;
+      background: linear-gradient(180deg, rgba(32, 32, 40, 0.95) 0%, rgba(14, 14, 20, 0.98) 100%);
+      border: 1.5px solid rgba(255, 215, 0, 0.55);
+      box-shadow: 0 0 100px rgba(255, 215, 0, 0.28), 0 40px 100px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      border-radius: 36px;
+      padding: 44px 48px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+      animation: keynoteCardPop 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes keynoteFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes keynoteCardPop {
+      from { opacity: 0; transform: scale(0.92) translateY(24px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .keynote-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 20px;
+      gap: 16px;
+    }
+
+    .keynote-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 215, 0, 0.15);
+      border: 1px solid rgba(255, 215, 0, 0.45);
+      color: #ffd700;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 7px 20px;
+      border-radius: 9999px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.35);
+    }
+
+    .keynote-beacon {
+      width: 9px;
+      height: 9px;
+      background: #30d158;
+      border-radius: 50%;
+      box-shadow: 0 0 14px #30d158;
+      animation: apple-pulse 1.6s infinite ease-in-out;
+    }
+
+    .keynote-timestamp {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+    }
+
+    .keynote-body {
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .keynote-icon {
+      font-size: 52px;
+      margin-bottom: -4px;
+    }
+
+    .keynote-message {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.8px;
+      color: #ffffff;
+      text-shadow: 0 2px 25px rgba(0, 0, 0, 0.7);
+      word-break: break-word;
+    }
+
+    @media (max-width: 768px) {
+      .keynote-message {
+        font-size: 26px;
+      }
+      .keynote-modal-card {
+        padding: 28px 22px;
+      }
+    }
+
+    .keynote-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 20px;
+    }
+
+    .keynote-progress-wrap {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .keynote-progress-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #30d158, #2997ff, #ffd700);
+      border-radius: 9999px;
+      transition: width 0.1s linear;
+    }
+
+    .keynote-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .keynote-hint {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+    }
+
+    .keynote-dismiss-btn {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: #ffffff;
+      padding: 9px 24px;
+      border-radius: 9999px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .keynote-dismiss-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.04);
+    }
   </style>
 </head>
 
@@ -954,6 +1128,39 @@
     Tech Boss 2026 Official Tournament Telemetry Engine • Synchronized with Organizer Command Center
   </footer>
 
+  <!-- FULLSCREEN APPLE KEYNOTE ANNOUNCEMENT OVERLAY -->
+  <div id="appleKeynoteOverlay" class="keynote-overlay" style="display: none;">
+    <div class="keynote-backdrop" id="keynoteBackdrop" title="Click to dismiss"></div>
+    <div class="keynote-modal-card">
+      <div class="keynote-top-bar">
+        <div class="keynote-badge">
+          <span class="keynote-beacon"></span>
+          <span>⚡ ARENA KEYNOTE ANNOUNCEMENT</span>
+        </div>
+        <div class="keynote-timestamp" id="keynoteTimestamp">JUST NOW</div>
+      </div>
+
+      <div class="keynote-body">
+        <div class="keynote-icon">📢</div>
+        <h1 class="keynote-message" id="keynoteMessageText">
+          Announcement message goes here
+        </h1>
+      </div>
+
+      <div class="keynote-footer">
+        <div class="keynote-progress-wrap">
+          <div class="keynote-progress-fill" id="keynoteProgressFill"></div>
+        </div>
+        <div class="keynote-actions">
+          <span class="keynote-hint">Auditorium Live Feed · Press ESC or click anywhere to dismiss</span>
+          <button type="button" class="keynote-dismiss-btn" id="keynoteDismissBtn">
+            Dismiss ✕
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- SCRIPT LOGIC -->
   <script>
     (function () {
@@ -981,6 +1188,17 @@
       var soundIconEl = document.getElementById('soundIcon');
       var segmentButtons = document.querySelectorAll('.segment-btn');
 
+      // Keynote Fullscreen Overlay Elements
+      var keynoteOverlayEl = document.getElementById('appleKeynoteOverlay');
+      var keynoteMessageTextEl = document.getElementById('keynoteMessageText');
+      var keynoteTimestampEl = document.getElementById('keynoteTimestamp');
+      var keynoteProgressFillEl = document.getElementById('keynoteProgressFill');
+      var keynoteDismissBtn = document.getElementById('keynoteDismissBtn');
+      var keynoteBackdrop = document.getElementById('keynoteBackdrop');
+      var keynoteTimer = null;
+      var keynoteProgressTimer = null;
+      var lastSeenAnnouncement = localStorage.getItem('techboss_custom_broadcast') || '';
+
       // Apple Audio Synthesizer
       function playTone(freq, duration, type) {
         if (!soundEnabled) return;
@@ -995,7 +1213,7 @@
           var gain = audioCtx.createGain();
           osc.type = type || 'sine';
           osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.14, audioCtx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
@@ -1012,11 +1230,76 @@
         setTimeout(function () { playTone(1046.50, 0.4, 'sine'); }, 360); // C6
       }
 
-      function playBroadcastAlertSound() {
+      function playKeynoteAnnouncementChime() {
         if (!soundEnabled) return;
-        playTone(880, 0.08, 'sine');
-        setTimeout(function () { playTone(1174.66, 0.15, 'sine'); }, 90);
+        playTone(440, 0.12, 'sine'); // A4
+        setTimeout(function () { playTone(554.37, 0.12, 'triangle'); }, 100); // C#5
+        setTimeout(function () { playTone(659.25, 0.15, 'triangle'); }, 200); // E5
+        setTimeout(function () { playTone(880, 0.35, 'sine'); }, 300); // A5
       }
+
+      function showKeynoteAnnouncement(text, timestampStr) {
+        if (!text || !text.trim()) return;
+        if (keynoteOverlayEl) {
+          if (keynoteMessageTextEl) keynoteMessageTextEl.textContent = text;
+          if (keynoteTimestampEl) keynoteTimestampEl.textContent = timestampStr || ('UPDATED ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+          keynoteOverlayEl.style.display = 'flex';
+
+          playKeynoteAnnouncementChime();
+
+          if (typeof confetti === 'function') {
+            confetti({
+              particleCount: 110,
+              spread: 90,
+              origin: { y: 0.4 },
+              colors: ['#ffd700', '#2997ff', '#30d158', '#ffffff']
+            });
+          }
+
+          if (keynoteTimer) clearTimeout(keynoteTimer);
+          if (keynoteProgressTimer) clearInterval(keynoteProgressTimer);
+
+          var totalMs = 14000;
+          var startMs = Date.now();
+          if (keynoteProgressFillEl) keynoteProgressFillEl.style.width = '100%';
+
+          keynoteProgressTimer = setInterval(function () {
+            var elapsed = Date.now() - startMs;
+            var remainPct = Math.max(0, 100 - (elapsed / totalMs) * 100);
+            if (keynoteProgressFillEl) keynoteProgressFillEl.style.width = remainPct + '%';
+            if (elapsed >= totalMs) {
+              clearInterval(keynoteProgressTimer);
+              closeKeynoteAnnouncement();
+            }
+          }, 100);
+
+          keynoteTimer = setTimeout(closeKeynoteAnnouncement, totalMs);
+        }
+      }
+
+      function closeKeynoteAnnouncement() {
+        if (keynoteTimer) clearTimeout(keynoteTimer);
+        if (keynoteProgressTimer) clearInterval(keynoteProgressTimer);
+        if (keynoteOverlayEl) keynoteOverlayEl.style.display = 'none';
+      }
+
+      if (keynoteDismissBtn) keynoteDismissBtn.addEventListener('click', closeKeynoteAnnouncement);
+      if (keynoteBackdrop) keynoteBackdrop.addEventListener('click', closeKeynoteAnnouncement);
+      if (broadcastCardEl) {
+        broadcastCardEl.style.cursor = 'pointer';
+        broadcastCardEl.title = 'Click to view Fullscreen Announcement';
+        broadcastCardEl.addEventListener('click', function () {
+          var msg = localStorage.getItem('techboss_custom_broadcast');
+          if (msg && msg.trim()) {
+            showKeynoteAnnouncement(msg);
+          }
+        });
+      }
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && keynoteOverlayEl && keynoteOverlayEl.style.display === 'flex') {
+          closeKeynoteAnnouncement();
+        }
+      });
 
       // Live Apple Clock
       function updateClock() {
@@ -1083,13 +1366,17 @@
       }
 
       // Load Telemetry Stats & Broadcast
-      function loadBroadcast() {
+      function loadBroadcast(triggerFullscreen) {
         var msg = localStorage.getItem('techboss_custom_broadcast');
         if (msg && msg.trim()) {
-          if (broadcastTextEl && broadcastTextEl.textContent !== msg) {
-            broadcastTextEl.textContent = msg;
-            if (broadcastTimestampEl) broadcastTimestampEl.textContent = 'UPDATED ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            playBroadcastAlertSound();
+          var isNew = (lastSeenAnnouncement !== msg);
+          if (broadcastTextEl) broadcastTextEl.textContent = msg;
+          var timeStr = 'UPDATED ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          if (broadcastTimestampEl) broadcastTimestampEl.textContent = timeStr;
+
+          if (isNew || triggerFullscreen) {
+            lastSeenAnnouncement = msg;
+            showKeynoteAnnouncement(msg, timeStr);
           }
         }
       }
