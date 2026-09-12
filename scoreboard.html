@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tech Boss 2026 — Live Tournament Scoreboard & Telemetry</title>
+  <title>Tech Boss 2026 — Live Arena Telemetry & Leaderboard</title>
   <meta name="description"
-    content="Full-screen Live Tournament Scoreboard, Championship Top 3 Glory Podium, and Real-Time Organizer Broadcast Telemetry for Tech Boss 2026.">
+    content="Apple-inspired Live Tournament Telemetry, Championship Glory Podium, and Real-Time Organizer Broadcast Telemetry for Tech Boss 2026.">
   <link rel="icon" type="image/png" href="logo.png?v=2">
   <link rel="apple-touch-icon" href="logo.png?v=2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,34 +14,46 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&family=SF+Pro+Display:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet">
-  <!-- CDN dependencies -->
+  <!-- CDN Dependencies -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js?v=2026_sync_v2"></script>
 
   <style>
     :root {
-      --bg-black: #050508;
-      --bg-card: rgba(16, 17, 24, 0.75);
-      --bg-card-elevated: rgba(24, 26, 38, 0.85);
+      --bg-black: #000000;
+      --bg-base: #070709;
+      --bg-card: rgba(22, 22, 26, 0.65);
+      --bg-card-hover: rgba(30, 30, 36, 0.85);
+      --bg-card-elevated: rgba(28, 28, 34, 0.75);
+      --bg-glass-nav: rgba(10, 10, 12, 0.78);
+
       --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-glow: rgba(0, 240, 255, 0.35);
-      --border-gold: rgba(255, 215, 0, 0.45);
+      --border-highlight: rgba(255, 255, 255, 0.12);
+      --border-hover: rgba(255, 255, 255, 0.2);
 
-      --neon-cyan: #00f0ff;
-      --neon-gold: #ffd700;
-      --neon-silver: #e2e8f0;
-      --neon-bronze: #ff9d5c;
-      --neon-purple: #b026ff;
-      --neon-green: #00ff88;
-      --neon-red: #ff3366;
+      --accent-blue: #2997ff;
+      --accent-cyan: #00f0ff;
+      --accent-gold: #e5b358;
+      --accent-gold-bright: #ffd700;
+      --accent-silver: #d1d5db;
+      --accent-bronze: #f97316;
+      --accent-green: #30d158;
+      --accent-red: #ff453a;
+      --accent-purple: #bf5af2;
 
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
+      --text-primary: #f5f5f7;
+      --text-secondary: #86868b;
+      --text-tertiary: #515154;
 
-      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --radius-xl: 28px;
+      --radius-pill: 9999px;
+
+      --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
     * {
@@ -50,386 +62,388 @@
       padding: 0;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       background-color: var(--bg-black);
-      color: var(--text-main);
-      font-family: var(--font-main);
+      color: var(--text-primary);
+      font-family: var(--font-system);
+      line-height: 1.5;
+      overflow-x: hidden;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
-        radial-gradient(circle at 10% 30%, rgba(176, 38, 255, 0.06) 0%, transparent 45%),
-        radial-gradient(circle at 90% 70%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
-        linear-gradient(to bottom, rgba(5,5,8,0.9), #050508);
-      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.015em;
+      position: relative;
     }
 
-    /* Cyber Grid Ambient Layer */
+    /* Apple Ambient Gradient Aura */
+    .ambient-glow {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1200px;
+      height: 600px;
+      background: radial-gradient(circle 500px at 50% 30%, rgba(41, 151, 255, 0.12), rgba(229, 179, 88, 0.06), transparent 70%);
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
     .ambient-grid {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background-size: 40px 40px;
+      background-size: 48px 48px;
       background-image: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
       pointer-events: none;
       z-index: 0;
     }
 
-    /* Top HUD Navigation Bar */
-    .hud-header {
+    /* Apple Glassmorphic Floating Navigation Header */
+    .apple-nav {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(5, 5, 8, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      background: var(--bg-glass-nav);
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 14px 28px;
+      padding: 12px 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
 
-    .hud-brand {
+    .nav-brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       text-decoration: none;
-      color: var(--text-main);
+      color: var(--text-primary);
     }
 
-    .hud-brand img {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
+    .nav-brand img {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
       border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
     }
 
     .brand-title {
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      background: linear-gradient(135deg, #ffffff 40%, #a1a1a6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-title span {
+      background: linear-gradient(135deg, var(--accent-gold) 0%, #fff 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .hud-live-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      background: rgba(255, 51, 102, 0.12);
-      border: 1px solid rgba(255, 51, 102, 0.35);
-      color: #ff4d79;
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      padding: 5px 12px;
-      border-radius: 20px;
-      box-shadow: 0 0 12px rgba(255, 51, 102, 0.25);
-    }
-
-    .radar-pulse {
-      width: 8px;
-      height: 8px;
-      background: #ff3366;
-      border-radius: 50%;
-      box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7);
-      animation: pulse-red 1.6s infinite;
-    }
-
-    @keyframes pulse-red {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
-      70% { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(255, 51, 102, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
-    }
-
-    .hud-center {
+    /* Apple Dynamic Capsule Badges */
+    .nav-center {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
     }
 
-    .sync-status {
+    .dynamic-capsule {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--neon-green);
-      background: rgba(0, 255, 136, 0.08);
-      border: 1px solid rgba(0, 255, 136, 0.2);
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-weight: 600;
-    }
-
-    .sync-status .dot {
-      width: 6px;
-      height: 6px;
-      background: var(--neon-green);
-      border-radius: 50%;
-    }
-
-    .hud-clock {
-      font-family: var(--font-mono);
-      font-size: 14px;
-      font-weight: 700;
-      color: #cbd5e1;
+      gap: 8px;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      padding: 5px 12px;
-      border-radius: 8px;
-    }
-
-    .hud-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .hud-btn {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-main);
-      padding: 8px 14px;
-      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-pill);
+      padding: 5px 14px;
       font-size: 12px;
       font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      text-decoration: none;
+      color: var(--text-primary);
+      backdrop-filter: blur(12px);
     }
 
-    .hud-btn:hover {
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: apple-pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes apple-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .nav-clock {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 5px 12px;
+      letter-spacing: 0.3px;
+    }
+
+    /* Apple Button Group */
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .apple-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(10px);
+    }
+
+    .apple-btn:hover {
       background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.25);
+      border-color: var(--border-hover);
       transform: translateY(-1px);
     }
 
-    .hud-btn.primary {
-      background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 150, 255, 0.2));
-      border-color: rgba(0, 240, 255, 0.4);
-      color: #38bdf8;
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+    .apple-btn.btn-primary {
+      background: #ffffff;
+      color: #000000;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
     }
 
-    .hud-btn.primary:hover {
-      background: linear-gradient(135deg, rgba(0, 240, 255, 0.35), rgba(0, 150, 255, 0.35));
-      border-color: #00f0ff;
+    .apple-btn.btn-primary:hover {
+      background: #f5f5f7;
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
     }
 
     /* Main Container */
-    .dashboard-container {
-      position: relative;
-      z-index: 1;
-      max-width: 1440px;
+    .main-wrap {
+      max-width: 1280px;
       width: 100%;
       margin: 0 auto;
-      padding: 24px 28px 60px;
+      padding: 28px 24px 60px;
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       gap: 24px;
     }
 
-    /* Live Broadcast Marquee Card */
-    .broadcast-card {
-      background: linear-gradient(135deg, rgba(20, 22, 35, 0.95), rgba(12, 14, 22, 0.95));
-      border: 1px solid rgba(0, 240, 255, 0.3);
-      box-shadow: 0 0 25px rgba(0, 240, 255, 0.12), inset 0 0 15px rgba(0, 240, 255, 0.05);
-      border-radius: 16px;
-      padding: 16px 22px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
+    /* Apple Bento Glass Card */
+    .apple-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(35px) saturate(190%);
+      -webkit-backdrop-filter: blur(35px) saturate(190%);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 var(--border-highlight);
       position: relative;
       overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .broadcast-card::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-purple));
-      box-shadow: 0 0 10px var(--neon-cyan);
+    .apple-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    }
+
+    /* Live Broadcast Marquee */
+    .broadcast-banner {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(135deg, rgba(22, 22, 28, 0.8), rgba(15, 15, 20, 0.8));
     }
 
     .broadcast-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(0, 240, 255, 0.12);
-      border: 1px solid rgba(0, 240, 255, 0.4);
-      color: #38bdf8;
+      background: rgba(41, 151, 255, 0.12);
+      border: 1px solid rgba(41, 151, 255, 0.3);
+      color: var(--accent-blue);
       font-size: 11px;
-      font-weight: 800;
-      padding: 6px 12px;
-      border-radius: 8px;
-      white-space: nowrap;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
     }
 
-    .broadcast-content {
+    .broadcast-text-wrap {
       flex: 1;
-      font-size: 15px;
-      font-weight: 600;
-      color: #f1f5f9;
-      line-height: 1.4;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #f5f5f7;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 16px;
     }
 
     .broadcast-time {
       font-family: var(--font-mono);
       font-size: 11px;
-      color: var(--text-dim);
+      color: var(--text-secondary);
       white-space: nowrap;
     }
 
-    /* Flash highlight animation for new broadcasts */
-    .broadcast-card.flash-alert {
-      animation: flashGlow 1.2s ease;
-    }
-
-    @keyframes flashGlow {
-      0% { box-shadow: 0 0 40px rgba(0, 240, 255, 0.8); border-color: #00f0ff; transform: scale(1.01); }
-      100% { box-shadow: 0 0 25px rgba(0, 240, 255, 0.12); border-color: rgba(0, 240, 255, 0.3); transform: scale(1); }
-    }
-
-    /* Telemetry KPI Metrics Grid */
-    .telemetry-grid {
+    /* Telemetry Bento Grid */
+    .telemetry-bento {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
     }
 
     @media (max-width: 1024px) {
-      .telemetry-grid {
+      .telemetry-bento {
         grid-template-columns: repeat(2, 1fr);
       }
     }
 
     @media (max-width: 640px) {
-      .telemetry-grid {
+      .telemetry-bento {
         grid-template-columns: 1fr;
       }
     }
 
-    .telemetry-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      padding: 18px 20px;
+    .metric-card {
+      padding: 20px 22px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(12px);
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      border-radius: var(--radius-lg);
     }
 
-    .telemetry-card:hover {
-      border-color: rgba(255, 255, 255, 0.18);
-      transform: translateY(-2px);
-    }
-
-    .telemetry-card .card-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
+    .metric-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
-    .telemetry-card .card-value {
+    .metric-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .badge-green { background: rgba(48, 209, 88, 0.12); color: var(--accent-green); border: 1px solid rgba(48, 209, 88, 0.25); }
+    .badge-blue { background: rgba(41, 151, 255, 0.12); color: var(--accent-blue); border: 1px solid rgba(41, 151, 255, 0.25); }
+    .badge-gold { background: rgba(229, 179, 88, 0.15); color: var(--accent-gold); border: 1px solid rgba(229, 179, 88, 0.3); }
+    .badge-red { background: rgba(255, 69, 58, 0.12); color: var(--accent-red); border: 1px solid rgba(255, 69, 58, 0.25); }
+
+    .metric-value {
       font-family: var(--font-mono);
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 800;
       color: #ffffff;
       line-height: 1.1;
       margin-bottom: 8px;
+      letter-spacing: -0.5px;
     }
 
-    .telemetry-card .card-sub {
+    .metric-sub {
       font-size: 12px;
-      color: var(--text-dim);
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    /* Boss HP Mini Bar */
-    .hp-bar-wrap {
+    /* Apple Capsule Meter */
+    .capsule-meter-wrap {
       width: 100%;
-      height: 8px;
+      height: 7px;
       background: rgba(255, 255, 255, 0.08);
       border-radius: 4px;
       overflow: hidden;
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
-    .hp-bar-fill {
+    .capsule-meter-fill {
       height: 100%;
       width: 78%;
-      background: linear-gradient(90deg, #ff3366, #ff9933);
+      background: linear-gradient(90deg, #ff453a, #ff9f0a);
       border-radius: 4px;
-      box-shadow: 0 0 10px rgba(255, 51, 102, 0.6);
       transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* TOP 3 CHAMPIONSHIP GLORY PODIUM */
-    .podium-section {
-      background: radial-gradient(circle at 50% 30%, rgba(255, 215, 0, 0.08), transparent 70%),
-                  rgba(16, 18, 28, 0.6);
-      border: 1px solid rgba(255, 215, 0, 0.2);
-      border-radius: 24px;
-      padding: 28px 24px 36px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    /* CHAMPIONSHIP GLORY PODIUM */
+    .podium-wrap {
+      padding: 32px 28px;
+      border-radius: var(--radius-xl);
+      background: radial-gradient(circle at 50% 20%, rgba(229, 179, 88, 0.08), transparent 70%),
+                  var(--bg-card);
+      border: 1px solid rgba(229, 179, 88, 0.2);
     }
 
-    .podium-header {
+    .podium-heading-wrap {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
 
     .podium-eyebrow {
-      font-size: 12px;
-      font-weight: 800;
+      font-size: 11.5px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--neon-gold);
-      margin-bottom: 4px;
+      letter-spacing: 1.5px;
+      color: var(--accent-gold);
+      margin-bottom: 6px;
       display: inline-block;
     }
 
-    .podium-title {
-      font-size: 26px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
+    .podium-main-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
       color: #ffffff;
     }
 
@@ -437,8 +451,8 @@
       display: grid;
       grid-template-columns: 1fr 1.15fr 1fr;
       align-items: flex-end;
-      gap: 20px;
-      max-width: 1050px;
+      gap: 18px;
+      max-width: 1060px;
       margin: 0 auto;
     }
 
@@ -450,120 +464,117 @@
     }
 
     .podium-card {
-      background: rgba(22, 24, 38, 0.85);
-      border-radius: 20px;
+      background: rgba(24, 24, 28, 0.85);
+      border-radius: var(--radius-lg);
       padding: 24px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       position: relative;
-      backdrop-filter: blur(16px);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(24px);
       border: 1px solid var(--border-subtle);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .podium-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
+      border-color: var(--border-hover);
     }
 
-    /* Rank 1 Apex Gold */
+    /* Rank 1 Champion Apex Gold */
     .podium-card.rank-1 {
-      background: linear-gradient(180deg, rgba(35, 30, 20, 0.9), rgba(18, 16, 24, 0.95));
-      border: 1.5px solid var(--neon-gold);
-      box-shadow: 0 0 35px rgba(255, 215, 0, 0.25), inset 0 0 20px rgba(255, 215, 0, 0.08);
+      background: linear-gradient(180deg, rgba(38, 32, 22, 0.95), rgba(20, 18, 24, 0.95));
+      border: 1.5px solid var(--accent-gold);
+      box-shadow: 0 0 35px rgba(229, 179, 88, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.3);
       order: 2;
-      padding-top: 32px;
-      padding-bottom: 32px;
+      padding-top: 34px;
+      padding-bottom: 34px;
     }
 
     @media (max-width: 860px) {
-      .podium-card.rank-1 {
-        order: 1;
-      }
+      .podium-card.rank-1 { order: 1; }
     }
 
     .podium-card.rank-2 {
-      border: 1.5px solid rgba(226, 232, 240, 0.45);
-      box-shadow: 0 0 25px rgba(226, 232, 240, 0.15);
+      border: 1px solid rgba(209, 213, 219, 0.35);
+      box-shadow: 0 0 20px rgba(209, 213, 219, 0.1);
       order: 1;
     }
 
     @media (max-width: 860px) {
-      .podium-card.rank-2 {
-        order: 2;
-      }
+      .podium-card.rank-2 { order: 2; }
     }
 
     .podium-card.rank-3 {
-      border: 1.5px solid rgba(255, 157, 92, 0.45);
-      box-shadow: 0 0 25px rgba(255, 157, 92, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.35);
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.1);
       order: 3;
     }
 
-    .podium-crown-badge {
-      width: 60px;
-      height: 60px;
+    .podium-avatar-ring {
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 26px;
       margin-bottom: 12px;
       position: relative;
     }
 
-    .rank-1 .podium-crown-badge {
-      width: 76px;
-      height: 76px;
-      font-size: 38px;
-      background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.05) 70%);
-      border: 2px solid var(--neon-gold);
-      box-shadow: 0 0 25px var(--neon-gold);
+    .rank-1 .podium-avatar-ring {
+      width: 74px;
+      height: 74px;
+      font-size: 36px;
+      background: radial-gradient(circle, rgba(229, 179, 88, 0.25) 0%, rgba(229, 179, 88, 0.05) 70%);
+      border: 2px solid var(--accent-gold);
+      box-shadow: 0 0 24px rgba(229, 179, 88, 0.5);
     }
 
-    .rank-2 .podium-crown-badge {
-      background: radial-gradient(circle, rgba(226, 232, 240, 0.3) 0%, rgba(226, 232, 240, 0.05) 70%);
-      border: 2px solid var(--neon-silver);
-      box-shadow: 0 0 18px rgba(226, 232, 240, 0.3);
+    .rank-2 .podium-avatar-ring {
+      background: radial-gradient(circle, rgba(209, 213, 219, 0.25) 0%, rgba(209, 213, 219, 0.05) 70%);
+      border: 2px solid var(--accent-silver);
+      box-shadow: 0 0 16px rgba(209, 213, 219, 0.3);
     }
 
-    .rank-3 .podium-crown-badge {
-      background: radial-gradient(circle, rgba(255, 157, 92, 0.3) 0%, rgba(255, 157, 92, 0.05) 70%);
-      border: 2px solid var(--neon-bronze);
-      box-shadow: 0 0 18px rgba(255, 157, 92, 0.3);
+    .rank-3 .podium-avatar-ring {
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.25) 0%, rgba(249, 115, 22, 0.05) 70%);
+      border: 2px solid var(--accent-bronze);
+      box-shadow: 0 0 16px rgba(249, 115, 22, 0.3);
     }
 
     .podium-rank-pill {
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 4px 10px;
-      border-radius: 12px;
+      letter-spacing: 0.8px;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
       margin-bottom: 8px;
     }
 
     .rank-1 .podium-rank-pill {
-      background: var(--neon-gold);
+      background: var(--accent-gold);
       color: #000000;
-      box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+      box-shadow: 0 2px 10px rgba(229, 179, 88, 0.4);
     }
 
     .rank-2 .podium-rank-pill {
-      background: var(--neon-silver);
-      color: #000000;
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
     }
 
     .rank-3 .podium-rank-pill {
-      background: var(--neon-bronze);
-      color: #000000;
+      background: rgba(249, 115, 22, 0.2);
+      color: #fb923c;
     }
 
     .podium-handle {
       font-family: var(--font-mono);
-      font-size: 18px;
-      font-weight: 800;
+      font-size: 17px;
+      font-weight: 700;
       color: #ffffff;
       margin-bottom: 2px;
       max-width: 100%;
@@ -573,13 +584,13 @@
     }
 
     .rank-1 .podium-handle {
-      font-size: 22px;
+      font-size: 21px;
       color: #fff9db;
     }
 
     .podium-name {
-      font-size: 13px;
-      color: var(--text-muted);
+      font-size: 12.5px;
+      color: var(--text-secondary);
       margin-bottom: 12px;
       max-width: 100%;
       overflow: hidden;
@@ -590,7 +601,7 @@
     .podium-score {
       font-family: var(--font-mono);
       font-size: 26px;
-      font-weight: 900;
+      font-weight: 800;
       color: #ffffff;
       display: flex;
       align-items: baseline;
@@ -598,423 +609,411 @@
     }
 
     .rank-1 .podium-score {
-      font-size: 34px;
-      color: var(--neon-gold);
-      text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+      font-size: 32px;
+      color: var(--accent-gold);
+      text-shadow: 0 0 20px rgba(229, 179, 88, 0.4);
     }
 
     .podium-score span {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-dim);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-tertiary);
       text-transform: uppercase;
     }
 
     .podium-tier-tag {
       margin-top: 10px;
       font-size: 11px;
-      font-weight: 700;
-      padding: 3px 8px;
+      font-weight: 600;
+      padding: 3px 9px;
       border-radius: 6px;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.06);
       color: #cbd5e1;
     }
 
     /* LEADERBOARD TABLE SECTION */
     .table-section {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
       padding: 24px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border-radius: var(--radius-xl);
     }
 
-    .table-header-wrap {
+    .table-toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 14px;
       margin-bottom: 20px;
     }
 
-    .table-title {
+    .table-heading {
       font-size: 20px;
       font-weight: 800;
       color: #ffffff;
       display: flex;
       align-items: center;
       gap: 10px;
+      letter-spacing: -0.4px;
     }
 
-    .table-title .count-badge {
+    .count-capsule {
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
-      color: var(--neon-cyan);
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--accent-blue);
+      background: rgba(41, 151, 255, 0.1);
+      border: 1px solid rgba(41, 151, 255, 0.25);
       padding: 2px 8px;
-      border-radius: 12px;
+      border-radius: var(--radius-pill);
     }
 
     .table-actions {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
-    .search-input-wrap {
-      position: relative;
-      min-width: 260px;
-    }
-
-    .search-input-wrap input {
-      width: 100%;
+    /* Apple Segmented Control */
+    .segmented-control {
+      display: inline-flex;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 8px 14px 8px 34px;
-      color: #ffffff;
-      font-size: 13px;
-      outline: none;
-      transition: all 0.2s ease;
+      border-radius: var(--radius-pill);
+      padding: 3px;
+      gap: 2px;
     }
 
-    .search-input-wrap input:focus {
-      border-color: var(--neon-cyan);
-      background: rgba(0, 240, 255, 0.05);
-      box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 11px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-dim);
-      font-size: 13px;
-    }
-
-    .filter-pills {
-      display: flex;
-      gap: 6px;
-    }
-
-    .filter-pill {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      padding: 6px 12px;
-      border-radius: 8px;
+    .segment-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
     }
 
-    .filter-pill.active {
-      background: rgba(0, 240, 255, 0.15);
-      border-color: var(--neon-cyan);
-      color: #38bdf8;
+    .segment-btn:hover {
+      color: var(--text-primary);
     }
 
-    /* Scoreboard Table */
-    .scoreboard-table-wrap {
-      overflow-x: auto;
-      border-radius: 12px;
+    .segment-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Apple Search Field */
+    .apple-search-wrap {
+      position: relative;
+      min-width: 240px;
+    }
+
+    .apple-search-wrap input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-subtle);
-      background: rgba(10, 11, 16, 0.6);
+      border-radius: var(--radius-pill);
+      padding: 7px 14px 7px 34px;
+      color: #ffffff;
+      font-size: 12.5px;
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: var(--font-system);
     }
 
-    .telemetry-table {
+    .apple-search-wrap input:focus {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .search-glyph {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    /* Apple Clean Table */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: rgba(12, 12, 16, 0.5);
+    }
+
+    .apple-table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      font-size: 14px;
+      font-size: 13.5px;
     }
 
-    .telemetry-table th {
-      background: rgba(255, 255, 255, 0.03);
-      color: var(--text-muted);
+    .apple-table th {
+      background: rgba(255, 255, 255, 0.025);
+      color: var(--text-secondary);
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 14px 16px;
+      letter-spacing: 0.6px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--border-subtle);
     }
 
-    .telemetry-table td {
-      padding: 14px 16px;
+    .apple-table td {
+      padding: 13px 16px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      color: #e2e8f0;
+      color: #e5e5ea;
       vertical-align: middle;
     }
 
-    .telemetry-table tbody tr {
+    .apple-table tbody tr {
       transition: background 0.15s ease;
     }
 
-    .telemetry-table tbody tr:hover {
-      background: rgba(255, 255, 255, 0.03);
+    .apple-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.035);
     }
 
-    /* Top Row Highlights */
-    .telemetry-table tr.row-gold {
-      background: rgba(255, 215, 0, 0.04);
-    }
-    .telemetry-table tr.row-silver {
-      background: rgba(226, 232, 240, 0.03);
-    }
-    .telemetry-table tr.row-bronze {
-      background: rgba(255, 157, 92, 0.03);
-    }
-
+    /* Rank Pill Inside Table */
     .rank-cell {
       font-family: var(--font-mono);
-      font-weight: 800;
-      font-size: 15px;
-      display: flex;
+      font-weight: 700;
+      font-size: 13.5px;
+      display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
-    .rank-cell.rank-1 { color: var(--neon-gold); }
-    .rank-cell.rank-2 { color: var(--neon-silver); }
-    .rank-cell.rank-3 { color: var(--neon-bronze); }
+    .rank-cell.rank-1 { color: var(--accent-gold); }
+    .rank-cell.rank-2 { color: var(--accent-silver); }
+    .rank-cell.rank-3 { color: var(--accent-bronze); }
 
-    .contender-info {
+    .contender-identity {
       display: flex;
       flex-direction: column;
     }
 
-    .contender-handle {
+    .contender-tag {
       font-family: var(--font-mono);
-      font-weight: 700;
+      font-weight: 600;
       color: #ffffff;
-      font-size: 14px;
+      font-size: 13.5px;
     }
 
-    .contender-sub {
-      font-size: 12px;
-      color: var(--text-dim);
+    .contender-fullname {
+      font-size: 11.5px;
+      color: var(--text-secondary);
     }
 
-    /* Score Progress Bar */
-    .score-cell {
+    .damage-cell {
       display: flex;
       flex-direction: column;
       gap: 4px;
       min-width: 150px;
     }
 
-    .score-val {
+    .damage-num {
       font-family: var(--font-mono);
-      font-weight: 800;
-      font-size: 16px;
+      font-weight: 700;
+      font-size: 14.5px;
       color: #ffffff;
     }
 
-    .score-meter-wrap {
+    .damage-bar-wrap {
       width: 100%;
-      height: 6px;
+      height: 5px;
       background: rgba(255, 255, 255, 0.06);
       border-radius: 3px;
       overflow: hidden;
     }
 
-    .score-meter-fill {
+    .damage-bar-fill {
       height: 100%;
       border-radius: 3px;
-      background: linear-gradient(90deg, #00f0ff, #3b82f6);
+      background: linear-gradient(90deg, #2997ff, #30d158);
       transition: width 0.5s ease;
     }
 
-    .tier-badge {
+    .tier-pill {
       display: inline-block;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 3px 8px;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
       border-radius: 6px;
       text-transform: uppercase;
     }
 
-    .tier-S { background: rgba(255, 215, 0, 0.15); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.3); }
-    .tier-A { background: rgba(0, 240, 255, 0.15); color: #38bdf8; border: 1px solid rgba(0, 240, 255, 0.3); }
-    .tier-B { background: rgba(176, 38, 255, 0.15); color: #d8b4fe; border: 1px solid rgba(176, 38, 255, 0.3); }
-    .tier-C { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+    .tier-S { background: rgba(229, 179, 88, 0.15); color: var(--accent-gold); border: 1px solid rgba(229, 179, 88, 0.3); }
+    .tier-A { background: rgba(41, 151, 255, 0.15); color: var(--accent-blue); border: 1px solid rgba(41, 151, 255, 0.3); }
+    .tier-B { background: rgba(191, 90, 242, 0.15); color: var(--accent-purple); border: 1px solid rgba(191, 90, 242, 0.3); }
+    .tier-C { background: rgba(134, 134, 139, 0.15); color: #a1a1a6; border: 1px solid rgba(134, 134, 139, 0.3); }
 
-    .arena-status-tag {
+    .status-pill {
       display: inline-flex;
       align-items: center;
       gap: 5px;
       font-size: 11px;
       font-weight: 600;
-      color: var(--neon-green);
-      background: rgba(0, 255, 136, 0.08);
-      border: 1px solid rgba(0, 255, 136, 0.2);
-      padding: 2px 7px;
-      border-radius: 10px;
+      color: var(--accent-green);
+      background: rgba(48, 209, 88, 0.08);
+      border: 1px solid rgba(48, 209, 88, 0.2);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
     }
 
-    /* Fullscreen Mode Additions */
-    :fullscreen body {
-      background-color: #030305;
-    }
-    :-webkit-full-screen body {
-      background-color: #030305;
-    }
-
-    /* Footer */
-    .telemetry-footer {
+    /* Apple Footer */
+    .apple-footer {
       text-align: center;
-      padding: 20px 0;
-      color: var(--text-dim);
+      padding: 24px 0 32px;
+      color: var(--text-tertiary);
       font-size: 12px;
       border-top: 1px solid var(--border-subtle);
       margin-top: auto;
+      letter-spacing: 0.2px;
     }
   </style>
 </head>
 
 <body>
+  <div class="ambient-glow"></div>
   <div class="ambient-grid"></div>
 
-  <!-- TOP HUD BAR -->
-  <header class="hud-header">
-    <a href="index.html" class="hud-brand" title="Return to Main Arena">
+  <!-- APPLE FLOATING GLASS NAVIGATION -->
+  <header class="apple-nav">
+    <a href="index.html" class="nav-brand" title="Return to Main Arena">
       <img src="logo.png?v=2" alt="Tech Boss Logo">
       <div>
-        <div class="brand-title">TECH BOSS 2026</div>
-        <div style="font-size: 10px; color: var(--text-dim); letter-spacing: 0.5px;">SOLO CHAMPIONSHIP ARENA</div>
+        <div class="brand-title">Tech <span>Boss</span></div>
       </div>
     </a>
 
-    <div class="hud-center">
-      <div class="hud-live-tag">
-        <div class="radar-pulse"></div>
-        LIVE TOURNAMENT TELEMETRY
+    <div class="nav-center">
+      <div class="dynamic-capsule">
+        <div class="live-dot"></div>
+        <span>Live Telemetry</span>
       </div>
-      <div class="sync-status" id="syncStatusIndicator">
-        <div class="dot"></div>
-        <span>ORGANIZER SYNC ACTIVE</span>
-      </div>
-      <div class="hud-clock" id="hudLiveClock">--:--:--</div>
+      <div class="nav-clock" id="hudLiveClock">--:--:--</div>
     </div>
 
-    <div class="hud-controls">
-      <button class="hud-btn" id="soundToggleBtn" title="Toggle Hype Sounds">
-        <span id="soundIcon">🔊</span> Sound FX
+    <div class="nav-controls">
+      <button class="apple-btn" id="soundToggleBtn" title="Toggle Sound FX">
+        <span id="soundIcon">🔊</span> Sound
       </button>
-      <button class="hud-btn primary" id="fullscreenToggleBtn" title="Toggle Fullscreen Stage Mode (Key: F)">
+      <button class="apple-btn btn-primary" id="fullscreenToggleBtn" title="Toggle Fullscreen Stage (F)">
         <span>⛶</span> Stage Fullscreen
       </button>
-      <a href="index.html" class="hud-btn">
-        <span>🏠</span> Arena Main
+      <a href="index.html" class="apple-btn">
+        <span>🏠</span> Main
       </a>
     </div>
   </header>
 
-  <!-- MAIN DASHBOARD CONTENT -->
-  <main class="dashboard-container">
+  <!-- MAIN CONTAINER -->
+  <main class="main-wrap">
 
-    <!-- LIVE ORGANIZER BROADCAST MARQUEE -->
-    <div class="broadcast-card" id="broadcastCard">
+    <!-- LIVE ORGANIZER BROADCAST BANNER -->
+    <div class="apple-card broadcast-banner" id="broadcastCard">
       <div class="broadcast-badge">
-        <span>⚡</span> ORGANIZER BROADCAST
+        <span>⚡</span> Announcement
       </div>
-      <div class="broadcast-content">
+      <div class="broadcast-text-wrap">
         <span id="broadcastText">🏆 TOURNAMENT ACTIVE: Contenders battling in Phase 02 Boss Gauntlet. Live damage calculations synced directly from Organizer Core.</span>
         <span class="broadcast-time" id="broadcastTimestamp">JUST NOW</span>
       </div>
     </div>
 
-    <!-- TELEMETRY KPI METRICS GRID -->
-    <section class="telemetry-grid">
-      <!-- Card 1: Boss HP -->
-      <div class="telemetry-card">
-        <div class="card-label">
-          <span>Boss Core Health</span>
-          <span style="color: var(--neon-red);" id="bossHpStatus">VULNERABLE</span>
+    <!-- TELEMETRY BENTO METRICS GRID -->
+    <section class="telemetry-bento">
+      <!-- Card 1: Boss Core Health -->
+      <div class="apple-card metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Boss Core Health</span>
+          <span class="metric-badge badge-green" id="bossHpStatus">Vulnerable</span>
         </div>
-        <div class="card-value" id="bossHpValue">78%</div>
-        <div class="hp-bar-wrap">
-          <div class="hp-bar-fill" id="bossHpBar" style="width: 78%;"></div>
+        <div class="metric-value" id="bossHpValue">78%</div>
+        <div>
+          <div class="capsule-meter-wrap">
+            <div class="capsule-meter-fill" id="bossHpBar" style="width: 78%;"></div>
+          </div>
         </div>
       </div>
 
-      <!-- Card 2: In-House Headcount -->
-      <div class="telemetry-card">
-        <div class="card-label">
-          <span>Arena Check-Ins</span>
-          <span style="color: var(--neon-green);">🟢 LIVE</span>
+      <!-- Card 2: Arena Check-Ins -->
+      <div class="apple-card metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Arena Check-Ins</span>
+          <span class="metric-badge badge-green">🟢 Live</span>
         </div>
-        <div class="card-value" id="inHouseCount">0</div>
-        <div class="card-sub">
-          <span>Contenders inside house arena</span>
+        <div class="metric-value" id="inHouseCount">0</div>
+        <div class="metric-sub">
+          <span>Contenders verified inside House</span>
         </div>
       </div>
 
       <!-- Card 3: Total Damage -->
-      <div class="telemetry-card">
-        <div class="card-label">
-          <span>Total Damage Dealt</span>
-          <span style="color: var(--neon-cyan);">⚡ COMBINED</span>
+      <div class="apple-card metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Total Damage Dealt</span>
+          <span class="metric-badge badge-blue">⚡ Combined</span>
         </div>
-        <div class="card-value" id="totalDamageDealt">0 DMG</div>
-        <div class="card-sub">
-          <span>Across all active combatants</span>
+        <div class="metric-value" id="totalDamageDealt">0 DMG</div>
+        <div class="metric-sub">
+          <span>Across all active warriors</span>
         </div>
       </div>
 
-      <!-- Card 4: Top Warrior Streak -->
-      <div class="telemetry-card">
-        <div class="card-label">
-          <span>Apex Leader</span>
-          <span style="color: var(--neon-gold);">👑 #1 SPOT</span>
+      <!-- Card 4: Apex Leader -->
+      <div class="apple-card metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Apex Leader</span>
+          <span class="metric-badge badge-gold">👑 Rank 1</span>
         </div>
-        <div class="card-value" id="topLeaderScore" style="font-size: 22px; color: var(--neon-gold);">--</div>
-        <div class="card-sub" id="topLeaderHandle">
+        <div class="metric-value" id="topLeaderScore" style="color: var(--accent-gold);">--</div>
+        <div class="metric-sub" id="topLeaderHandle">
           <span>Awaiting Phase 02 results</span>
         </div>
       </div>
     </section>
 
     <!-- TOP 3 CHAMPIONSHIP GLORY PODIUM -->
-    <section class="podium-section">
-      <div class="podium-header">
-        <span class="podium-eyebrow">GRAND CHAMPIONSHIP PODIUM</span>
-        <h2 class="podium-title">Top 3 Glory Showcase</h2>
+    <section class="apple-card podium-wrap">
+      <div class="podium-heading-wrap">
+        <span class="podium-eyebrow">Grand Championship Podium</span>
+        <h2 class="podium-main-title">Top 3 Glory Showcase</h2>
       </div>
 
       <div class="podium-grid">
         <!-- 2nd Place Silver -->
         <div class="podium-card rank-2" id="podiumRank2">
-          <div class="podium-crown-badge">🥈</div>
-          <div class="podium-rank-pill">2ND PLACE</div>
+          <div class="podium-avatar-ring">🥈</div>
+          <div class="podium-rank-pill">2nd Place</div>
           <div class="podium-handle" id="podiumHandle2">@runnerup</div>
           <div class="podium-name" id="podiumName2">Awaiting Contender</div>
           <div class="podium-score" id="podiumScore2">0 <span>DMG</span></div>
           <div class="podium-tier-tag" id="podiumTier2">Tier A</div>
         </div>
 
-        <!-- 1st Place Gold Apex -->
+        <!-- 1st Place Champion Apex Gold -->
         <div class="podium-card rank-1" id="podiumRank1">
-          <div class="podium-crown-badge">👑</div>
-          <div class="podium-rank-pill">CHAMPION #1</div>
+          <div class="podium-avatar-ring">👑</div>
+          <div class="podium-rank-pill">Champion #1</div>
           <div class="podium-handle" id="podiumHandle1">@champion</div>
           <div class="podium-name" id="podiumName1">Awaiting Apex Contender</div>
           <div class="podium-score" id="podiumScore1">0 <span>DMG</span></div>
-          <div class="podium-tier-tag" id="podiumTier1" style="background: rgba(255,215,0,0.2); color: #ffd700; border: 1px solid #ffd700;">Tier S Apex</div>
+          <div class="podium-tier-tag" id="podiumTier1" style="background: rgba(229,179,88,0.2); color: var(--accent-gold); border: 1px solid var(--accent-gold);">Tier S Apex</div>
         </div>
 
         <!-- 3rd Place Bronze -->
         <div class="podium-card rank-3" id="podiumRank3">
-          <div class="podium-crown-badge">🥉</div>
-          <div class="podium-rank-pill">3RD PLACE</div>
+          <div class="podium-avatar-ring">🥉</div>
+          <div class="podium-rank-pill">3rd Place</div>
           <div class="podium-handle" id="podiumHandle3">@challenger</div>
           <div class="podium-name" id="podiumName3">Awaiting Contender</div>
           <div class="podium-score" id="podiumScore3">0 <span>DMG</span></div>
@@ -1023,38 +1022,38 @@
       </div>
     </section>
 
-    <!-- FULL LIVE SCOREBOARD TABLE -->
-    <section class="table-section">
-      <div class="table-header-wrap">
-        <div class="table-title">
+    <!-- FULL LEADERBOARD TABLE -->
+    <section class="apple-card table-section">
+      <div class="table-toolbar">
+        <div class="table-heading">
           <span>Live Arena Leaderboard</span>
-          <span class="count-badge" id="contenderCountBadge">0 WARRIORS</span>
+          <span class="count-capsule" id="contenderCountBadge">0 Warriors</span>
         </div>
 
         <div class="table-actions">
-          <div class="filter-pills">
-            <button class="filter-pill active" data-filter="all">All Standings</button>
-            <button class="filter-pill" data-filter="top10">Top 10</button>
-            <button class="filter-pill" data-filter="inhouse">In-House Only</button>
-            <button class="filter-pill" data-filter="tierSA">Tier S & A</button>
+          <div class="segmented-control">
+            <button class="segment-btn active" data-filter="all">All</button>
+            <button class="segment-btn" data-filter="top10">Top 10</button>
+            <button class="segment-btn" data-filter="inhouse">In-House</button>
+            <button class="segment-btn" data-filter="tierSA">Tier S & A</button>
           </div>
 
-          <div class="search-input-wrap">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="scoreboardSearchInput" placeholder="Filter contender handle or name...">
+          <div class="apple-search-wrap">
+            <span class="search-glyph">🔍</span>
+            <input type="text" id="scoreboardSearchInput" placeholder="Search contender...">
           </div>
         </div>
       </div>
 
-      <div class="scoreboard-table-wrap">
-        <table class="telemetry-table">
+      <div class="table-container">
+        <table class="apple-table">
           <thead>
             <tr>
-              <th style="width: 90px; text-align: center;">Rank</th>
+              <th style="width: 85px; text-align: center;">Rank</th>
               <th>Contender</th>
-              <th style="min-width: 180px;">Damage Telemetry</th>
-              <th style="width: 100px; text-align: center;">Tier</th>
-              <th style="width: 130px; text-align: center;">Arena Status</th>
+              <th style="min-width: 170px;">Damage Telemetry</th>
+              <th style="width: 90px; text-align: center;">Tier</th>
+              <th style="width: 120px; text-align: center;">Status</th>
             </tr>
           </thead>
           <tbody id="scoreboardTableBody">
@@ -1066,8 +1065,8 @@
 
   </main>
 
-  <footer class="telemetry-footer">
-    TECH BOSS 2026 OFFICIAL TOURNAMENT TELEMETRY ENGINE • SYNCHRONIZED WITH ORGANIZER COMMAND CENTER
+  <footer class="apple-footer">
+    Tech Boss 2026 Official Tournament Telemetry Engine • Synchronized with Organizer Command Center
   </footer>
 
   <!-- SCRIPT LOGIC -->
@@ -1101,9 +1100,9 @@
       var fullscreenBtn = document.getElementById('fullscreenToggleBtn');
       var soundToggleBtn = document.getElementById('soundToggleBtn');
       var soundIconEl = document.getElementById('soundIcon');
-      var filterButtons = document.querySelectorAll('.filter-pill');
+      var segmentButtons = document.querySelectorAll('.segment-btn');
 
-      // Audio Synthesizer for Stage Hype
+      // Apple Audio Synthesizer
       function playTone(freq, duration, type) {
         if (!soundEnabled) return;
         try {
@@ -1117,7 +1116,7 @@
           var gain = audioCtx.createGain();
           osc.type = type || 'sine';
           osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
@@ -1136,17 +1135,17 @@
 
       function playBroadcastAlertSound() {
         if (!soundEnabled) return;
-        playTone(880, 0.1, 'square');
-        setTimeout(function () { playTone(1174.66, 0.2, 'square'); }, 100);
+        playTone(880, 0.08, 'sine');
+        setTimeout(function () { playTone(1174.66, 0.15, 'sine'); }, 90);
       }
 
-      // Live HUD Clock
+      // Live Apple Clock
       function updateClock() {
         var now = new Date();
         var hrs = String(now.getHours()).padStart(2, '0');
         var mins = String(now.getMinutes()).padStart(2, '0');
         var secs = String(now.getSeconds()).padStart(2, '0');
-        hudClockEl.textContent = hrs + ':' + mins + ':' + secs + ' IST';
+        if (hudClockEl) hudClockEl.textContent = hrs + ':' + mins + ':' + secs + ' IST';
       }
       setInterval(updateClock, 1000);
       updateClock();
@@ -1208,12 +1207,9 @@
       function loadBroadcast() {
         var msg = localStorage.getItem('techboss_custom_broadcast');
         if (msg && msg.trim()) {
-          if (broadcastTextEl.textContent !== msg) {
+          if (broadcastTextEl && broadcastTextEl.textContent !== msg) {
             broadcastTextEl.textContent = msg;
-            broadcastTimestampEl.textContent = 'UPDATED ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            broadcastCardEl.classList.remove('flash-alert');
-            void broadcastCardEl.offsetWidth; // trigger reflow
-            broadcastCardEl.classList.add('flash-alert');
+            if (broadcastTimestampEl) broadcastTimestampEl.textContent = 'UPDATED ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             playBroadcastAlertSound();
           }
         }
@@ -1223,19 +1219,21 @@
         var hp = localStorage.getItem('techboss_boss_hp') || '78';
         var hpNum = parseInt(hp, 10);
         if (isNaN(hpNum)) hpNum = 78;
-        bossHpValEl.textContent = hpNum + '%';
-        bossHpBarEl.style.width = hpNum + '%';
+        if (bossHpValEl) bossHpValEl.textContent = hpNum + '%';
+        if (bossHpBarEl) bossHpBarEl.style.width = hpNum + '%';
 
         var statusEl = document.getElementById('bossHpStatus');
-        if (hpNum <= 25) {
-          statusEl.textContent = 'CRITICAL HP';
-          statusEl.style.color = '#ff3366';
-        } else if (hpNum <= 50) {
-          statusEl.textContent = 'ENRAGED';
-          statusEl.style.color = '#ff9933';
-        } else {
-          statusEl.textContent = 'VULNERABLE';
-          statusEl.style.color = '#00ff88';
+        if (statusEl) {
+          if (hpNum <= 25) {
+            statusEl.textContent = 'Critical HP';
+            statusEl.className = 'metric-badge badge-red';
+          } else if (hpNum <= 50) {
+            statusEl.textContent = 'Enraged';
+            statusEl.className = 'metric-badge badge-gold';
+          } else {
+            statusEl.textContent = 'Vulnerable';
+            statusEl.className = 'metric-badge badge-green';
+          }
         }
       }
 
@@ -1244,10 +1242,10 @@
           var raw = localStorage.getItem('techboss_inhouse_checkins');
           inHouseMap = raw ? JSON.parse(raw) : {};
           var count = Object.keys(inHouseMap).length;
-          inHouseCountEl.textContent = count;
+          if (inHouseCountEl) inHouseCountEl.textContent = count;
         } catch (e) {
           inHouseMap = {};
-          inHouseCountEl.textContent = '0';
+          if (inHouseCountEl) inHouseCountEl.textContent = '0';
         }
       }
 
@@ -1271,15 +1269,15 @@
             playCelebrationFanfare();
           }
           lastTopLeaderHandle = p1.handle;
-          topLeaderScoreEl.textContent = p1.score + ' DMG';
-          topLeaderHandleEl.innerHTML = '<span>' + escapeHtml(p1.handle) + ' (Leader)</span>';
+          if (topLeaderScoreEl) topLeaderScoreEl.textContent = p1.score + ' DMG';
+          if (topLeaderHandleEl) topLeaderHandleEl.innerHTML = '<span>' + escapeHtml(p1.handle) + ' (Leader)</span>';
         } else {
           document.getElementById('podiumHandle1').textContent = '@apex_leader';
           document.getElementById('podiumName1').textContent = 'Awaiting Contender';
           document.getElementById('podiumScore1').innerHTML = '0 <span>DMG</span>';
           document.getElementById('podiumTier1').textContent = 'Tier S Apex';
-          topLeaderScoreEl.textContent = '--';
-          topLeaderHandleEl.innerHTML = '<span>Awaiting Phase 02</span>';
+          if (topLeaderScoreEl) topLeaderScoreEl.textContent = '--';
+          if (topLeaderHandleEl) topLeaderHandleEl.innerHTML = '<span>Awaiting Phase 02</span>';
         }
 
         // Rank 2
@@ -1315,8 +1313,8 @@
 
         // Calculate metrics
         var totalDmg = cleanBoard.reduce(function (sum, item) { return sum + (item.score || 0); }, 0);
-        totalDamageDealtEl.textContent = totalDmg.toLocaleString() + ' DMG';
-        countBadgeEl.textContent = cleanBoard.length + ' WARRIORS';
+        if (totalDamageDealtEl) totalDamageDealtEl.textContent = totalDmg.toLocaleString() + ' DMG';
+        if (countBadgeEl) countBadgeEl.textContent = cleanBoard.length + ' Warriors';
 
         // Filtering
         var filtered = cleanBoard.filter(function (item) {
@@ -1326,7 +1324,7 @@
 
           if (!matchesSearch) return false;
 
-          if (currentFilter === 'top10') return true; // sliced later
+          if (currentFilter === 'top10') return true;
           if (currentFilter === 'inhouse') {
             var normH = item.handle.toLowerCase().replace(/[^a-z0-9_]/g, '');
             return !!inHouseMap[normH];
@@ -1343,10 +1341,10 @@
         }
 
         if (!filtered.length) {
-          tableBodyEl.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 48px 20px; color: var(--text-dim);">' +
+          tableBodyEl.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 48px 20px; color: var(--text-secondary);">' +
             '<div style="font-size: 32px; margin-bottom: 8px;">⚔️</div>' +
             '<div style="font-weight: 700; color: #ffffff; font-size: 16px; margin-bottom: 4px;">Scores Live During Phase 02</div>' +
-            '<div style="font-size: 13px; max-width: 420px; margin: 0 auto; line-height: 1.5;">Damage points are awarded in real-time as contenders battle Boss stages. Synced directly with Organizer Command Center.</div>' +
+            '<div style="font-size: 13px; max-width: 420px; margin: 0 auto; line-height: 1.5; color: var(--text-secondary);">Damage points are awarded in real-time as contenders battle Boss stages. Synced directly with Organizer Command Center.</div>' +
             '</td></tr>';
           return;
         }
@@ -1359,31 +1357,30 @@
           var normH = item.handle.toLowerCase().replace(/[^a-z0-9_]/g, '');
           var isInHouse = !!inHouseMap[normH];
 
-          var rowClass = rank === 1 ? 'row-gold' : (rank === 2 ? 'row-silver' : (rank === 3 ? 'row-bronze' : ''));
           var rankDisplay = rank === 1 ? '🥇 1st' : (rank === 2 ? '🥈 2nd' : (rank === 3 ? '🥉 3rd' : '#' + rank));
           var rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
 
           var barWidth = Math.min(100, Math.round((item.score / maxScore) * 100));
 
-          return '<tr class="' + rowClass + '">' +
+          return '<tr>' +
             '<td><div class="rank-cell ' + rankClass + '">' + rankDisplay + '</div></td>' +
             '<td>' +
-              '<div class="contender-info">' +
-                '<span class="contender-handle">' + escapeHtml(item.handle) + '</span>' +
-                (item.name ? '<span class="contender-sub">' + escapeHtml(item.name) + '</span>' : '') +
+              '<div class="contender-identity">' +
+                '<span class="contender-tag">' + escapeHtml(item.handle) + '</span>' +
+                (item.name ? '<span class="contender-fullname">' + escapeHtml(item.name) + '</span>' : '') +
               '</div>' +
             '</td>' +
             '<td>' +
-              '<div class="score-cell">' +
-                '<span class="score-val">' + item.score + ' <span style="font-size:11px; color:var(--text-dim);">DMG</span></span>' +
-                '<div class="score-meter-wrap">' +
-                  '<div class="score-meter-fill" style="width: ' + barWidth + '%;"></div>' +
+              '<div class="damage-cell">' +
+                '<span class="damage-num">' + item.score + ' <span style="font-size:11px; color:var(--text-tertiary);">DMG</span></span>' +
+                '<div class="damage-bar-wrap">' +
+                  '<div class="damage-bar-fill" style="width: ' + barWidth + '%;"></div>' +
                 '</div>' +
               '</div>' +
             '</td>' +
-            '<td style="text-align: center;"><span class="tier-badge tier-' + tier + '">Tier ' + tier + '</span></td>' +
+            '<td style="text-align: center;"><span class="tier-pill tier-' + tier + '">Tier ' + tier + '</span></td>' +
             '<td style="text-align: center;">' +
-              (isInHouse ? '<span class="arena-status-tag">🟢 In House</span>' : '<span style="font-size:12px; color:var(--text-dim);">⚡ Battling</span>') +
+              (isInHouse ? '<span class="status-pill">🟢 In House</span>' : '<span style="font-size:11.5px; color:var(--text-secondary);">⚡ Active</span>') +
             '</td>' +
           '</tr>';
         }).join('');
@@ -1477,18 +1474,20 @@
         });
       }
 
-      // High-Frequency Background Poller (every 2.5s fallback)
+      // High-Frequency Background Poller
       setInterval(loadAllData, 2500);
 
-      // Search & Filters
-      searchInput.addEventListener('input', function (e) {
-        currentSearch = e.target.value.trim();
-        renderScoreboard();
-      });
+      // Search & Segment Filters
+      if (searchInput) {
+        searchInput.addEventListener('input', function (e) {
+          currentSearch = e.target.value.trim();
+          renderScoreboard();
+        });
+      }
 
-      filterButtons.forEach(function (btn) {
+      segmentButtons.forEach(function (btn) {
         btn.addEventListener('click', function () {
-          filterButtons.forEach(function (b) { b.classList.remove('active'); });
+          segmentButtons.forEach(function (b) { b.classList.remove('active'); });
           btn.classList.add('active');
           currentFilter = btn.getAttribute('data-filter');
           renderScoreboard();
@@ -1499,16 +1498,16 @@
       function toggleFullScreen() {
         if (!document.fullscreenElement) {
           document.documentElement.requestFullscreen().catch(function () { });
-          fullscreenBtn.innerHTML = '<span>⛶</span> Exit Fullscreen';
+          if (fullscreenBtn) fullscreenBtn.innerHTML = '<span>⛶</span> Exit Fullscreen';
         } else {
           if (document.exitFullscreen) {
             document.exitFullscreen();
-            fullscreenBtn.innerHTML = '<span>⛶</span> Stage Fullscreen';
+            if (fullscreenBtn) fullscreenBtn.innerHTML = '<span>⛶</span> Stage Fullscreen';
           }
         }
       }
 
-      fullscreenBtn.addEventListener('click', toggleFullScreen);
+      if (fullscreenBtn) fullscreenBtn.addEventListener('click', toggleFullScreen);
 
       // Keyboard Shortcut 'F' for Fullscreen
       document.addEventListener('keydown', function (e) {
@@ -1519,12 +1518,14 @@
       });
 
       // Sound FX Toggle
-      soundToggleBtn.addEventListener('click', function () {
-        soundEnabled = !soundEnabled;
-        soundIconEl.textContent = soundEnabled ? '🔊' : '🔇';
-        soundToggleBtn.style.opacity = soundEnabled ? '1' : '0.6';
-        if (soundEnabled) playTone(600, 0.1, 'sine');
-      });
+      if (soundToggleBtn) {
+        soundToggleBtn.addEventListener('click', function () {
+          soundEnabled = !soundEnabled;
+          if (soundIconEl) soundIconEl.textContent = soundEnabled ? '🔊' : '🔇';
+          soundToggleBtn.style.opacity = soundEnabled ? '1' : '0.6';
+          if (soundEnabled) playTone(600, 0.1, 'sine');
+        });
+      }
 
     })();
   </script>
