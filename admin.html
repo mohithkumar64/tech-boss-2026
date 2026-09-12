@@ -796,8 +796,8 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
         </select>
       </div>
       <div>
-        <label for="modalScore">Boss Damage (0-1000)</label>
-        <input type="number" id="modalScore" min="0" max="1000" placeholder="0 - 1000">
+        <label for="modalScore">Boss Damage Points</label>
+        <input type="number" id="modalScore" min="0" placeholder="e.g. 1500 (Unlimited Score)">
       </div>
     </div>
 
@@ -1371,7 +1371,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
   // ---------- LEADERBOARD CRUD ----------
   window.adjustScore = function(idx, delta) {
     if (boardData[idx]) {
-      boardData[idx].score = Math.max(0, Math.min(1000, boardData[idx].score + delta));
+      boardData[idx].score = Math.max(0, boardData[idx].score + delta);
       saveData();
       renderLeaderboardTable();
       showToast('Score updated for ' + boardData[idx].handle);
@@ -1420,13 +1420,13 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     var track = document.getElementById('modalTrack').value;
     var scoreVal = parseInt(document.getElementById('modalScore').value, 10);
 
-    if (!handle || isNaN(scoreVal)) {
-      alert('Please provide a valid handle and score (0-1000).');
+    if (!handle || isNaN(scoreVal) || scoreVal < 0) {
+      alert('Please provide a valid handle and damage score (0 or higher).');
       return;
     }
 
     var cleanHandle = handle.startsWith('@') ? handle : ('@' + handle);
-    var cleanScore = Math.max(0, Math.min(1000, scoreVal));
+    var cleanScore = Math.max(0, scoreVal);
 
     var normH = cleanHandle.toLowerCase().replace(/[^a-z0-9_]/g, '');
     var normN = name.toLowerCase().replace(/[^a-z0-9]/g, '');
