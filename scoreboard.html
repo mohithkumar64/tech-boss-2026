@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tech Boss 2026 — Live Arena Telemetry & Leaderboard</title>
   <meta name="description"
-    content="Apple-inspired Live Tournament Telemetry, Championship Glory Podium, and Real-Time Organizer Broadcast Telemetry for Tech Boss 2026.">
+    content="Apple-grade Live Tournament Telemetry, Championship Glory Podium, and Real-Time Organizer Broadcast Telemetry for Tech Boss 2026.">
   <link rel="icon" type="image/png" href="logo.png?v=2">
   <link rel="apple-touch-icon" href="logo.png?v=2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,34 +22,39 @@
   <style>
     :root {
       --bg-black: #000000;
-      --bg-base: #070709;
-      --bg-card: rgba(22, 22, 26, 0.65);
-      --bg-card-hover: rgba(30, 30, 36, 0.85);
-      --bg-card-elevated: rgba(28, 28, 34, 0.75);
-      --bg-glass-nav: rgba(10, 10, 12, 0.78);
+      --bg-space: #070709;
+      --bg-card: rgba(20, 20, 24, 0.65);
+      --bg-card-hover: rgba(28, 28, 34, 0.85);
+      --bg-glass-nav: rgba(10, 10, 14, 0.82);
 
       --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-highlight: rgba(255, 255, 255, 0.12);
-      --border-hover: rgba(255, 255, 255, 0.2);
+      --border-highlight: rgba(255, 255, 255, 0.14);
+      --border-hover: rgba(255, 255, 255, 0.22);
 
-      --accent-blue: #2997ff;
-      --accent-cyan: #00f0ff;
-      --accent-gold: #e5b358;
-      --accent-gold-bright: #ffd700;
-      --accent-silver: #d1d5db;
-      --accent-bronze: #f97316;
-      --accent-green: #30d158;
-      --accent-red: #ff453a;
-      --accent-purple: #bf5af2;
+      --apple-gold: #ffd700;
+      --apple-gold-light: #fff0a8;
+      --apple-gold-glow: rgba(255, 215, 0, 0.25);
 
-      --text-primary: #f5f5f7;
-      --text-secondary: #86868b;
-      --text-tertiary: #515154;
+      --apple-silver: #f1f5f9;
+      --apple-silver-glow: rgba(241, 245, 249, 0.2);
 
-      --radius-sm: 10px;
-      --radius-md: 16px;
-      --radius-lg: 22px;
-      --radius-xl: 28px;
+      --apple-bronze: #ff9d5c;
+      --apple-bronze-glow: rgba(255, 157, 92, 0.22);
+
+      --apple-blue: #2997ff;
+      --apple-cyan: #00f0ff;
+      --apple-green: #30d158;
+      --apple-red: #ff453a;
+      --apple-purple: #bf5af2;
+
+      --text-primary: #ffffff;
+      --text-secondary: #98989f;
+      --text-tertiary: #636366;
+
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
       --radius-pill: 9999px;
 
       --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", sans-serif;
@@ -76,31 +81,23 @@
       display: flex;
       flex-direction: column;
       -webkit-font-smoothing: antialiased;
-      letter-spacing: -0.015em;
+      letter-spacing: -0.018em;
       position: relative;
+      background-image: 
+        radial-gradient(circle at 50% -80px, rgba(41, 151, 255, 0.14) 0%, transparent 60%),
+        radial-gradient(circle at 80% 20%, rgba(229, 179, 88, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 20% 60%, rgba(191, 90, 242, 0.06) 0%, transparent 45%);
+      background-attachment: fixed;
     }
 
-    /* Apple Ambient Gradient Aura */
-    .ambient-glow {
-      position: fixed;
-      top: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 1200px;
-      height: 600px;
-      background: radial-gradient(circle 500px at 50% 30%, rgba(41, 151, 255, 0.12), rgba(229, 179, 88, 0.06), transparent 70%);
-      filter: blur(90px);
-      pointer-events: none;
-      z-index: 0;
-    }
-
+    /* Ambient Subtle Grid */
     .ambient-grid {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background-size: 48px 48px;
+      background-size: 52px 52px;
       background-image: 
         linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
@@ -108,21 +105,21 @@
       z-index: 0;
     }
 
-    /* Apple Glassmorphic Floating Navigation Header */
+    /* Apple Floating Glass Navigation Dock */
     .apple-nav {
       position: sticky;
       top: 0;
       z-index: 100;
       background: var(--bg-glass-nav);
-      backdrop-filter: blur(28px) saturate(190%);
-      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      backdrop-filter: blur(30px) saturate(200%);
+      -webkit-backdrop-filter: blur(30px) saturate(200%);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 12px 28px;
+      padding: 14px 32px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
 
     .nav-brand {
@@ -134,17 +131,17 @@
     }
 
     .nav-brand img {
-      width: 34px;
-      height: 34px;
-      border-radius: 9px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
     }
 
     .brand-title {
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: -0.4px;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
       background: linear-gradient(135deg, #ffffff 40%, #a1a1a6 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -154,7 +151,7 @@
     }
 
     .brand-title span {
-      background: linear-gradient(135deg, var(--accent-gold) 0%, #fff 100%);
+      background: linear-gradient(135deg, #ffd700 0%, #fff 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -171,27 +168,28 @@
       align-items: center;
       gap: 8px;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius-pill);
-      padding: 5px 14px;
-      font-size: 12px;
+      padding: 6px 16px;
+      font-size: 12.5px;
       font-weight: 600;
       color: var(--text-primary);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     .live-dot {
-      width: 7px;
-      height: 7px;
-      background: var(--accent-green);
+      width: 8px;
+      height: 8px;
+      background: var(--apple-green);
       border-radius: 50%;
-      box-shadow: 0 0 10px var(--accent-green);
+      box-shadow: 0 0 12px var(--apple-green);
       animation: apple-pulse 2s infinite ease-in-out;
     }
 
     @keyframes apple-pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
+      50% { opacity: 0.35; transform: scale(0.85); }
     }
 
     .nav-clock {
@@ -202,23 +200,23 @@
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-pill);
-      padding: 5px 12px;
-      letter-spacing: 0.3px;
+      padding: 6px 14px;
+      letter-spacing: 0.4px;
     }
 
     /* Apple Button Group */
     .nav-controls {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .apple-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 7px 14px;
+      gap: 7px;
+      padding: 8px 16px;
       border-radius: var(--radius-pill);
       font-size: 12.5px;
       font-weight: 600;
@@ -228,7 +226,7 @@
       background: rgba(255, 255, 255, 0.06);
       color: var(--text-primary);
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
     }
 
     .apple-btn:hover {
@@ -240,14 +238,15 @@
     .apple-btn.btn-primary {
       background: #ffffff;
       color: #000000;
-      border: 1px solid rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.9);
       font-weight: 700;
-      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 18px rgba(255, 255, 255, 0.18);
     }
 
     .apple-btn.btn-primary:hover {
       background: #f5f5f7;
-      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+      box-shadow: 0 6px 24px rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
     }
 
     /* Main Container */
@@ -255,60 +254,58 @@
       max-width: 1280px;
       width: 100%;
       margin: 0 auto;
-      padding: 28px 24px 60px;
+      padding: 32px 24px 70px;
       position: relative;
       z-index: 1;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 28px;
     }
 
     /* Apple Bento Glass Card */
     .apple-card {
       background: var(--bg-card);
-      backdrop-filter: blur(35px) saturate(190%);
-      -webkit-backdrop-filter: blur(35px) saturate(190%);
+      backdrop-filter: blur(36px) saturate(190%);
+      -webkit-backdrop-filter: blur(36px) saturate(190%);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 var(--border-highlight);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45), inset 0 1px 0 var(--border-highlight);
       position: relative;
       overflow: hidden;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .apple-card:hover {
-      border-color: var(--border-hover);
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-    }
-
-    /* Live Broadcast Marquee */
+    /* Apple Dynamic Announcement Capsule */
     .broadcast-banner {
-      padding: 14px 20px;
+      padding: 16px 24px;
       display: flex;
       align-items: center;
-      gap: 14px;
-      background: linear-gradient(135deg, rgba(22, 22, 28, 0.8), rgba(15, 15, 20, 0.8));
+      gap: 16px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(135deg, rgba(28, 28, 36, 0.75), rgba(16, 16, 22, 0.75));
+      border: 1px solid rgba(41, 151, 255, 0.25);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
     .broadcast-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(41, 151, 255, 0.12);
-      border: 1px solid rgba(41, 151, 255, 0.3);
-      color: var(--accent-blue);
+      background: rgba(41, 151, 255, 0.15);
+      border: 1px solid rgba(41, 151, 255, 0.35);
+      color: #38bdf8;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
-      padding: 4px 10px;
+      letter-spacing: 0.8px;
+      padding: 5px 12px;
       border-radius: var(--radius-pill);
       white-space: nowrap;
     }
 
     .broadcast-text-wrap {
       flex: 1;
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 500;
       color: #f5f5f7;
       display: flex;
@@ -319,140 +316,53 @@
 
     .broadcast-time {
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 11.5px;
       color: var(--text-secondary);
       white-space: nowrap;
     }
 
-    /* Telemetry Bento Grid */
-    .telemetry-bento {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-
-    @media (max-width: 1024px) {
-      .telemetry-bento {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 640px) {
-      .telemetry-bento {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .metric-card {
-      padding: 20px 22px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border-radius: var(--radius-lg);
-    }
-
-    .metric-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .metric-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .metric-badge {
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: var(--radius-pill);
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-
-    .badge-green { background: rgba(48, 209, 88, 0.12); color: var(--accent-green); border: 1px solid rgba(48, 209, 88, 0.25); }
-    .badge-blue { background: rgba(41, 151, 255, 0.12); color: var(--accent-blue); border: 1px solid rgba(41, 151, 255, 0.25); }
-    .badge-gold { background: rgba(229, 179, 88, 0.15); color: var(--accent-gold); border: 1px solid rgba(229, 179, 88, 0.3); }
-    .badge-red { background: rgba(255, 69, 58, 0.12); color: var(--accent-red); border: 1px solid rgba(255, 69, 58, 0.25); }
-
-    .metric-value {
-      font-family: var(--font-mono);
-      font-size: 30px;
-      font-weight: 800;
-      color: #ffffff;
-      line-height: 1.1;
-      margin-bottom: 8px;
-      letter-spacing: -0.5px;
-    }
-
-    .metric-sub {
-      font-size: 12px;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* Apple Capsule Meter */
-    .capsule-meter-wrap {
-      width: 100%;
-      height: 7px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 8px;
-    }
-
-    .capsule-meter-fill {
-      height: 100%;
-      width: 78%;
-      background: linear-gradient(90deg, #ff453a, #ff9f0a);
-      border-radius: 4px;
-      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* CHAMPIONSHIP GLORY PODIUM */
-    .podium-wrap {
-      padding: 32px 28px;
+    /* CHAMPIONSHIP GLORY PODIUM - APPLE KEYNOTE STAGE DESIGN */
+    .podium-section {
+      padding: 36px 32px 42px;
       border-radius: var(--radius-xl);
-      background: radial-gradient(circle at 50% 20%, rgba(229, 179, 88, 0.08), transparent 70%),
-                  var(--bg-card);
-      border: 1px solid rgba(229, 179, 88, 0.2);
+      background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.08) 0%, transparent 70%),
+                  linear-gradient(180deg, rgba(22, 22, 28, 0.75) 0%, rgba(12, 12, 16, 0.85) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.16);
     }
 
-    .podium-heading-wrap {
+    .podium-header-wrap {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 34px;
     }
 
     .podium-eyebrow {
-      font-size: 11.5px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--accent-gold);
+      letter-spacing: 2.2px;
+      background: linear-gradient(135deg, #ffd700, #ffae00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin-bottom: 6px;
       display: inline-block;
     }
 
     .podium-main-title {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 800;
-      letter-spacing: -0.6px;
-      color: #ffffff;
+      letter-spacing: -0.8px;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .podium-grid {
       display: grid;
-      grid-template-columns: 1fr 1.15fr 1fr;
+      grid-template-columns: 1fr 1.18fr 1fr;
       align-items: flex-end;
-      gap: 18px;
-      max-width: 1060px;
+      gap: 24px;
+      max-width: 1080px;
       margin: 0 auto;
     }
 
@@ -463,120 +373,136 @@
       }
     }
 
-    .podium-card {
-      background: rgba(24, 24, 28, 0.85);
-      border-radius: var(--radius-lg);
-      padding: 24px 20px;
+    /* Pedestal Base Styling */
+    .podium-pedestal {
+      background: rgba(24, 24, 30, 0.8);
+      border-radius: 24px;
+      padding: 28px 22px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       position: relative;
-      backdrop-filter: blur(24px);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
       border: 1px solid var(--border-subtle);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 var(--border-highlight);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .podium-card:hover {
-      transform: translateY(-3px);
+    .podium-pedestal:hover {
+      transform: translateY(-4px);
       border-color: var(--border-hover);
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
     }
 
     /* Rank 1 Champion Apex Gold */
-    .podium-card.rank-1 {
-      background: linear-gradient(180deg, rgba(38, 32, 22, 0.95), rgba(20, 18, 24, 0.95));
-      border: 1.5px solid var(--accent-gold);
-      box-shadow: 0 0 35px rgba(229, 179, 88, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    .podium-pedestal.rank-1 {
+      background: linear-gradient(180deg, rgba(38, 32, 18, 0.95) 0%, rgba(18, 16, 22, 0.95) 100%);
+      border: 1.5px solid rgba(255, 215, 0, 0.6);
+      box-shadow: 0 0 50px rgba(255, 215, 0, 0.22), 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35);
       order: 2;
-      padding-top: 34px;
-      padding-bottom: 34px;
+      padding-top: 40px;
+      padding-bottom: 40px;
+      transform: scale(1.03);
+    }
+
+    .podium-pedestal.rank-1:hover {
+      transform: scale(1.03) translateY(-4px);
+      box-shadow: 0 0 65px rgba(255, 215, 0, 0.32), 0 28px 60px rgba(0, 0, 0, 0.7);
     }
 
     @media (max-width: 860px) {
-      .podium-card.rank-1 { order: 1; }
+      .podium-pedestal.rank-1 { order: 1; transform: none; }
+      .podium-pedestal.rank-1:hover { transform: translateY(-4px); }
     }
 
-    .podium-card.rank-2 {
-      border: 1px solid rgba(209, 213, 219, 0.35);
-      box-shadow: 0 0 20px rgba(209, 213, 219, 0.1);
+    /* Rank 2 Silver */
+    .podium-pedestal.rank-2 {
+      border: 1.5px solid rgba(241, 245, 249, 0.35);
+      box-shadow: 0 0 30px rgba(241, 245, 249, 0.1), 0 16px 36px rgba(0, 0, 0, 0.4);
       order: 1;
     }
 
     @media (max-width: 860px) {
-      .podium-card.rank-2 { order: 2; }
+      .podium-pedestal.rank-2 { order: 2; }
     }
 
-    .podium-card.rank-3 {
-      border: 1px solid rgba(249, 115, 22, 0.35);
-      box-shadow: 0 0 20px rgba(249, 115, 22, 0.1);
+    /* Rank 3 Bronze */
+    .podium-pedestal.rank-3 {
+      border: 1.5px solid rgba(255, 157, 92, 0.35);
+      box-shadow: 0 0 30px rgba(255, 157, 92, 0.1), 0 16px 36px rgba(0, 0, 0, 0.4);
       order: 3;
     }
 
-    .podium-avatar-ring {
-      width: 58px;
-      height: 58px;
+    /* Medal Halo Rings */
+    .medal-halo-ring {
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
-      margin-bottom: 12px;
+      font-size: 28px;
+      margin-bottom: 14px;
       position: relative;
     }
 
-    .rank-1 .podium-avatar-ring {
-      width: 74px;
-      height: 74px;
-      font-size: 36px;
-      background: radial-gradient(circle, rgba(229, 179, 88, 0.25) 0%, rgba(229, 179, 88, 0.05) 70%);
-      border: 2px solid var(--accent-gold);
-      box-shadow: 0 0 24px rgba(229, 179, 88, 0.5);
+    .rank-1 .medal-halo-ring {
+      width: 84px;
+      height: 84px;
+      font-size: 42px;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.35) 0%, rgba(255, 215, 0, 0.08) 70%);
+      border: 2px solid var(--apple-gold);
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), inset 0 0 15px rgba(255, 215, 0, 0.3);
     }
 
-    .rank-2 .podium-avatar-ring {
-      background: radial-gradient(circle, rgba(209, 213, 219, 0.25) 0%, rgba(209, 213, 219, 0.05) 70%);
-      border: 2px solid var(--accent-silver);
-      box-shadow: 0 0 16px rgba(209, 213, 219, 0.3);
+    .rank-2 .medal-halo-ring {
+      background: radial-gradient(circle, rgba(241, 245, 249, 0.28) 0%, rgba(241, 245, 249, 0.06) 70%);
+      border: 2px solid var(--apple-silver);
+      box-shadow: 0 0 20px var(--apple-silver-glow);
     }
 
-    .rank-3 .podium-avatar-ring {
-      background: radial-gradient(circle, rgba(249, 115, 22, 0.25) 0%, rgba(249, 115, 22, 0.05) 70%);
-      border: 2px solid var(--accent-bronze);
-      box-shadow: 0 0 16px rgba(249, 115, 22, 0.3);
+    .rank-3 .medal-halo-ring {
+      background: radial-gradient(circle, rgba(255, 157, 92, 0.28) 0%, rgba(255, 157, 92, 0.06) 70%);
+      border: 2px solid var(--apple-bronze);
+      box-shadow: 0 0 20px var(--apple-bronze-glow);
     }
 
     .podium-rank-pill {
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      padding: 3px 10px;
+      letter-spacing: 1px;
+      padding: 4px 12px;
       border-radius: var(--radius-pill);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .rank-1 .podium-rank-pill {
-      background: var(--accent-gold);
+      background: var(--apple-gold);
       color: #000000;
-      box-shadow: 0 2px 10px rgba(229, 179, 88, 0.4);
+      box-shadow: 0 2px 12px rgba(255, 215, 0, 0.5);
     }
 
     .rank-2 .podium-rank-pill {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.18);
       color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
     }
 
     .rank-3 .podium-rank-pill {
-      background: rgba(249, 115, 22, 0.2);
-      color: #fb923c;
+      background: rgba(255, 157, 92, 0.2);
+      color: #ff9d5c;
+      border: 1px solid rgba(255, 157, 92, 0.35);
     }
 
     .podium-handle {
       font-family: var(--font-mono);
-      font-size: 17px;
-      font-weight: 700;
+      font-size: 18px;
+      font-weight: 800;
       color: #ffffff;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -584,14 +510,15 @@
     }
 
     .rank-1 .podium-handle {
-      font-size: 21px;
-      color: #fff9db;
+      font-size: 23px;
+      color: #fffbeb;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
 
     .podium-name {
-      font-size: 12.5px;
+      font-size: 13px;
       color: var(--text-secondary);
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -600,40 +527,51 @@
 
     .podium-score {
       font-family: var(--font-mono);
-      font-size: 26px;
-      font-weight: 800;
+      font-size: 30px;
+      font-weight: 900;
       color: #ffffff;
       display: flex;
       align-items: baseline;
-      gap: 4px;
+      gap: 5px;
+      margin-bottom: 10px;
     }
 
     .rank-1 .podium-score {
-      font-size: 32px;
-      color: var(--accent-gold);
-      text-shadow: 0 0 20px rgba(229, 179, 88, 0.4);
+      font-size: 38px;
+      color: var(--apple-gold);
+      text-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+    }
+
+    .rank-2 .podium-score {
+      color: #f1f5f9;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .rank-3 .podium-score {
+      color: #ff9d5c;
+      text-shadow: 0 0 20px rgba(255, 157, 92, 0.3);
     }
 
     .podium-score span {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-tertiary);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-secondary);
       text-transform: uppercase;
     }
 
     .podium-tier-tag {
-      margin-top: 10px;
       font-size: 11px;
-      font-weight: 600;
-      padding: 3px 9px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.06);
-      color: #cbd5e1;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     /* LEADERBOARD TABLE SECTION */
     .table-section {
-      padding: 24px;
+      padding: 28px;
       border-radius: var(--radius-xl);
     }
 
@@ -642,45 +580,45 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 14px;
-      margin-bottom: 20px;
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
     .table-heading {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 800;
       color: #ffffff;
       display: flex;
       align-items: center;
-      gap: 10px;
-      letter-spacing: -0.4px;
+      gap: 12px;
+      letter-spacing: -0.5px;
     }
 
     .count-capsule {
       font-family: var(--font-mono);
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
-      color: var(--accent-blue);
-      background: rgba(41, 151, 255, 0.1);
-      border: 1px solid rgba(41, 151, 255, 0.25);
-      padding: 2px 8px;
+      color: #38bdf8;
+      background: rgba(41, 151, 255, 0.12);
+      border: 1px solid rgba(41, 151, 255, 0.3);
+      padding: 3px 10px;
       border-radius: var(--radius-pill);
     }
 
     .table-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     /* Apple Segmented Control */
     .segmented-control {
       display: inline-flex;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-pill);
-      padding: 3px;
+      padding: 4px;
       gap: 2px;
     }
 
@@ -688,12 +626,12 @@
       background: transparent;
       border: none;
       color: var(--text-secondary);
-      padding: 5px 12px;
+      padding: 6px 14px;
       border-radius: var(--radius-pill);
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .segment-btn:hover {
@@ -701,42 +639,43 @@
     }
 
     .segment-btn.active {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.18);
       color: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
 
     /* Apple Search Field */
     .apple-search-wrap {
       position: relative;
-      min-width: 240px;
+      min-width: 260px;
     }
 
     .apple-search-wrap input {
       width: 100%;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-pill);
-      padding: 7px 14px 7px 34px;
+      padding: 8px 16px 8px 36px;
       color: #ffffff;
-      font-size: 12.5px;
+      font-size: 13px;
       outline: none;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
       font-family: var(--font-system);
     }
 
     .apple-search-wrap input:focus {
-      background: rgba(255, 255, 255, 0.09);
-      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     }
 
     .search-glyph {
       position: absolute;
-      left: 12px;
+      left: 13px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-secondary);
-      font-size: 12px;
+      font-size: 13px;
       pointer-events: none;
     }
 
@@ -745,31 +684,31 @@
       overflow-x: auto;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
-      background: rgba(12, 12, 16, 0.5);
+      background: rgba(14, 14, 18, 0.6);
     }
 
     .apple-table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      font-size: 13.5px;
+      font-size: 14px;
     }
 
     .apple-table th {
-      background: rgba(255, 255, 255, 0.025);
+      background: rgba(255, 255, 255, 0.03);
       color: var(--text-secondary);
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
-      padding: 12px 16px;
+      letter-spacing: 0.8px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--border-subtle);
     }
 
     .apple-table td {
-      padding: 13px 16px;
+      padding: 15px 18px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      color: #e5e5ea;
+      color: #f1f5f9;
       vertical-align: middle;
     }
 
@@ -778,22 +717,22 @@
     }
 
     .apple-table tbody tr:hover {
-      background: rgba(255, 255, 255, 0.035);
+      background: rgba(255, 255, 255, 0.04);
     }
 
-    /* Rank Pill Inside Table */
+    /* Rank Cell Inside Table */
     .rank-cell {
       font-family: var(--font-mono);
-      font-weight: 700;
-      font-size: 13.5px;
+      font-weight: 800;
+      font-size: 14px;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
-    .rank-cell.rank-1 { color: var(--accent-gold); }
-    .rank-cell.rank-2 { color: var(--accent-silver); }
-    .rank-cell.rank-3 { color: var(--accent-bronze); }
+    .rank-cell.rank-1 { color: var(--apple-gold); }
+    .rank-cell.rank-2 { color: var(--apple-silver); }
+    .rank-cell.rank-3 { color: var(--apple-bronze); }
 
     .contender-identity {
       display: flex;
@@ -802,87 +741,86 @@
 
     .contender-tag {
       font-family: var(--font-mono);
-      font-weight: 600;
+      font-weight: 700;
       color: #ffffff;
-      font-size: 13.5px;
+      font-size: 14px;
     }
 
     .contender-fullname {
-      font-size: 11.5px;
+      font-size: 12px;
       color: var(--text-secondary);
     }
 
     .damage-cell {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      min-width: 150px;
+      gap: 5px;
+      min-width: 160px;
     }
 
     .damage-num {
       font-family: var(--font-mono);
-      font-weight: 700;
-      font-size: 14.5px;
+      font-weight: 800;
+      font-size: 15px;
       color: #ffffff;
     }
 
     .damage-bar-wrap {
       width: 100%;
-      height: 5px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 3px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
       overflow: hidden;
     }
 
     .damage-bar-fill {
       height: 100%;
-      border-radius: 3px;
+      border-radius: 4px;
       background: linear-gradient(90deg, #2997ff, #30d158);
       transition: width 0.5s ease;
     }
 
     .tier-pill {
       display: inline-block;
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
       border-radius: 6px;
       text-transform: uppercase;
     }
 
-    .tier-S { background: rgba(229, 179, 88, 0.15); color: var(--accent-gold); border: 1px solid rgba(229, 179, 88, 0.3); }
-    .tier-A { background: rgba(41, 151, 255, 0.15); color: var(--accent-blue); border: 1px solid rgba(41, 151, 255, 0.3); }
-    .tier-B { background: rgba(191, 90, 242, 0.15); color: var(--accent-purple); border: 1px solid rgba(191, 90, 242, 0.3); }
-    .tier-C { background: rgba(134, 134, 139, 0.15); color: #a1a1a6; border: 1px solid rgba(134, 134, 139, 0.3); }
+    .tier-S { background: rgba(255, 215, 0, 0.15); color: var(--apple-gold); border: 1px solid rgba(255, 215, 0, 0.35); }
+    .tier-A { background: rgba(41, 151, 255, 0.15); color: #38bdf8; border: 1px solid rgba(41, 151, 255, 0.35); }
+    .tier-B { background: rgba(191, 90, 242, 0.15); color: #d8b4fe; border: 1px solid rgba(191, 90, 242, 0.35); }
+    .tier-C { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.35); }
 
     .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--accent-green);
-      background: rgba(48, 209, 88, 0.08);
-      border: 1px solid rgba(48, 209, 88, 0.2);
-      padding: 2px 8px;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--apple-green);
+      background: rgba(48, 209, 88, 0.1);
+      border: 1px solid rgba(48, 209, 88, 0.25);
+      padding: 3px 9px;
       border-radius: var(--radius-pill);
     }
 
     /* Apple Footer */
     .apple-footer {
       text-align: center;
-      padding: 24px 0 32px;
+      padding: 28px 0 36px;
       color: var(--text-tertiary);
-      font-size: 12px;
+      font-size: 12.5px;
       border-top: 1px solid var(--border-subtle);
       margin-top: auto;
-      letter-spacing: 0.2px;
+      letter-spacing: 0.3px;
     }
   </style>
 </head>
 
 <body>
-  <div class="ambient-glow"></div>
   <div class="ambient-grid"></div>
 
   <!-- APPLE FLOATING GLASS NAVIGATION -->
@@ -919,7 +857,7 @@
   <main class="main-wrap">
 
     <!-- LIVE ORGANIZER BROADCAST BANNER -->
-    <div class="apple-card broadcast-banner" id="broadcastCard">
+    <div class="broadcast-banner" id="broadcastCard">
       <div class="broadcast-badge">
         <span>⚡</span> Announcement
       </div>
@@ -929,19 +867,17 @@
       </div>
     </div>
 
-
-
     <!-- TOP 3 CHAMPIONSHIP GLORY PODIUM -->
-    <section class="apple-card podium-wrap">
-      <div class="podium-heading-wrap">
+    <section class="podium-section">
+      <div class="podium-header-wrap">
         <span class="podium-eyebrow">Grand Championship Podium</span>
         <h2 class="podium-main-title">Top 3 Glory Showcase</h2>
       </div>
 
       <div class="podium-grid">
         <!-- 2nd Place Silver -->
-        <div class="podium-card rank-2" id="podiumRank2">
-          <div class="podium-avatar-ring">🥈</div>
+        <div class="podium-pedestal rank-2" id="podiumRank2">
+          <div class="medal-halo-ring">🥈</div>
           <div class="podium-rank-pill">2nd Place</div>
           <div class="podium-handle" id="podiumHandle2">@runnerup</div>
           <div class="podium-name" id="podiumName2">Awaiting Contender</div>
@@ -950,18 +886,18 @@
         </div>
 
         <!-- 1st Place Champion Apex Gold -->
-        <div class="podium-card rank-1" id="podiumRank1">
-          <div class="podium-avatar-ring">👑</div>
+        <div class="podium-pedestal rank-1" id="podiumRank1">
+          <div class="medal-halo-ring">👑</div>
           <div class="podium-rank-pill">Champion #1</div>
           <div class="podium-handle" id="podiumHandle1">@champion</div>
           <div class="podium-name" id="podiumName1">Awaiting Apex Contender</div>
           <div class="podium-score" id="podiumScore1">0 <span>DMG</span></div>
-          <div class="podium-tier-tag" id="podiumTier1" style="background: rgba(229,179,88,0.2); color: var(--accent-gold); border: 1px solid var(--accent-gold);">Tier S Apex</div>
+          <div class="podium-tier-tag" id="podiumTier1" style="background: rgba(255,215,0,0.18); color: var(--apple-gold); border: 1px solid var(--apple-gold);">Tier S Apex</div>
         </div>
 
         <!-- 3rd Place Bronze -->
-        <div class="podium-card rank-3" id="podiumRank3">
-          <div class="podium-avatar-ring">🥉</div>
+        <div class="podium-pedestal rank-3" id="podiumRank3">
+          <div class="medal-halo-ring">🥉</div>
           <div class="podium-rank-pill">3rd Place</div>
           <div class="podium-handle" id="podiumHandle3">@challenger</div>
           <div class="podium-name" id="podiumName3">Awaiting Contender</div>
@@ -1037,12 +973,6 @@
       var broadcastTextEl = document.getElementById('broadcastText');
       var broadcastTimestampEl = document.getElementById('broadcastTimestamp');
       var broadcastCardEl = document.getElementById('broadcastCard');
-      var bossHpValEl = document.getElementById('bossHpValue');
-      var bossHpBarEl = document.getElementById('bossHpBar');
-      var inHouseCountEl = document.getElementById('inHouseCount');
-      var totalDamageDealtEl = document.getElementById('totalDamageDealt');
-      var topLeaderScoreEl = document.getElementById('topLeaderScore');
-      var topLeaderHandleEl = document.getElementById('topLeaderHandle');
       var tableBodyEl = document.getElementById('scoreboardTableBody');
       var searchInput = document.getElementById('scoreboardSearchInput');
       var countBadgeEl = document.getElementById('contenderCountBadge');
@@ -1164,37 +1094,12 @@
         }
       }
 
-      function loadBossHealth() {
-        var hp = localStorage.getItem('techboss_boss_hp') || '78';
-        var hpNum = parseInt(hp, 10);
-        if (isNaN(hpNum)) hpNum = 78;
-        if (bossHpValEl) bossHpValEl.textContent = hpNum + '%';
-        if (bossHpBarEl) bossHpBarEl.style.width = hpNum + '%';
-
-        var statusEl = document.getElementById('bossHpStatus');
-        if (statusEl) {
-          if (hpNum <= 25) {
-            statusEl.textContent = 'Critical HP';
-            statusEl.className = 'metric-badge badge-red';
-          } else if (hpNum <= 50) {
-            statusEl.textContent = 'Enraged';
-            statusEl.className = 'metric-badge badge-gold';
-          } else {
-            statusEl.textContent = 'Vulnerable';
-            statusEl.className = 'metric-badge badge-green';
-          }
-        }
-      }
-
       function loadInHouseData() {
         try {
           var raw = localStorage.getItem('techboss_inhouse_checkins');
           inHouseMap = raw ? JSON.parse(raw) : {};
-          var count = Object.keys(inHouseMap).length;
-          if (inHouseCountEl) inHouseCountEl.textContent = count;
         } catch (e) {
           inHouseMap = {};
-          if (inHouseCountEl) inHouseCountEl.textContent = '0';
         }
       }
 
@@ -1207,7 +1112,7 @@
         if (p1 && p1.score > 0) {
           document.getElementById('podiumHandle1').textContent = p1.handle;
           document.getElementById('podiumName1').textContent = p1.name || 'Arena Warrior';
-          document.getElementById('podiumScore1').innerHTML = p1.score + ' <span>DMG</span>';
+          document.getElementById('podiumScore1').innerHTML = p1.score.toLocaleString() + ' <span>DMG</span>';
           document.getElementById('podiumTier1').textContent = 'Tier ' + tierFor(p1.score) + ' Apex';
 
           // Trigger confetti on new leader
@@ -1218,22 +1123,18 @@
             playCelebrationFanfare();
           }
           lastTopLeaderHandle = p1.handle;
-          if (topLeaderScoreEl) topLeaderScoreEl.textContent = p1.score + ' DMG';
-          if (topLeaderHandleEl) topLeaderHandleEl.innerHTML = '<span>' + escapeHtml(p1.handle) + ' (Leader)</span>';
         } else {
           document.getElementById('podiumHandle1').textContent = '@apex_leader';
           document.getElementById('podiumName1').textContent = 'Awaiting Contender';
           document.getElementById('podiumScore1').innerHTML = '0 <span>DMG</span>';
           document.getElementById('podiumTier1').textContent = 'Tier S Apex';
-          if (topLeaderScoreEl) topLeaderScoreEl.textContent = '--';
-          if (topLeaderHandleEl) topLeaderHandleEl.innerHTML = '<span>Awaiting Phase 02</span>';
         }
 
         // Rank 2
         if (p2 && p2.score > 0) {
           document.getElementById('podiumHandle2').textContent = p2.handle;
           document.getElementById('podiumName2').textContent = p2.name || 'Arena Warrior';
-          document.getElementById('podiumScore2').innerHTML = p2.score + ' <span>DMG</span>';
+          document.getElementById('podiumScore2').innerHTML = p2.score.toLocaleString() + ' <span>DMG</span>';
           document.getElementById('podiumTier2').textContent = 'Tier ' + tierFor(p2.score);
         } else {
           document.getElementById('podiumHandle2').textContent = '@challenger_2';
@@ -1246,7 +1147,7 @@
         if (p3 && p3.score > 0) {
           document.getElementById('podiumHandle3').textContent = p3.handle;
           document.getElementById('podiumName3').textContent = p3.name || 'Arena Warrior';
-          document.getElementById('podiumScore3').innerHTML = p3.score + ' <span>DMG</span>';
+          document.getElementById('podiumScore3').innerHTML = p3.score.toLocaleString() + ' <span>DMG</span>';
           document.getElementById('podiumTier3').textContent = 'Tier ' + tierFor(p3.score);
         } else {
           document.getElementById('podiumHandle3').textContent = '@challenger_3';
@@ -1260,9 +1161,6 @@
         var cleanBoard = deduplicateBoard(memoryBoard);
         renderPodium(cleanBoard);
 
-        // Calculate metrics
-        var totalDmg = cleanBoard.reduce(function (sum, item) { return sum + (item.score || 0); }, 0);
-        if (totalDamageDealtEl) totalDamageDealtEl.textContent = totalDmg.toLocaleString() + ' DMG';
         if (countBadgeEl) countBadgeEl.textContent = cleanBoard.length + ' Warriors';
 
         // Filtering
@@ -1290,10 +1188,10 @@
         }
 
         if (!filtered.length) {
-          tableBodyEl.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 48px 20px; color: var(--text-secondary);">' +
-            '<div style="font-size: 32px; margin-bottom: 8px;">⚔️</div>' +
-            '<div style="font-weight: 700; color: #ffffff; font-size: 16px; margin-bottom: 4px;">Scores Live During Phase 02</div>' +
-            '<div style="font-size: 13px; max-width: 420px; margin: 0 auto; line-height: 1.5; color: var(--text-secondary);">Damage points are awarded in real-time as contenders battle Boss stages. Synced directly with Organizer Command Center.</div>' +
+          tableBodyEl.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 50px 20px; color: var(--text-secondary);">' +
+            '<div style="font-size: 36px; margin-bottom: 10px;">⚔️</div>' +
+            '<div style="font-weight: 700; color: #ffffff; font-size: 17px; margin-bottom: 4px;">Scores Live During Phase 02</div>' +
+            '<div style="font-size: 13.5px; max-width: 420px; margin: 0 auto; line-height: 1.5; color: var(--text-secondary);">Damage points are awarded in real-time as contenders battle Boss stages. Synced directly with Organizer Command Center.</div>' +
             '</td></tr>';
           return;
         }
@@ -1321,7 +1219,7 @@
             '</td>' +
             '<td>' +
               '<div class="damage-cell">' +
-                '<span class="damage-num">' + item.score + ' <span style="font-size:11px; color:var(--text-tertiary);">DMG</span></span>' +
+                '<span class="damage-num">' + item.score.toLocaleString() + ' <span style="font-size:11px; color:var(--text-tertiary);">DMG</span></span>' +
                 '<div class="damage-bar-wrap">' +
                   '<div class="damage-bar-fill" style="width: ' + barWidth + '%;"></div>' +
                 '</div>' +
@@ -1329,7 +1227,7 @@
             '</td>' +
             '<td style="text-align: center;"><span class="tier-pill tier-' + tier + '">Tier ' + tier + '</span></td>' +
             '<td style="text-align: center;">' +
-              (isInHouse ? '<span class="status-pill">🟢 In House</span>' : '<span style="font-size:11.5px; color:var(--text-secondary);">⚡ Active</span>') +
+              (isInHouse ? '<span class="status-pill">🟢 In House</span>' : '<span style="font-size:12px; color:var(--text-secondary);">⚡ Active</span>') +
             '</td>' +
           '</tr>';
         }).join('');
@@ -1350,7 +1248,6 @@
         } catch (e) { }
 
         loadBroadcast();
-        loadBossHealth();
         loadInHouseData();
         renderScoreboard();
       }
@@ -1368,8 +1265,6 @@
                 loadAllData();
               } else if (ev.data.type === 'TELEMETRY_BROADCAST') {
                 loadBroadcast();
-              } else if (ev.data.type === 'BOSS_HP_UPDATE') {
-                loadBossHealth();
               } else if (ev.data.type === 'INHOUSE_CHECKIN') {
                 loadInHouseData();
                 renderScoreboard();
@@ -1384,7 +1279,6 @@
         if (e.key === 'techboss_solo_leaderboard' ||
             e.key === 'techboss_board_updated_at' ||
             e.key === 'techboss_custom_broadcast' ||
-            e.key === 'techboss_boss_hp' ||
             e.key === 'techboss_inhouse_checkins') {
           loadAllData();
         }
@@ -1402,15 +1296,9 @@
             }
 
             var eventState = await window.TechBossSupabase.fetchEventState();
-            if (eventState) {
-              if (eventState.announcement) {
-                localStorage.setItem('techboss_custom_broadcast', eventState.announcement);
-                loadBroadcast();
-              }
-              if (eventState.boss_hp) {
-                localStorage.setItem('techboss_boss_hp', eventState.boss_hp);
-                loadBossHealth();
-              }
+            if (eventState && eventState.announcement) {
+              localStorage.setItem('techboss_custom_broadcast', eventState.announcement);
+              loadBroadcast();
             }
           } catch (err) { }
         }
