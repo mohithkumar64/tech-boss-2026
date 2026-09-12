@@ -1091,9 +1091,8 @@
 
         <div class="table-actions">
           <div class="segmented-control">
-            <button class="segment-btn active" data-filter="all">All</button>
+            <button class="segment-btn active" data-filter="all">All In-House</button>
             <button class="segment-btn" data-filter="top10">Top 10</button>
-            <button class="segment-btn" data-filter="inhouse">In-House</button>
             <button class="segment-btn" data-filter="tierSA">Tier S & A</button>
           </div>
 
@@ -1330,36 +1329,61 @@
           .replace(/'/g, '&#039;');
       }
 
-      // Deduplicate Leaderboard
-      function deduplicateBoard(list) {
-        if (!Array.isArray(list)) return [];
+      // Strictly In-House Contenders Board
+      function getInHouseBoard() {
         var map = new Map();
-        list.forEach(function (item) {
-          if (!item) return;
-          var rawH = (item.handle || '').trim();
-          var handle = rawH ? (rawH.startsWith('@') ? rawH : ('@' + rawH)) : '';
-          var name = (item.name || '').trim();
-          var scoreVal = parseInt(item.score || 0, 10);
-          if (isNaN(scoreVal)) scoreVal = 0;
 
-          var normH = handle.toLowerCase().replace(/[^a-z0-9_]/g, '');
-          var normN = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-          var key = normH || normN || ('id_' + (item.id || Math.random()));
+        // 1. Gather all checkins from inHouseMap
+        for (var k in inHouseMap) {
+          var rec = inHouseMap[k] || {};
+          var rawH = (rec.handle || k || '').trim();
+          var handle = rawH ? (rawH.startsWith('@') ? rawH : ('@' + rawH)) : '@contender';
+          var name = (rec.name || '').trim();
+          var cleanKey = handle.toLowerCase().replace(/[^a-z0-9_]/g, '');
 
-          if (map.has(key)) {
-            var ex = map.get(key);
-            if (scoreVal > ex.score) ex.score = scoreVal;
-            if (name && !ex.name) ex.name = name;
-          } else {
-            map.set(key, {
-              id: item.id,
-              handle: handle || (name ? ('@' + name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12)) : '@challenger'),
+          if (cleanKey) {
+            map.set(cleanKey, {
+              handle: handle,
               name: name,
-              score: scoreVal,
-              tier: item.tier || 'Vanguard'
+              score: 0,
+              tier: 'C',
+              checkinTime: rec.time || ''
             });
           }
-        });
+        }
+
+        // 2. Attach live damage scores from memoryBoard for checked-in contenders
+        if (Array.isArray(memoryBoard)) {
+          memoryBoard.forEach(function (item) {
+            if (!item) return;
+            var rawH = (item.handle || '').trim();
+            var handle = rawH ? (rawH.startsWith('@') ? rawH : ('@' + rawH)) : '';
+            var name = (item.name || '').trim();
+            var scoreVal = parseInt(item.score || 0, 10);
+            if (isNaN(scoreVal)) scoreVal = 0;
+
+            var cleanH = handle.toLowerCase().replace(/[^a-z0-9_]/g, '');
+            var cleanN = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+            var target = map.get(cleanH);
+            if (!target && cleanN) {
+              for (var pair of map.entries()) {
+                var cName = (pair[1].name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (cName && cName === cleanN) {
+                  target = pair[1];
+                  break;
+                }
+              }
+            }
+
+            if (target) {
+              if (scoreVal > target.score) target.score = scoreVal;
+              if (name && !target.name) target.name = name;
+              target.tier = tierFor(target.score);
+            }
+          });
+        }
+
         var result = Array.from(map.values());
         result.sort(function (a, b) { return b.score - a.score; });
         return result;
@@ -1410,9 +1434,14 @@
             playCelebrationFanfare();
           }
           lastTopLeaderHandle = p1.handle;
+        } else if (p1) {
+          document.getElementById('podiumHandle1').textContent = p1.handle;
+          document.getElementById('podiumName1').textContent = p1.name || 'Arena Warrior';
+          document.getElementById('podiumScore1').innerHTML = '0 <span>DMG</span>';
+          document.getElementById('podiumTier1').textContent = 'Tier C';
         } else {
           document.getElementById('podiumHandle1').textContent = '@apex_leader';
-          document.getElementById('podiumName1').textContent = 'Awaiting Contender';
+          document.getElementById('podiumName1').textContent = 'Awaiting In-House Contender';
           document.getElementById('podiumScore1').innerHTML = '0 <span>DMG</span>';
           document.getElementById('podiumTier1').textContent = 'Tier S Apex';
         }
@@ -1423,9 +1452,14 @@
           document.getElementById('podiumName2').textContent = p2.name || 'Arena Warrior';
           document.getElementById('podiumScore2').innerHTML = p2.score.toLocaleString() + ' <span>DMG</span>';
           document.getElementById('podiumTier2').textContent = 'Tier ' + tierFor(p2.score);
+        } else if (p2) {
+          document.getElementById('podiumHandle2').textContent = p2.handle;
+          document.getElementById('podiumName2').textContent = p2.name || 'Arena Warrior';
+          document.getElementById('podiumScore2').innerHTML = '0 <span>DMG</span>';
+          document.getElementById('podiumTier2').textContent = 'Tier C';
         } else {
           document.getElementById('podiumHandle2').textContent = '@challenger_2';
-          document.getElementById('podiumName2').textContent = 'Awaiting Contender';
+          document.getElementById('podiumName2').textContent = 'Awaiting In-House Contender';
           document.getElementById('podiumScore2').innerHTML = '0 <span>DMG</span>';
           document.getElementById('podiumTier2').textContent = 'Tier A';
         }
@@ -1436,22 +1470,27 @@
           document.getElementById('podiumName3').textContent = p3.name || 'Arena Warrior';
           document.getElementById('podiumScore3').innerHTML = p3.score.toLocaleString() + ' <span>DMG</span>';
           document.getElementById('podiumTier3').textContent = 'Tier ' + tierFor(p3.score);
+        } else if (p3) {
+          document.getElementById('podiumHandle3').textContent = p3.handle;
+          document.getElementById('podiumName3').textContent = p3.name || 'Arena Warrior';
+          document.getElementById('podiumScore3').innerHTML = '0 <span>DMG</span>';
+          document.getElementById('podiumTier3').textContent = 'Tier C';
         } else {
           document.getElementById('podiumHandle3').textContent = '@challenger_3';
-          document.getElementById('podiumName3').textContent = 'Awaiting Contender';
+          document.getElementById('podiumName3').textContent = 'Awaiting In-House Contender';
           document.getElementById('podiumScore3').innerHTML = '0 <span>DMG</span>';
           document.getElementById('podiumTier3').textContent = 'Tier B';
         }
       }
 
       function renderScoreboard() {
-        var cleanBoard = deduplicateBoard(memoryBoard);
-        renderPodium(cleanBoard);
+        var inHouseBoard = getInHouseBoard();
+        renderPodium(inHouseBoard);
 
-        if (countBadgeEl) countBadgeEl.textContent = cleanBoard.length + ' Warriors';
+        if (countBadgeEl) countBadgeEl.textContent = inHouseBoard.length + ' In-House Warriors';
 
         // Filtering
-        var filtered = cleanBoard.filter(function (item) {
+        var filtered = inHouseBoard.filter(function (item) {
           var matchesSearch = !currentSearch ||
             item.handle.toLowerCase().includes(currentSearch.toLowerCase()) ||
             (item.name && item.name.toLowerCase().includes(currentSearch.toLowerCase()));
@@ -1459,10 +1498,6 @@
           if (!matchesSearch) return false;
 
           if (currentFilter === 'top10') return true;
-          if (currentFilter === 'inhouse') {
-            var normH = item.handle.toLowerCase().replace(/[^a-z0-9_]/g, '');
-            return !!inHouseMap[normH];
-          }
           if (currentFilter === 'tierSA') {
             var t = tierFor(item.score);
             return t === 'S' || t === 'A';
@@ -1476,20 +1511,18 @@
 
         if (!filtered.length) {
           tableBodyEl.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 50px 20px; color: var(--text-secondary);">' +
-            '<div style="font-size: 36px; margin-bottom: 10px;">⚔️</div>' +
-            '<div style="font-weight: 700; color: #ffffff; font-size: 17px; margin-bottom: 4px;">Scores Live During Phase 02</div>' +
-            '<div style="font-size: 13.5px; max-width: 420px; margin: 0 auto; line-height: 1.5; color: var(--text-secondary);">Damage points are awarded in real-time as contenders battle Boss stages. Synced directly with Organizer Command Center.</div>' +
+            '<div style="font-size: 36px; margin-bottom: 10px;">🏟️</div>' +
+            '<div style="font-weight: 700; color: #ffffff; font-size: 17px; margin-bottom: 4px;">Awaiting In-House Check-Ins</div>' +
+            '<div style="font-size: 13.5px; max-width: 440px; margin: 0 auto; line-height: 1.5; color: var(--text-secondary);">Only contenders verified at the Arena Gate Scanner will appear on this live scoreboard. Aim your device camera at the official Arena QR pass to enter.</div>' +
             '</td></tr>';
           return;
         }
 
-        var maxScore = cleanBoard[0] && cleanBoard[0].score > 0 ? cleanBoard[0].score : 1000;
+        var maxScore = inHouseBoard[0] && inHouseBoard[0].score > 0 ? inHouseBoard[0].score : 1000;
 
         var html = filtered.map(function (item, idx) {
           var rank = idx + 1;
           var tier = tierFor(item.score);
-          var normH = item.handle.toLowerCase().replace(/[^a-z0-9_]/g, '');
-          var isInHouse = !!inHouseMap[normH];
 
           var rankDisplay = rank === 1 ? '🥇 1st' : (rank === 2 ? '🥈 2nd' : (rank === 3 ? '🥉 3rd' : '#' + rank));
           var rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
@@ -1514,7 +1547,7 @@
             '</td>' +
             '<td style="text-align: center;"><span class="tier-pill tier-' + tier + '">Tier ' + tier + '</span></td>' +
             '<td style="text-align: center;">' +
-              (isInHouse ? '<span class="status-pill">🟢 In House</span>' : '<span style="font-size:12px; color:var(--text-secondary);">⚡ Active</span>') +
+              '<span class="status-pill">🟢 In House</span>' +
             '</td>' +
           '</tr>';
         }).join('');
