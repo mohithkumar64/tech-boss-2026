@@ -26,26 +26,26 @@
     :root {
       --bg-black: #000000;
       --bg-secondary: #0a0a0c;
-      --bg-card: rgba(22, 22, 26, 0.7);
-      --bg-card-hover: rgba(30, 30, 36, 0.85);
+      --bg-card: rgba(20, 20, 26, 0.72);
+      --bg-card-hover: rgba(28, 28, 36, 0.88);
 
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(255, 255, 255, 0.18);
-      --border-highlight: rgba(255, 255, 255, 0.12);
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --border-hover: rgba(255, 255, 255, 0.24);
+      --border-highlight: rgba(255, 255, 255, 0.18);
 
       --text-primary: #f5f5f7;
-      --text-secondary: #86868b;
-      --text-tertiary: #515154;
+      --text-secondary: #a1a1a6;
+      --text-tertiary: #636366;
 
       --accent-blue: #2997ff;
       --accent-gold: #e5b358;
-      --accent-silver: #a1a1a6;
+      --accent-silver: #f1f5f9;
       --accent-green: #30d158;
 
-      --radius-sm: 10px;
-      --radius-md: 18px;
-      --radius-lg: 24px;
-      --radius-xl: 30px;
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 26px;
+      --radius-xl: 34px;
       --radius-pill: 9999px;
     }
 
@@ -68,7 +68,7 @@
       position: relative;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
-      letter-spacing: -0.015em;
+      letter-spacing: -0.018em;
     }
 
     /* Subtle Ambient Lighting */
@@ -77,10 +77,10 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 1000px;
-      height: 550px;
-      background: radial-gradient(circle 400px at center, rgba(41, 151, 255, 0.07), rgba(229, 179, 88, 0.04), transparent 75%);
-      filter: blur(80px);
+      width: 1100px;
+      height: 600px;
+      background: radial-gradient(circle 450px at center, rgba(41, 151, 255, 0.08), rgba(229, 179, 88, 0.05), transparent 75%);
+      filter: blur(90px);
       pointer-events: none;
       z-index: 0;
     }
@@ -105,17 +105,17 @@
     }
 
     .mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
     /* Apple-Style Bento Cards */
     .apple-card {
       background: var(--bg-card);
-      backdrop-filter: blur(30px) saturate(190%);
-      -webkit-backdrop-filter: blur(30px) saturate(190%);
+      backdrop-filter: blur(40px) saturate(190%);
+      -webkit-backdrop-filter: blur(40px) saturate(190%);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 var(--border-highlight);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 var(--border-highlight);
       position: relative;
       overflow: hidden;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -125,7 +125,7 @@
       background: var(--bg-card-hover);
       border-color: var(--border-hover);
       transform: translateY(-2px);
-      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      box-shadow: 0 32px 70px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.28);
     }
 
     /* Status Pills */
@@ -135,21 +135,29 @@
       gap: 8px;
       padding: 6px 14px;
       border-radius: var(--radius-pill);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-secondary);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-primary);
       background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     .live-dot {
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       background: var(--accent-green);
       border-radius: 50%;
       display: inline-block;
-      box-shadow: 0 0 8px var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: livePulse 2s infinite ease-in-out;
+    }
+
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
     }
 
     /* Buttons */
@@ -158,14 +166,14 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 12px 24px;
+      padding: 13px 26px;
       border-radius: var(--radius-pill);
       font-size: 14.5px;
       font-weight: 600;
       text-decoration: none;
       cursor: pointer;
       border: none;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       user-select: none;
       white-space: nowrap;
     }
@@ -173,13 +181,14 @@
     .btn-white {
       background: #ffffff;
       color: #000000;
-      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 18px rgba(255, 255, 255, 0.18);
     }
 
     .btn-white:hover {
-      background: #f0f0f2;
-      transform: scale(1.02);
-      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+      background: #f5f5f7;
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 6px 24px rgba(255, 255, 255, 0.3);
     }
 
     .btn-white:active {
@@ -188,14 +197,18 @@
 
     .btn-dark {
       background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       color: #f5f5f7;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     .btn-dark:hover {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: rgba(255, 255, 255, 0.25);
-      transform: scale(1.02);
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.28);
+      transform: translateY(-1px);
+      color: #ffffff;
     }
 
     .btn-dark:active {
@@ -214,10 +227,11 @@
       left: 0;
       width: 100%;
       z-index: 100;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      background: rgba(10, 10, 14, 0.82);
+      backdrop-filter: blur(30px) saturate(200%);
+      -webkit-backdrop-filter: blur(30px) saturate(200%);
       border-bottom: 1px solid var(--border-subtle);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
 
     nav.nav-wrap {
@@ -240,7 +254,8 @@
       height: 32px;
       width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+      border-radius: 8px;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15));
       transition: transform 0.2s ease;
     }
 
@@ -256,7 +271,9 @@
     }
 
     .brand-title span {
-      color: var(--accent-gold);
+      background: linear-gradient(135deg, #ffd700 0%, #fff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .nav-controls {
@@ -1441,24 +1458,29 @@
       animation: gzQrScanBeam 1.8s ease-in-out infinite alternate;
     }
 
-    /* MINIMAL EVENT COUNTDOWN COMPONENT */
+    /* APPLE VISIONOS EVENT COUNTDOWN COMPONENT */
     .countdown-section-card {
-      padding: clamp(36px, 5vw, 60px) 20px;
-      border-radius: var(--radius-lg);
-      background: linear-gradient(135deg, rgba(16, 16, 22, 0.9), rgba(8, 8, 12, 0.95));
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      padding: clamp(36px, 5vw, 56px) 24px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(28, 28, 34, 0.78) 0%, rgba(16, 16, 20, 0.88) 100%);
+      backdrop-filter: blur(48px) saturate(200%);
+      -webkit-backdrop-filter: blur(48px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 
+        0 32px 80px -15px rgba(0, 0, 0, 0.85), 
+        0 0 0 1px rgba(255, 255, 255, 0.05), 
+        inset 0 1px 0 rgba(255, 255, 255, 0.28);
       text-align: center;
       position: relative;
       overflow: hidden;
-      max-width: 900px;
+      max-width: 860px;
       margin: 0 auto;
     }
 
     .minimal-countdown-row {
       display: flex !important;
       flex-direction: row !important;
-      align-items: flex-start !important;
+      align-items: center !important;
       justify-content: center !important;
       gap: clamp(8px, 2.5vw, 24px) !important;
       margin: 0 auto clamp(20px, 3.5vw, 36px) !important;
@@ -1473,30 +1495,33 @@
     }
 
     .time-digit {
-      font-family: 'Outfit', 'Inter', -apple-system, sans-serif !important;
-      font-size: clamp(40px, 8vw, 80px) !important;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif !important;
+      font-size: clamp(42px, 8.5vw, 84px) !important;
       font-weight: 800 !important;
       color: #ffffff !important;
       line-height: 1 !important;
-      letter-spacing: -1.5px !important;
+      letter-spacing: -2px !important;
       display: block !important;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
     }
 
     .time-colon-sep {
-      font-family: 'Outfit', 'Inter', -apple-system, sans-serif !important;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif !important;
       font-size: clamp(32px, 6.5vw, 68px) !important;
       font-weight: 700 !important;
-      color: rgba(255, 255, 255, 0.8) !important;
+      color: rgba(255, 255, 255, 0.45) !important;
       line-height: 1 !important;
       user-select: none !important;
-      margin-top: clamp(2px, 0.5vw, 6px) !important;
+      margin-top: clamp(-4px, -0.5vw, -8px) !important;
       display: block !important;
     }
 
     .time-unit-label {
-      font-size: clamp(12px, 1.6vw, 15px) !important;
-      font-weight: 500 !important;
-      color: #86868b !important;
+      font-size: clamp(11px, 1.4vw, 13px) !important;
+      font-weight: 600 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 1.2px !important;
+      color: var(--text-secondary) !important;
       margin-top: 10px !important;
       text-align: center !important;
       display: block !important;
@@ -1505,31 +1530,24 @@
     .tech-boss-live-banner {
       display: none;
       padding: clamp(28px, 5vw, 44px) 20px;
-      background: radial-gradient(circle, rgba(229, 179, 88, 0.2) 0%, rgba(0, 0, 0, 0.8) 75%);
-      border: 2px solid rgba(229, 179, 88, 0.7);
-      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(34, 28, 16, 0.85) 0%, rgba(18, 18, 22, 0.92) 100%);
+      border: 1px solid rgba(229, 179, 88, 0.5);
+      border-radius: var(--radius-lg);
       margin: 0 auto 28px;
       max-width: 760px;
-      box-shadow: 0 0 50px rgba(229, 179, 88, 0.35);
-      animation: tbGlowPulse 2.5s infinite ease-in-out;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(229, 179, 88, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
       text-align: center;
     }
 
-    @keyframes tbGlowPulse {
-      0%, 100% { box-shadow: 0 0 30px rgba(229, 179, 88, 0.25); border-color: rgba(229, 179, 88, 0.5); }
-      50% { box-shadow: 0 0 65px rgba(229, 179, 88, 0.6); border-color: rgba(229, 179, 88, 0.9); }
-    }
-
     .tb-boss-title {
-      font-family: 'Outfit', -apple-system, sans-serif;
-      font-size: clamp(48px, 10vw, 84px);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+      font-size: clamp(44px, 9vw, 80px);
       font-weight: 900;
-      letter-spacing: 4px;
+      letter-spacing: 2px;
       line-height: 1.05;
-      background: linear-gradient(180deg, #ffffff 20%, #e5b358 75%, #ff8800 100%);
+      background: linear-gradient(180deg, #ffffff 30%, #e5b358 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 40px rgba(229, 179, 88, 0.5);
       margin-bottom: 8px;
     }
 
@@ -2246,6 +2264,11 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="wrap hero-container">
+      <div class="apple-badge" style="margin-bottom: 8px;">
+        <span class="live-dot"></span>
+        <span>The Solo Engineering Championship · Sept 16, 2026</span>
+      </div>
+
       <h1 class="hero-title">
         <span class="titanium-gradient">Clear the bosses.</span><br>
         <span class="gold-gradient">Claim the throne.</span>
