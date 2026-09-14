@@ -1916,9 +1916,69 @@
       // Scheduled Audio & Keynote Auto-Trigger System
       var lastFiredAudioStamp = null;
 
-      function playScheduledArenaAudio(customTrack) {
+      var TIME_AUDIO_MAP = {
+        '09:00': ['Times/9-00 AM.jpeg', 'Times/9-00 AM.mp3'],
+        '10:00': ['Times/10-00 AM.jpeg', 'Times/10-00 AM.mp3'],
+        '11:00': ['Times/11-00 AM.jpeg', 'Times/11-00 AM.mp3'],
+        '12:00': ['Times/12-00 PM.jpeg', 'Times/12-00 PM.mp3'],
+        '13:00': ['Times/1-00 PM.jpeg', 'Times/1-00 PM.mp3'],
+        '14:00': ['Times/2-00 PM.jpeg', 'Times/2-00 PM.mp3'],
+        '15:00': ['Times/3-00 PM.jpeg', 'Times/3-00 PM.mp3'],
+        '16:00': ['Times/4-00 PM.jpeg', 'Times/4-00 PM.mp3']
+      };
+
+      var TRACK_PRESETS = {
+        'times-9am': ['Times/9-00 AM.jpeg', 'Times/9-00 AM.mp3'],
+        'times-10am': ['Times/10-00 AM.jpeg', 'Times/10-00 AM.mp3'],
+        'times-11am': ['Times/11-00 AM.jpeg', 'Times/11-00 AM.mp3'],
+        'times-12pm': ['Times/12-00 PM.jpeg', 'Times/12-00 PM.mp3'],
+        'times-1pm': ['Times/1-00 PM.jpeg', 'Times/1-00 PM.mp3'],
+        'times-2pm': ['Times/2-00 PM.jpeg', 'Times/2-00 PM.mp3'],
+        'times-3pm': ['Times/3-00 PM.jpeg', 'Times/3-00 PM.mp3'],
+        'times-4pm': ['Times/4-00 PM.jpeg', 'Times/4-00 PM.mp3'],
+        'success': ['success-sound.mp3']
+      };
+
+      function playAudioUrlsWithFallback(urls, fallbackFn) {
+        if (!Array.isArray(urls)) urls = [urls];
+        var idx = 0;
+        function tryNext() {
+          if (idx >= urls.length) {
+            if (fallbackFn) fallbackFn();
+            return;
+          }
+          var url = urls[idx++];
+          var audio = new Audio(url);
+          var p = audio.play();
+          if (p !== undefined) {
+            p.catch(function () {
+              try {
+                var AudioCtx = window.AudioContext || window.webkitAudioContext;
+                var ctx = new AudioCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+                fetch(url)
+                  .then(function (res) { if (!res.ok) throw new Error('Fetch failed'); return res.arrayBuffer(); })
+                  .then(function (buf) { return ctx.decodeAudioData(buf); })
+                  .then(function (dec) {
+                    var src = ctx.createBufferSource();
+                    src.buffer = dec;
+                    src.connect(ctx.destination);
+                    src.start(0);
+                  })
+                  .catch(function () { tryNext(); });
+              } catch (e) {
+                tryNext();
+              }
+            });
+          }
+        }
+        tryNext();
+      }
+
+      function playScheduledArenaAudio(customTrack, timeSlot) {
         var customAudioData = localStorage.getItem('techboss_custom_audio_data');
-        var trackType = customTrack || localStorage.getItem('techboss_scheduled_audio_track') || 'fanfare';
+        var trackType = customTrack || localStorage.getItem('techboss_scheduled_audio_track');
+        var timeKey = (timeSlot || localStorage.getItem('techboss_scheduled_audio_time') || '09:00').slice(0, 5);
 
         if (trackType === 'custom' && customAudioData) {
           try {
@@ -1927,14 +1987,20 @@
             return;
           } catch (e) {}
         }
-        if (trackType === 'success') {
-          try {
-            var sa = new Audio('success-sound.mp3');
-            sa.play().catch(function () { playCelebrationFanfare(); });
-            return;
-          } catch (e) {}
+
+        if (trackType && TRACK_PRESETS[trackType]) {
+          playAudioUrlsWithFallback(TRACK_PRESETS[trackType], playCelebrationFanfare);
+          return;
         }
-        playCelebrationFanfare();
+
+        // Auto map by time or default to 9-00 AM.jpeg
+        if (TIME_AUDIO_MAP[timeKey]) {
+          playAudioUrlsWithFallback(TIME_AUDIO_MAP[timeKey], playCelebrationFanfare);
+          return;
+        }
+
+        // Default 9:00 AM track
+        playAudioUrlsWithFallback(['Times/9-00 AM.jpeg', 'Times/9-00 AM.mp3', 'success-sound.mp3'], playCelebrationFanfare);
       }
 
       // Check system clock every second for 09:00 or custom scheduled time
@@ -1953,7 +2019,7 @@
           lastFiredAudioStamp = todayKey;
           var customMsg = localStorage.getItem('techboss_scheduled_audio_msg') || '👑 THE ARENA IS LIVE — THE CHAMPIONSHIP HAS BEGUN!';
           
-          playScheduledArenaAudio();
+          playScheduledArenaAudio(null, currentTimeStr);
           showKeynoteAnnouncement(customMsg);
           
           if (typeof confetti === 'function') {

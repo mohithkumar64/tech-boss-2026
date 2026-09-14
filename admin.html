@@ -594,8 +594,16 @@
           <div class="form-group" style="margin-bottom:0;">
             <label for="scheduledAudioTrackSelect">Audio Track / Sound Effect</label>
             <select id="scheduledAudioTrackSelect">
-              <option value="fanfare">🎺 Championship Kickoff Fanfare</option>
-              <option value="success">🔔 Victory Celebration Chime</option>
+              <option value="times-9am">🌅 9:00 AM Audio (Times/9-00 AM.jpeg)</option>
+              <option value="times-10am">🕙 10:00 AM Audio (Times/10-00 AM.jpeg)</option>
+              <option value="times-11am">🕚 11:00 AM Audio (Times/11-00 AM.jpeg)</option>
+              <option value="times-12pm">🕛 12:00 PM Audio (Times/12-00 PM.jpeg)</option>
+              <option value="times-1pm">🕐 1:00 PM Audio (Times/1-00 PM.jpeg)</option>
+              <option value="times-2pm">🕑 2:00 PM Audio (Times/2-00 PM.jpeg)</option>
+              <option value="times-3pm">🕒 3:00 PM Audio (Times/3-00 PM.jpeg)</option>
+              <option value="times-4pm">🕓 4:00 PM Audio (Times/4-00 PM.jpeg)</option>
+              <option value="fanfare">🎺 Championship Synth Fanfare</option>
+              <option value="success">🔔 Victory Celebration Chime (success-sound.mp3)</option>
               <option value="custom">📁 Upload Custom Audio File</option>
             </select>
           </div>
@@ -1852,6 +1860,54 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     } catch (e) {}
   }
 
+  var TRACK_PRESETS = {
+    'times-9am': ['Times/9-00 AM.jpeg', 'Times/9-00 AM.mp3'],
+    'times-10am': ['Times/10-00 AM.jpeg', 'Times/10-00 AM.mp3'],
+    'times-11am': ['Times/11-00 AM.jpeg', 'Times/11-00 AM.mp3'],
+    'times-12pm': ['Times/12-00 PM.jpeg', 'Times/12-00 PM.mp3'],
+    'times-1pm': ['Times/1-00 PM.jpeg', 'Times/1-00 PM.mp3'],
+    'times-2pm': ['Times/2-00 PM.jpeg', 'Times/2-00 PM.mp3'],
+    'times-3pm': ['Times/3-00 PM.jpeg', 'Times/3-00 PM.mp3'],
+    'times-4pm': ['Times/4-00 PM.jpeg', 'Times/4-00 PM.mp3'],
+    'success': ['success-sound.mp3']
+  };
+
+  function playAudioUrlsWithFallback(urls, fallbackFn) {
+    if (!Array.isArray(urls)) urls = [urls];
+    var idx = 0;
+    function tryNext() {
+      if (idx >= urls.length) {
+        if (fallbackFn) fallbackFn();
+        return;
+      }
+      var url = urls[idx++];
+      var audio = new Audio(url);
+      var p = audio.play();
+      if (p !== undefined) {
+        p.catch(function () {
+          try {
+            var AudioCtx = window.AudioContext || window.webkitAudioContext;
+            var ctx = new AudioCtx();
+            if (ctx.state === 'suspended') ctx.resume();
+            fetch(url)
+              .then(function (res) { if (!res.ok) throw new Error('Fetch failed'); return res.arrayBuffer(); })
+              .then(function (buf) { return ctx.decodeAudioData(buf); })
+              .then(function (dec) {
+                var src = ctx.createBufferSource();
+                src.buffer = dec;
+                src.connect(ctx.destination);
+                src.start(0);
+              })
+              .catch(function () { tryNext(); });
+          } catch (e) {
+            tryNext();
+          }
+        });
+      }
+    }
+    tryNext();
+  }
+
   function playSoundTrack(trackType) {
     if (trackType === 'custom' && customAudioData) {
       try {
@@ -1860,12 +1916,9 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
         return;
       } catch (e) {}
     }
-    if (trackType === 'success') {
-      try {
-        var s = new Audio('success-sound.mp3');
-        s.play().catch(function () { playSynthFanfare(); });
-        return;
-      } catch (e) {}
+    if (trackType && TRACK_PRESETS[trackType]) {
+      playAudioUrlsWithFallback(TRACK_PRESETS[trackType], playSynthFanfare);
+      return;
     }
     playSynthFanfare();
   }
