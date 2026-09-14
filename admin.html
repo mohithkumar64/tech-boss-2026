@@ -574,6 +574,55 @@
         </div>
       </div>
 
+      <!-- AUTO AUDIO SCHEDULER & ARENA TIME TRIGGER -->
+      <div class="cyber-card" style="padding:28px; border-color:rgba(229,179,88,0.45); box-shadow:0 0 25px rgba(229,179,88,0.12);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <h3 style="font-size:18px; font-weight:800; color:var(--gold); display:flex; align-items:center; gap:8px;">
+            <span>⏰</span> AUTO AUDIO SCHEDULER
+          </h3>
+          <span class="badge-status status-verified" id="audioSchedulerStatusBadge">🟢 Active · 09:00 IST</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">
+          Automatically play championship audio fanfare across the arena when the system clock hits your scheduled time (e.g. 09:00:00).
+        </p>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="scheduledAudioTimeInput">Target Trigger Time (24-Hour)</label>
+            <input type="time" id="scheduledAudioTimeInput" value="09:00" step="1" style="font-family:'JetBrains Mono', monospace; font-size:16px; font-weight:700; color:#ffd700;">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="scheduledAudioTrackSelect">Audio Track / Sound Effect</label>
+            <select id="scheduledAudioTrackSelect">
+              <option value="fanfare">🎺 Championship Kickoff Fanfare</option>
+              <option value="success">🔔 Victory Celebration Chime</option>
+              <option value="custom">📁 Upload Custom Audio File</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" id="customAudioUploadGroup" style="display:none; margin-bottom: 14px;">
+          <label for="customAudioFileInput">Upload Custom Audio (.mp3, .wav, .m4a)</label>
+          <input type="file" id="customAudioFileInput" accept="audio/*">
+          <small style="color:var(--text-muted); font-size:11px; display:block; margin-top:4px;" id="customAudioFileName">No custom file chosen (default fanfare will be used)</small>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="scheduledAnnouncementMsg">Scheduled Keynote Announcement</label>
+          <input type="text" id="scheduledAnnouncementMsg" value="👑 THE ARENA IS LIVE — THE CHAMPIONSHIP HAS BEGUN!" placeholder="Announcement message when timer fires">
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+          <button class="btn btn-green btn-sm" id="saveAudioScheduleBtn">💾 Save & Sync Schedule</button>
+          <button class="btn btn-ghost btn-sm" id="testAudioPlayBtn">🔊 Test Audio Now</button>
+          <button class="btn btn-primary btn-sm" id="triggerAudioNowBtn">⚡ Fire Arena Audio & Keynote Now</button>
+        </div>
+
+        <div style="font-size:12px; color:var(--text-muted); background:rgba(0,0,0,0.35); padding:10px 14px; border-radius:6px; border:1px solid var(--panel-border);">
+          💡 <b>Tip:</b> Keep the Scoreboard or Main page open with sound enabled. At the exact scheduled time (e.g. 09:00:00), the audio fanfare plays automatically and celebration confetti fires across all connected devices.
+        </div>
+      </div>
+
       <!-- In-House Admissions Stream -->
       <div class="cyber-card" style="padding:28px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
@@ -1717,6 +1766,184 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     showToast('Announcement broadcasted to live arena feed.');
     document.getElementById('broadcastMsg').value = '';
   });
+
+  // ---------- AUTO AUDIO SCHEDULER CONTROLS ----------
+  var schedTimeInput = document.getElementById('scheduledAudioTimeInput');
+  var schedTrackSelect = document.getElementById('scheduledAudioTrackSelect');
+  var customUploadGroup = document.getElementById('customAudioUploadGroup');
+  var customFileInput = document.getElementById('customAudioFileInput');
+  var customFileNameEl = document.getElementById('customAudioFileName');
+  var schedMsgInput = document.getElementById('scheduledAnnouncementMsg');
+  var schedStatusBadge = document.getElementById('audioSchedulerStatusBadge');
+  var saveSchedBtn = document.getElementById('saveAudioScheduleBtn');
+  var testAudioBtn = document.getElementById('testAudioPlayBtn');
+  var triggerAudioNowBtn = document.getElementById('triggerAudioNowBtn');
+
+  // Load saved schedule settings
+  var savedSchedTime = localStorage.getItem('techboss_scheduled_audio_time') || '09:00';
+  var savedSchedTrack = localStorage.getItem('techboss_scheduled_audio_track') || 'fanfare';
+  var savedSchedMsg = localStorage.getItem('techboss_scheduled_audio_msg') || '👑 THE ARENA IS LIVE — THE CHAMPIONSHIP HAS BEGUN!';
+  var customAudioData = localStorage.getItem('techboss_custom_audio_data') || '';
+
+  if (schedTimeInput) schedTimeInput.value = savedSchedTime;
+  if (schedTrackSelect) schedTrackSelect.value = savedSchedTrack;
+  if (schedMsgInput) schedMsgInput.value = savedSchedMsg;
+  if (customUploadGroup) customUploadGroup.style.display = (savedSchedTrack === 'custom') ? 'block' : 'none';
+  if (customFileNameEl && customAudioData) customFileNameEl.textContent = '✅ Custom audio file loaded & saved';
+
+  if (schedTrackSelect) {
+    schedTrackSelect.addEventListener('change', function () {
+      if (customUploadGroup) customUploadGroup.style.display = (this.value === 'custom') ? 'block' : 'none';
+    });
+  }
+
+  // Handle custom audio file upload -> convert to base64 data URL
+  if (customFileInput) {
+    customFileInput.addEventListener('change', function (e) {
+      var file = e.target.files && e.target.files[0];
+      if (file) {
+        if (file.size > 8 * 1024 * 1024) {
+          alert('Audio file is too large (max 8MB). Please choose a shorter sound clip.');
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+          customAudioData = ev.target.result;
+          try {
+            localStorage.setItem('techboss_custom_audio_data', customAudioData);
+            if (customFileNameEl) customFileNameEl.textContent = '✅ Uploaded: ' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
+            showToast('🎵 Custom audio file uploaded & cached!');
+          } catch (err) {
+            alert('Unable to cache audio file in local storage. Try a smaller .mp3 clip.');
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Web Audio Multi-Tone Synth Fanfare
+  function playSynthFanfare() {
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') ctx.resume();
+      var notes = [
+        { f: 523.25, d: 0.18, t: 0 },    // C5
+        { f: 659.25, d: 0.18, t: 150 },  // E5
+        { f: 783.99, d: 0.22, t: 300 },  // G5
+        { f: 1046.50, d: 0.6, t: 450 }   // C6
+      ];
+      notes.forEach(function (n) {
+        setTimeout(function () {
+          try {
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(n.f, ctx.currentTime);
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + n.d);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + n.d);
+          } catch (e) {}
+        }, n.t);
+      });
+    } catch (e) {}
+  }
+
+  function playSoundTrack(trackType) {
+    if (trackType === 'custom' && customAudioData) {
+      try {
+        var a = new Audio(customAudioData);
+        a.play().catch(function () { playSynthFanfare(); });
+        return;
+      } catch (e) {}
+    }
+    if (trackType === 'success') {
+      try {
+        var s = new Audio('success-sound.mp3');
+        s.play().catch(function () { playSynthFanfare(); });
+        return;
+      } catch (e) {}
+    }
+    playSynthFanfare();
+  }
+
+  // Save and Sync Schedule
+  if (saveSchedBtn) {
+    saveSchedBtn.addEventListener('click', function () {
+      var timeVal = schedTimeInput ? schedTimeInput.value.trim() : '09:00';
+      var trackVal = schedTrackSelect ? schedTrackSelect.value : 'fanfare';
+      var msgVal = schedMsgInput ? schedMsgInput.value.trim() : '👑 THE ARENA IS LIVE!';
+
+      if (!timeVal) {
+        alert('Please enter a target trigger time (e.g. 09:00)');
+        return;
+      }
+
+      localStorage.setItem('techboss_scheduled_audio_time', timeVal);
+      localStorage.setItem('techboss_scheduled_audio_track', trackVal);
+      localStorage.setItem('techboss_scheduled_audio_msg', msgVal);
+
+      if (schedStatusBadge) schedStatusBadge.textContent = '🟢 Active · ' + timeVal + ' IST';
+
+      if (syncChannel) {
+        try {
+          syncChannel.postMessage({
+            type: 'SCHEDULE_AUDIO_CONFIG',
+            time: timeVal,
+            track: trackVal,
+            message: msgVal,
+            timestamp: Date.now()
+          });
+        } catch (e) {}
+      }
+
+      if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+        var hp = localStorage.getItem('techboss_boss_hp') || '78';
+        window.TechBossSupabase.saveEventState(hp, msgVal);
+      }
+
+      showToast('⏰ Trigger time set to ' + timeVal + ' IST. Audio will auto-play on schedule!');
+    });
+  }
+
+  if (testAudioBtn) {
+    testAudioBtn.addEventListener('click', function () {
+      var trackVal = schedTrackSelect ? schedTrackSelect.value : 'fanfare';
+      playSoundTrack(trackVal);
+      showToast('🔊 Playing audio track preview...');
+    });
+  }
+
+  if (triggerAudioNowBtn) {
+    triggerAudioNowBtn.addEventListener('click', function () {
+      var trackVal = schedTrackSelect ? schedTrackSelect.value : 'fanfare';
+      var msgVal = schedMsgInput ? schedMsgInput.value.trim() : '👑 THE ARENA IS LIVE!';
+
+      playSoundTrack(trackVal);
+
+      if (syncChannel) {
+        try {
+          syncChannel.postMessage({
+            type: 'FIRE_SCHEDULED_AUDIO',
+            track: trackVal,
+            message: msgVal,
+            timestamp: Date.now()
+          });
+        } catch (e) {}
+      }
+
+      localStorage.setItem('techboss_custom_broadcast', msgVal);
+      if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+        var hp = localStorage.getItem('techboss_boss_hp') || '78';
+        window.TechBossSupabase.saveEventState(hp, msgVal);
+      }
+
+      showToast('⚡ Fired live Arena audio fanfare & keynote across all screens!');
+    });
+  }
 
   document.getElementById('bossHealthSlider').addEventListener('input', function(e) {
     document.getElementById('bossHealthVal').textContent = e.target.value + '%';

@@ -4393,10 +4393,51 @@
       var countdownSecDesc = document.getElementById('countdownSecDesc');
 
       var hasTriggeredLive = false;
+      var lastFiredAudioStamp = null;
+
+      function playScheduledAudioTrack(trackType) {
+        var customAudioData = localStorage.getItem('techboss_custom_audio_data');
+        var chosen = trackType || localStorage.getItem('techboss_scheduled_audio_track') || 'fanfare';
+
+        if (chosen === 'custom' && customAudioData) {
+          try {
+            var ca = new Audio(customAudioData);
+            ca.play().catch(function () { playCelebrationSound(); });
+            return;
+          } catch (e) {}
+        }
+        if (chosen === 'success') {
+          try {
+            var sa = new Audio('success-sound.mp3');
+            sa.play().catch(function () { playCelebrationSound(); });
+            return;
+          } catch (e) {}
+        }
+        playCelebrationSound();
+      }
 
       function updateCountdown() {
-        var now = new Date().getTime();
-        var diff = targetDate - now;
+        var now = new Date();
+        var nowMs = now.getTime();
+        var diff = targetDate - nowMs;
+
+        // Daily / Scheduled time checker (e.g. 09:00 IST)
+        var hrs = String(now.getHours()).padStart(2, '0');
+        var mins = String(now.getMinutes()).padStart(2, '0');
+        var currentTimeStr = hrs + ':' + mins;
+        var todayKey = now.toISOString().slice(0, 10) + '_' + currentTimeStr;
+        var targetTime = localStorage.getItem('techboss_scheduled_audio_time') || '09:00';
+        var normTarget = targetTime.slice(0, 5);
+
+        if (currentTimeStr === normTarget && lastFiredAudioStamp !== todayKey) {
+          lastFiredAudioStamp = todayKey;
+          playScheduledAudioTrack();
+          if (typeof confetti === 'function') {
+            try {
+              confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
+            } catch (e) {}
+          }
+        }
 
         if (diff <= 0) {
           // Event has arrived -> Show TECH BOSS
@@ -4411,12 +4452,13 @@
 
           if (!hasTriggeredLive) {
             hasTriggeredLive = true;
+            playScheduledAudioTrack();
             if (typeof confetti === 'function') {
               try {
                 confetti({
-                  particleCount: 100,
-                  spread: 80,
-                  origin: { y: 0.6 }
+                  particleCount: 120,
+                  spread: 90,
+                  origin: { y: 0.5 }
                 });
               } catch (e) {}
             }
@@ -4438,6 +4480,20 @@
 
       updateCountdown();
       setInterval(updateCountdown, 1000);
+
+      // Listen for Admin manual trigger across tabs
+      if (syncBroadcastChannel) {
+        syncBroadcastChannel.addEventListener('message', function (ev) {
+          if (ev.data && ev.data.type === 'FIRE_SCHEDULED_AUDIO') {
+            playScheduledAudioTrack(ev.data.track);
+            if (typeof confetti === 'function') {
+              try {
+                confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
+              } catch (e) {}
+            }
+          }
+        });
+      }
     })();
 
   </script>

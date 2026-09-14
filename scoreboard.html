@@ -1913,6 +1913,61 @@
         }
       })();
 
+      // Scheduled Audio & Keynote Auto-Trigger System
+      var lastFiredAudioStamp = null;
+
+      function playScheduledArenaAudio(customTrack) {
+        var customAudioData = localStorage.getItem('techboss_custom_audio_data');
+        var trackType = customTrack || localStorage.getItem('techboss_scheduled_audio_track') || 'fanfare';
+
+        if (trackType === 'custom' && customAudioData) {
+          try {
+            var ca = new Audio(customAudioData);
+            ca.play().catch(function () { playCelebrationFanfare(); });
+            return;
+          } catch (e) {}
+        }
+        if (trackType === 'success') {
+          try {
+            var sa = new Audio('success-sound.mp3');
+            sa.play().catch(function () { playCelebrationFanfare(); });
+            return;
+          } catch (e) {}
+        }
+        playCelebrationFanfare();
+      }
+
+      // Check system clock every second for 09:00 or custom scheduled time
+      function checkScheduledAudioTrigger() {
+        var now = new Date();
+        var hrs = String(now.getHours()).padStart(2, '0');
+        var mins = String(now.getMinutes()).padStart(2, '0');
+        var currentTimeStr = hrs + ':' + mins;
+        var todayKey = now.toISOString().slice(0, 10) + '_' + currentTimeStr;
+
+        var targetTime = localStorage.getItem('techboss_scheduled_audio_time') || '09:00';
+        // Normalize target time (e.g. "09:00:00" -> "09:00")
+        var normTarget = targetTime.slice(0, 5);
+
+        if (currentTimeStr === normTarget && lastFiredAudioStamp !== todayKey) {
+          lastFiredAudioStamp = todayKey;
+          var customMsg = localStorage.getItem('techboss_scheduled_audio_msg') || '👑 THE ARENA IS LIVE — THE CHAMPIONSHIP HAS BEGUN!';
+          
+          playScheduledArenaAudio();
+          showKeynoteAnnouncement(customMsg);
+          
+          if (typeof confetti === 'function') {
+            confetti({
+              particleCount: 140,
+              spread: 100,
+              origin: { y: 0.35 },
+              colors: ['#ffd700', '#2997ff', '#30d158', '#ffffff', '#ff2a85']
+            });
+          }
+        }
+      }
+      setInterval(checkScheduledAudioTrigger, 1000);
+
       // BroadcastChannel Real-Time Listener
       if (typeof BroadcastChannel !== 'undefined') {
         try {
@@ -1929,6 +1984,16 @@
                 if (ev.data.contender || ev.data.handle) {
                   showScoreboardWelcomeGreeting(ev.data.contender || ev.data.handle);
                 }
+              } else if (ev.data.type === 'FIRE_SCHEDULED_AUDIO') {
+                playScheduledArenaAudio(ev.data.track);
+                if (ev.data.message) showKeynoteAnnouncement(ev.data.message);
+                if (typeof confetti === 'function') {
+                  confetti({ particleCount: 120, spread: 90, origin: { y: 0.4 } });
+                }
+              } else if (ev.data.type === 'SCHEDULE_AUDIO_CONFIG') {
+                if (ev.data.time) localStorage.setItem('techboss_scheduled_audio_time', ev.data.time);
+                if (ev.data.track) localStorage.setItem('techboss_scheduled_audio_track', ev.data.track);
+                if (ev.data.message) localStorage.setItem('techboss_scheduled_audio_msg', ev.data.message);
               }
             }
           };
@@ -1940,7 +2005,8 @@
         if (e.key === 'techboss_solo_leaderboard' ||
             e.key === 'techboss_board_updated_at' ||
             e.key === 'techboss_custom_broadcast' ||
-            e.key === 'techboss_inhouse_checkins') {
+            e.key === 'techboss_inhouse_checkins' ||
+            e.key === 'techboss_scheduled_audio_time') {
           loadAllData();
         }
       });
