@@ -721,6 +721,190 @@
         transform: scale(1);
       }
     }
+
+    /* CONTENDER PROFILE DASHBOARD BANNER */
+    .gz-player-card {
+      background: linear-gradient(135deg, rgba(229, 179, 88, 0.09) 0%, rgba(20, 20, 28, 0.75) 100%);
+      border: 1px solid rgba(229, 179, 88, 0.28);
+      border-radius: var(--radius-md);
+      padding: 16px 22px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+      animation: sheetPop 0.3s ease;
+    }
+    .gz-player-avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .gz-player-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #24242e, #14141a);
+      border: 2px solid var(--accent-gold);
+      box-shadow: 0 0 16px rgba(229, 179, 88, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent-gold);
+    }
+    .gz-player-online-dot {
+      position: absolute;
+      bottom: 1px;
+      right: 1px;
+      width: 12px;
+      height: 12px;
+      background: #30d158;
+      border: 2px solid #121216;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #30d158;
+    }
+    .gz-player-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .gz-player-tag-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+    .gz-player-name-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .gz-player-full-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: -0.3px;
+    }
+    .gz-player-handle {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .gz-player-subtext {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: 3px 0 0;
+      line-height: 1.4;
+    }
+    .gz-player-actions {
+      flex-shrink: 0;
+    }
+    @media (max-width: 640px) {
+      .gz-player-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+      }
+      .gz-player-actions {
+        width: 100%;
+        margin-top: 6px;
+      }
+      .gz-player-actions button {
+        width: 100%;
+      }
+    }
+
+    /* WELCOME GREETING TOAST */
+    .welcome-greeting-toast {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      background: linear-gradient(135deg, rgba(24, 24, 32, 0.96) 0%, rgba(14, 14, 20, 0.98) 100%);
+      border: 1px solid rgba(229, 179, 88, 0.45);
+      border-radius: var(--radius-md);
+      padding: 16px 22px;
+      color: #ffffff;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(229, 179, 88, 0.22);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      max-width: 90vw;
+      width: 480px;
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      animation: welcomeSlideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes welcomeSlideDown {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -24px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1);
+      }
+    }
+    .welcome-toast-icon {
+      font-size: 32px;
+      line-height: 1;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 10px rgba(229, 179, 88, 0.5));
+    }
+    .welcome-toast-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .welcome-toast-badge {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+    .welcome-toast-title {
+      font-size: 15.5px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+    .welcome-toast-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .welcome-toast-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #a1a1a6;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .welcome-toast-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
   </style>
 </head>
 
@@ -807,6 +991,31 @@
       <p style="color: var(--text-secondary); max-width: 680px; margin: 0 auto; font-size: 15px; line-height: 1.5;">
         Test your combat speed against the Cyber Boss, monitor live tournament telemetry from the server, simulate your damage score, and climb the solo leaderboard.
       </p>
+    </div>
+
+    <!-- Contender Logged-in Profile Hero Card -->
+    <div id="gzPlayerProfileCard" class="gz-player-card">
+      <div style="display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0;">
+        <div class="gz-player-avatar-wrap">
+          <div class="gz-player-avatar" id="gzPlayerAvatar">🛡️</div>
+          <span class="gz-player-online-dot"></span>
+        </div>
+        <div class="gz-player-info">
+          <div class="gz-player-tag-row">
+            <span class="apple-badge green" style="margin-bottom:0; font-size:10.5px; padding:2px 8px;">🟢 IN-HOUSE CHECKED IN</span>
+            <span class="apple-badge gold" id="gzPlayerRegBadge" style="margin-bottom:0; font-size:10.5px; padding:2px 8px;">ROLL: --</span>
+            <span class="apple-badge blue" id="gzPlayerBranchBadge" style="margin-bottom:0; font-size:10.5px; padding:2px 8px; display:none;">CSE</span>
+          </div>
+          <div class="gz-player-name-row">
+            <h2 id="gzPlayerFullName" class="gz-player-full-name">Contender</h2>
+            <span id="gzPlayerHandle" class="gz-player-handle">@contender</span>
+          </div>
+          <p class="gz-player-subtext" id="gzPlayerSubtext">Logged into Combat Arena & Live Telemetry Dashboard. Ready for Solo Boss Rush & Rapid Reflex Trials.</p>
+        </div>
+      </div>
+      <div class="gz-player-actions">
+        <button type="button" class="btn btn-ghost btn-sm" id="gzBannerSwitchBtn" style="border: 1px solid rgba(229,179,88,0.3); color: var(--accent-gold); white-space: nowrap;">🔄 Switch Account</button>
+      </div>
     </div>
 
     <!-- Navigation Tabs -->
@@ -1489,12 +1698,20 @@
         return;
       }
 
+      var currentUserHandle = (currentContenderUsername || '').toLowerCase().trim();
+      if (currentUserHandle && !currentUserHandle.startsWith('@')) currentUserHandle = '@' + currentUserHandle;
+
       var html = filtered.map(function (item, i) {
         var tier = gzTierFor(item.score);
         var rankBadge = i === 0 ? '🥇 1st' : (i === 1 ? '🥈 2nd' : (i === 2 ? '🥉 3rd' : '#' + (i + 1)));
-        return '<tr>' +
+        var itemHandle = (item.handle || '').toLowerCase().trim();
+        if (itemHandle && !itemHandle.startsWith('@')) itemHandle = '@' + itemHandle;
+        var isMe = currentUserHandle && (itemHandle === currentUserHandle || (currentContenderProfile && (itemHandle === (currentContenderProfile.handle || '').toLowerCase() || (item.name && currentContenderProfile.name && item.name.toLowerCase() === currentContenderProfile.name.toLowerCase()))));
+        var rowStyle = isMe ? ' style="background: rgba(229,179,88,0.12); box-shadow: inset 3px 0 0 var(--accent-gold);"' : '';
+
+        return '<tr' + rowStyle + '>' +
           '<td style="text-align:center; font-weight:700;">' + rankBadge + '</td>' +
-          '<td><div><span style="font-weight:700; color:#ffffff;">' + escapeHtml(item.handle) + '</span>' + (item.name ? ' <span style="font-size:12px; color:var(--text-secondary);">(' + escapeHtml(item.name) + ')</span>' : '') + '</div></td>' +
+          '<td><div><span style="font-weight:700; color:#ffffff;">' + escapeHtml(item.handle) + '</span>' + (item.name ? ' <span style="font-size:12px; color:var(--text-secondary);">(' + escapeHtml(item.name) + ')</span>' : '') + (isMe ? ' <span class="apple-badge gold" style="font-size:10px; margin-left:6px; padding:1px 6px;">YOU</span>' : '') + '</div></td>' +
           '<td style="text-align:right;"><b class="score-mono">' + item.score + ' <span>DMG</span></b></td>' +
           '<td style="text-align:center;"><span class="tier-tag tier-' + tier + '">Tier ' + tier + '</span></td>' +
           '</tr>';
@@ -1606,6 +1823,7 @@
     // 6. IN-HOUSE CONTENDER PROFILE & CHECK-IN GATE
     // ==========================================
     var currentContenderUsername = '';
+    var currentContenderProfile = null;
 
     var gzCheckinModal = document.getElementById('gzCheckinModal');
     var gzCheckinCloseBtn = document.getElementById('gzCheckinCloseBtn');
@@ -1617,28 +1835,157 @@
     var gzActiveUserDisplay = document.getElementById('gzActiveUserDisplay');
     var gzDrawerActiveUser = document.getElementById('gzDrawerActiveUser');
     var gzDrawerSwitchBtn = document.getElementById('gzDrawerSwitchBtn');
+    var gzBannerSwitchBtn = document.getElementById('gzBannerSwitchBtn');
     var bossContenderTag = document.getElementById('bossContenderTag');
     var codeContenderTag = document.getElementById('codeContenderTag');
+
+    // Profile Card UI Elements
+    var gzPlayerProfileCard = document.getElementById('gzPlayerProfileCard');
+    var gzPlayerAvatar = document.getElementById('gzPlayerAvatar');
+    var gzPlayerFullName = document.getElementById('gzPlayerFullName');
+    var gzPlayerHandle = document.getElementById('gzPlayerHandle');
+    var gzPlayerRegBadge = document.getElementById('gzPlayerRegBadge');
+    var gzPlayerBranchBadge = document.getElementById('gzPlayerBranchBadge');
+    var gzPlayerSubtext = document.getElementById('gzPlayerSubtext');
 
     function getQueryParam(param) {
       var urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     }
 
-    function setContenderUsername(username, saveStorage) {
-      if (!username) return;
-      var clean = username.trim();
-      currentContenderUsername = clean;
-      if (saveStorage !== false) {
-        localStorage.setItem('techboss_contender_username', clean);
+    async function resolveContenderProfile(identifier) {
+      if (!identifier) return null;
+      var clean = String(identifier).trim().toLowerCase();
+      var normHandle = clean.startsWith('@') ? clean : ('@' + clean);
+      var regNorm = clean.replace('@', '');
+
+      // 1. Check cached profile in localStorage
+      try {
+        var cached = localStorage.getItem('techboss_contender_profile');
+        if (cached) {
+          var p = JSON.parse(cached);
+          if (p && ((p.handle && p.handle.toLowerCase() === normHandle) || (p.regNo && p.regNo.toLowerCase() === regNorm))) {
+            return p;
+          }
+        }
+      } catch (e) {}
+
+      // 2. Check registered contenders
+      var all = await getAllRegisteredContendersGz();
+      var matched = all.find(function (r) {
+        var h = (r.handle || '').toLowerCase().trim();
+        if (h && !h.startsWith('@')) h = '@' + h;
+        var rNo = (r.regNo || r.reg_no || '').toLowerCase().trim();
+        return h === normHandle || rNo === regNorm || h === ('@' + regNorm);
+      });
+
+      if (matched) {
+        var prof = {
+          name: matched.name || normHandle.replace('@', ''),
+          handle: matched.handle ? (matched.handle.startsWith('@') ? matched.handle : ('@' + matched.handle)) : normHandle,
+          regNo: matched.regNo || matched.reg_no || '--',
+          branch: matched.branch || '',
+          year: matched.year || ''
+        };
+        localStorage.setItem('techboss_contender_profile', JSON.stringify(prof));
+        return prof;
       }
 
-      var displayTag = clean.startsWith('@') ? clean : ('@' + clean);
+      // 3. Check in-house check-in map
+      try {
+        var rawCheckins = localStorage.getItem('techboss_inhouse_checkins');
+        if (rawCheckins) {
+          var checkinMap = JSON.parse(rawCheckins);
+          if (checkinMap[normHandle]) {
+            var rec = checkinMap[normHandle];
+            var prof2 = {
+              name: rec.name || normHandle.replace('@', ''),
+              handle: rec.handle || normHandle,
+              regNo: rec.regNo || '--',
+              branch: rec.branch || '',
+              year: rec.year || ''
+            };
+            localStorage.setItem('techboss_contender_profile', JSON.stringify(prof2));
+            return prof2;
+          }
+        }
+      } catch (e) {}
 
+      // Fallback
+      return {
+        name: normHandle.replace('@', ''),
+        handle: normHandle,
+        regNo: '--',
+        branch: '',
+        year: ''
+      };
+    }
+
+    function updateContenderUI(profile) {
+      if (!profile) return;
+      currentContenderProfile = profile;
+      var name = profile.name || 'Gladiator';
+      var handle = profile.handle || '@contender';
+      if (!handle.startsWith('@')) handle = '@' + handle;
+      var regNo = profile.regNo || '--';
+      var branchYear = [profile.branch, profile.year].filter(Boolean).join(' · ');
+
+      // Contender Display String
+      var displayTag = name && name !== handle.replace('@', '') ? (name + ' (' + handle + ')') : handle;
+
+      // Header Badge
       if (gzActiveUserDisplay) gzActiveUserDisplay.textContent = displayTag;
+
+      // Profile Dashboard Banner
+      if (gzPlayerFullName) gzPlayerFullName.textContent = name;
+      if (gzPlayerHandle) gzPlayerHandle.textContent = handle;
+      if (gzPlayerRegBadge) {
+        gzPlayerRegBadge.textContent = regNo && regNo !== '--' ? ('ROLL: ' + regNo) : 'PASS VERIFIED';
+      }
+      if (gzPlayerBranchBadge) {
+        if (branchYear) {
+          gzPlayerBranchBadge.textContent = branchYear;
+          gzPlayerBranchBadge.style.display = 'inline-block';
+        } else {
+          gzPlayerBranchBadge.style.display = 'none';
+        }
+      }
+      if (gzPlayerAvatar) {
+        gzPlayerAvatar.textContent = name ? name.charAt(0).toUpperCase() : '🛡️';
+      }
+      if (gzPlayerSubtext) {
+        gzPlayerSubtext.textContent = 'Active In-House Contender: ' + name + ' (' + handle + ') · Ready for Combat Rush & Speed Trials.';
+      }
+
+      // Drawer, Boss duel, and code reflex tags
       if (gzDrawerActiveUser) gzDrawerActiveUser.textContent = displayTag;
       if (bossContenderTag) bossContenderTag.textContent = displayTag;
       if (codeContenderTag) codeContenderTag.textContent = displayTag;
+
+      // Re-render leaderboard to update row highlight
+      renderGzLeaderboard();
+    }
+
+    async function setContenderUsername(usernameOrProfile, saveStorage) {
+      if (!usernameOrProfile) return;
+      var profile = null;
+      if (typeof usernameOrProfile === 'object') {
+        profile = usernameOrProfile;
+        currentContenderUsername = profile.handle || '';
+      } else {
+        var clean = String(usernameOrProfile).trim();
+        currentContenderUsername = clean.startsWith('@') ? clean : ('@' + clean);
+        profile = await resolveContenderProfile(clean);
+      }
+
+      if (saveStorage !== false && currentContenderUsername) {
+        localStorage.setItem('techboss_contender_username', currentContenderUsername);
+        if (profile) {
+          localStorage.setItem('techboss_contender_profile', JSON.stringify(profile));
+        }
+      }
+
+      updateContenderUI(profile);
     }
 
     function openContenderCheckinModal(isEditMode) {
@@ -1720,7 +2067,7 @@
       var rawInput = (gzModalUsernameInput ? gzModalUsernameInput.value : '').trim();
       if (!rawInput) {
         if (gzModalError) {
-          gzModalError.innerHTML = '⚠️ Please enter your registered handle (e.g. <b>@binarybeast</b>).';
+          gzModalError.innerHTML = '⚠️ Please enter your registered handle or register number (e.g. <b>@binarybeast</b>).';
           gzModalError.style.display = 'block';
         }
         playSynthSound('click');
@@ -1728,8 +2075,9 @@
         return;
       }
 
-      var normHandle = rawInput.startsWith('@') ? rawInput : ('@' + rawInput);
-      var searchKey = normHandle.toLowerCase();
+      var normInput = rawInput.toLowerCase();
+      var normHandle = normInput.startsWith('@') ? normInput : ('@' + normInput);
+      var regNorm = normInput.replace('@', '');
 
       if (gzModalSubmitBtn) {
         gzModalSubmitBtn.disabled = true;
@@ -1740,7 +2088,8 @@
       var matched = allContenders.find(function (r) {
         var h = (r.handle || '').toLowerCase().trim();
         if (h && !h.startsWith('@')) h = '@' + h;
-        return h === searchKey;
+        var rNo = (r.regNo || r.reg_no || '').toLowerCase().trim();
+        return h === normHandle || rNo === regNorm || h === ('@' + regNorm);
       });
 
       if (!matched) {
@@ -1749,12 +2098,15 @@
           gzModalSubmitBtn.textContent = 'Enter In-House Arena ⚡';
         }
         if (gzModalError) {
-          gzModalError.innerHTML = '⚠️ Handle <b>' + escapeHtml(normHandle) + '</b> was not found in registered records.<br><span style="font-size:11px; color:#86868b;">Only registered contenders can enter in-house. Please enter your exact registered handle.</span>';
+          gzModalError.innerHTML = '⚠️ Contender <b>' + escapeHtml(rawInput) + '</b> was not found in registered records.<br><span style="font-size:11px; color:#86868b;">Only registered contenders can enter in-house. Please enter your exact registered handle or roll number.</span>';
           gzModalError.style.display = 'block';
         }
         playSynthSound('click');
         return;
       }
+
+      var contenderHandle = matched.handle ? (matched.handle.startsWith('@') ? matched.handle : ('@' + matched.handle)) : normHandle;
+      var searchKey = contenderHandle.toLowerCase();
 
       // Check single-entry lock
       var inHouseMap = {};
@@ -1774,7 +2126,7 @@
         }
         var entryTime = inHouseMap[searchKey].time || 'earlier today';
         if (gzModalError) {
-          gzModalError.innerHTML = '🚫 <b>RE-ENTRY BLOCKED:</b><br>Handle <b>' + escapeHtml(normHandle) + '</b> has already checked into the In-House Arena at <b>' + escapeHtml(entryTime) + '</b>.<br><span style="font-size:11.5px; color:#ff9f0a;">Each pass permits a single in-house entry. Contact the Organizer Command Desk for clearance.</span>';
+          gzModalError.innerHTML = '🚫 <b>RE-ENTRY BLOCKED:</b><br>Contender <b>' + escapeHtml(matched.name || contenderHandle) + '</b> (' + escapeHtml(contenderHandle) + ') has already checked into the In-House Arena at <b>' + escapeHtml(entryTime) + '</b>.<br><span style="font-size:11.5px; color:#ff9f0a;">Each pass permits a single in-house entry. Contact the Organizer Command Desk for clearance.</span>';
           gzModalError.style.display = 'block';
         }
         playSynthSound('click');
@@ -1785,7 +2137,7 @@
 
       var checkinTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       var checkinRecord = {
-        handle: matched.handle || normHandle,
+        handle: contenderHandle,
         name: matched.name || 'Gladiator',
         regNo: matched.regNo || matched.reg_no || '--',
         branch: matched.branch || '',
@@ -1805,27 +2157,33 @@
         } catch (e) {}
       }
 
+      if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+        window.TechBossSupabase.checkinContenderCloud(checkinRecord).catch(function (err) {});
+      }
+
       if (gzModalSubmitBtn) {
         gzModalSubmitBtn.disabled = false;
         gzModalSubmitBtn.textContent = 'Enter In-House Arena ⚡';
       }
 
-      setContenderUsername(normHandle, true);
+      await setContenderUsername(checkinRecord, true);
       closeContenderCheckinModal();
-      playSynthSound('victory');
+      showWelcomeGreetingToast(checkinRecord);
     }
 
     // Initialize Contender State on Load
-    function initContenderGate() {
+    async function initContenderGate() {
       var urlUser = getQueryParam('user');
       var scanToken = getQueryParam('scan_token');
       var isScan = getQueryParam('scan');
       var storedUser = localStorage.getItem('techboss_contender_username');
+      var storedProfile = localStorage.getItem('techboss_contender_profile');
 
       if (urlUser) {
         var cleanHandle = urlUser.trim();
         if (!cleanHandle.startsWith('@')) cleanHandle = '@' + cleanHandle;
-        setContenderUsername(cleanHandle, true);
+        var resolved = await resolveContenderProfile(cleanHandle);
+        await setContenderUsername(resolved || cleanHandle, true);
 
         // Record In-House Attendance if arriving from QR pass
         var searchKey = cleanHandle.toLowerCase();
@@ -1837,19 +2195,24 @@
         }
 
         var checkinTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        if (!inHouseMap[searchKey]) {
-          var checkinRecord = {
+        var checkinRecord = inHouseMap[searchKey];
+        if (!checkinRecord) {
+          checkinRecord = {
             handle: cleanHandle,
-            name: cleanHandle.replace('@', ''),
-            regNo: '--',
-            branch: '',
-            year: '',
+            name: resolved && resolved.name ? resolved.name : cleanHandle.replace('@', ''),
+            regNo: resolved && resolved.regNo ? resolved.regNo : '--',
+            branch: resolved && resolved.branch ? resolved.branch : '',
+            year: resolved && resolved.year ? resolved.year : '',
             time: checkinTime,
             token: scanToken || 'TB26-DIRECT',
             timestamp: Date.now()
           };
           inHouseMap[searchKey] = checkinRecord;
           localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(inHouseMap));
+
+          if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+            window.TechBossSupabase.checkinContenderCloud(checkinRecord).catch(function (err) {});
+          }
         }
 
         // Broadcast QR Scan Admission to Admin and Waiting Terminals
@@ -1865,52 +2228,116 @@
             });
             syncCh.postMessage({
               type: 'INHOUSE_CHECKIN',
-              contender: inHouseMap[searchKey],
+              contender: checkinRecord,
               timestamp: Date.now()
             });
           } catch (e) {}
         }
 
-        // Show celebratory toast if arrived via QR Scan
-        if (isScan === '1' || scanToken) {
-          showScanWelcomeToast(cleanHandle);
+        // Always show welcome greeting when opening with user parameter
+        showWelcomeGreetingToast(resolved || checkinRecord || cleanHandle);
+      } else if (storedProfile) {
+        try {
+          var parsedProfile = JSON.parse(storedProfile);
+          await setContenderUsername(parsedProfile, false);
+        } catch (e) {
+          if (storedUser) await setContenderUsername(storedUser, false);
         }
       } else if (storedUser) {
-        setContenderUsername(storedUser, false);
+        await setContenderUsername(storedUser, false);
       } else {
         // Open modal to ask handle to enter in house
         openContenderCheckinModal(false);
       }
     }
 
-    function showScanWelcomeToast(handle) {
+    function showWelcomeGreetingToast(contenderOrName) {
+      // Remove any existing toast
+      var existing = document.getElementById('gzWelcomeGreetingToast');
+      if (existing && existing.parentNode) {
+        existing.parentNode.removeChild(existing);
+      }
+
+      var name = 'Contender';
+      var handle = '@contender';
+      var regNo = '';
+      var branch = '';
+
+      if (typeof contenderOrName === 'object' && contenderOrName !== null) {
+        name = contenderOrName.name || 'Contender';
+        handle = contenderOrName.handle || '@contender';
+        regNo = contenderOrName.regNo || contenderOrName.reg_no || '';
+        branch = [contenderOrName.branch, contenderOrName.year].filter(Boolean).join(' · ');
+      } else if (typeof contenderOrName === 'string') {
+        name = contenderOrName.replace('@', '');
+        handle = contenderOrName.startsWith('@') ? contenderOrName : ('@' + contenderOrName);
+      }
+
+      if (!handle.startsWith('@')) handle = '@' + handle;
+      var subtitleParts = [handle];
+      if (regNo && regNo !== '--') subtitleParts.push('Roll: ' + regNo);
+      if (branch) subtitleParts.push(branch);
+
       var toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:9999; background:linear-gradient(135deg, rgba(20,20,28,0.95), rgba(10,10,14,0.98)); border:1px solid rgba(0,240,255,0.4); border-radius:14px; padding:14px 24px; color:#ffffff; font-size:14px; font-weight:600; box-shadow:0 12px 36px rgba(0,240,255,0.25); display:flex; align-items:center; gap:12px; animation:sheetPop 0.3s ease; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);';
-      toast.innerHTML = '<span style="font-size:22px;">🎟️</span> <div><div style="color:var(--accent-cyan); font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">In-House Pass Verified</div><div>Welcome to the Arena, <b style="color:var(--accent-gold);">' + escapeHtml(handle) + '</b>!</div></div>';
+      toast.id = 'gzWelcomeGreetingToast';
+      toast.className = 'welcome-greeting-toast';
+      toast.innerHTML = 
+        '<div class="welcome-toast-icon">🛡️</div>' +
+        '<div class="welcome-toast-body">' +
+          '<div class="welcome-toast-badge">' +
+            '<span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#30d158; box-shadow:0 0 6px #30d158;"></span>' +
+            'IN-HOUSE ARENA ADMISSION VERIFIED' +
+          '</div>' +
+          '<div class="welcome-toast-title">Welcome to Tech Boss 2026, <b style="color:var(--accent-gold);">' + escapeHtml(name) + '</b>!</div>' +
+          '<div class="welcome-toast-subtitle">' + escapeHtml(subtitleParts.join(' · ')) + '</div>' +
+        '</div>' +
+        '<button type="button" class="welcome-toast-close" aria-label="Dismiss">✕</button>';
+
+      var closeBtn = toast.querySelector('.welcome-toast-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function () {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translate(-50%, -20px) scale(0.95)';
+          toast.style.transition = 'all 0.3s ease';
+          setTimeout(function () {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+          }, 300);
+        });
+      }
+
       document.body.appendChild(toast);
 
       playSynthSound('victory');
       if (typeof confetti === 'function') {
         confetti({
-          particleCount: 80,
+          particleCount: 90,
           spread: 80,
-          origin: { y: 0.2 },
-          colors: ['#00f0ff', '#e5b358', '#30d158', '#ffffff']
+          origin: { y: 0.18 },
+          colors: ['#e5b358', '#00f0ff', '#30d158', '#ffffff', '#ff2a85']
         });
       }
 
       setTimeout(function () {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.5s ease';
-        setTimeout(function () {
-          if (toast.parentNode) toast.parentNode.removeChild(toast);
-        }, 500);
-      }, 4500);
+        if (toast.parentNode) {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translate(-50%, -20px) scale(0.95)';
+          toast.style.transition = 'all 0.4s ease';
+          setTimeout(function () {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+          }, 400);
+        }
+      }, 5000);
     }
     initContenderGate();
 
     if (gzContenderHeaderBadge) {
       gzContenderHeaderBadge.addEventListener('click', function () {
+        openContenderCheckinModal(true);
+      });
+    }
+
+    if (gzBannerSwitchBtn) {
+      gzBannerSwitchBtn.addEventListener('click', function () {
         openContenderCheckinModal(true);
       });
     }

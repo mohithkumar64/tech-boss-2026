@@ -1025,11 +1025,19 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
             document.getElementById('bossHealthSlider').value = cloudState.bossHp;
             document.getElementById('bossHealthVal').textContent = cloudState.bossHp + '%';
           }
-          if (cloudState.broadcastMsg) {
+          if (cloudState.broadcastMsg && !cloudState.broadcastMsg.trim().startsWith('{') && !cloudState.broadcastMsg.trim().startsWith('[')) {
             localStorage.setItem('techboss_custom_broadcast', cloudState.broadcastMsg);
             var bMsg = document.getElementById('broadcastMsg');
             if (bMsg) bMsg.value = cloudState.broadcastMsg;
           }
+        }
+
+        var cloudInHouse = await window.TechBossSupabase.fetchInHouseCheckins();
+        if (cloudInHouse !== null) {
+          localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(cloudInHouse));
+          renderInHouseLog();
+          renderMetrics();
+          renderRegistrationsTable();
         }
       } catch (err) {
         console.warn('Supabase initial fetch warning:', err);
@@ -1145,6 +1153,9 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
         syncChannel.postMessage({ type: 'INHOUSE_UPDATE', data: data, timestamp: Date.now() });
       }
     } catch (e) {}
+    if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+      window.TechBossSupabase.saveInHouseCheckinsCloud(data).catch(function(err) {});
+    }
     renderMetrics();
     renderRegistrationsTable();
     renderInHouseLog();
@@ -1981,6 +1992,20 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
           renderMetrics();
         }
       });
+
+      window.TechBossSupabase.subscribeToInHouseCheckins(function(cloudMap) {
+        if (cloudMap && typeof cloudMap === 'object') {
+          var localRaw = localStorage.getItem('techboss_inhouse_checkins');
+          if (JSON.stringify(cloudMap) !== localRaw) {
+            localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(cloudMap));
+            renderMetrics();
+            renderRegistrationsTable();
+            renderInHouseLog();
+            showToast('⚡ In-House entry roster updated from scanner device!');
+            playSynthBeep();
+          }
+        }
+      });
     }
   }
 
@@ -1996,11 +2021,14 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
   // Clear All In-House Entries Button
   var clearAllInHouseBtn = document.getElementById('clearAllInHouseBtn');
   if (clearAllInHouseBtn) {
-    clearAllInHouseBtn.addEventListener('click', function() {
+    clearAllInHouseBtn.addEventListener('click', async function() {
       if (confirm('Reset all In-House admissions? Contenders will need to re-check-in to enter.')) {
         localStorage.removeItem('techboss_inhouse_checkins');
         if (syncChannel) {
           syncChannel.postMessage({ type: 'INHOUSE_UPDATE', data: {}, timestamp: Date.now() });
+        }
+        if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+          await window.TechBossSupabase.saveInHouseCheckinsCloud({});
         }
         renderMetrics();
         renderRegistrationsTable();
@@ -2054,6 +2082,18 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
             localStorage.setItem('techboss_registrations', JSON.stringify(regData));
             renderRegistrationsTable();
             renderMetrics();
+          }
+        });
+
+        window.TechBossSupabase.fetchInHouseCheckins().then(function(cloudInHouse) {
+          if (cloudInHouse !== null) {
+            var localRaw = localStorage.getItem('techboss_inhouse_checkins');
+            if (JSON.stringify(cloudInHouse) !== localRaw) {
+              localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(cloudInHouse));
+              renderMetrics();
+              renderRegistrationsTable();
+              renderInHouseLog();
+            }
           }
         });
       }

@@ -469,7 +469,92 @@
   }
 
   // ==========================================
-  // 4. REAL-TIME SUBSCRIPTIONS
+  // 4. IN-HOUSE CHECK-INS CLOUD API
+  // ==========================================
+
+  async function fetchInHouseCheckins() {
+    var config = getSupabaseConfig();
+    if (config.url && config.key) {
+      try {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state?id=eq.inhouse_checkins';
+        var resp = await fetch(apiUrl, {
+          headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
+        });
+        if (resp.ok) {
+          var rows = await resp.json();
+          if (rows.length > 0 && rows[0].broadcast_msg) {
+            try {
+              var parsed = JSON.parse(rows[0].broadcast_msg);
+              return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+              return {};
+            }
+          }
+          return {};
+        }
+      } catch (e) {}
+    }
+    return null;
+  }
+
+  async function saveInHouseCheckinsCloud(inHouseMap) {
+    var config = getSupabaseConfig();
+    if (config.url && config.key) {
+      try {
+        var payload = {
+          id: 'inhouse_checkins',
+          boss_hp: '0',
+          broadcast_msg: typeof inHouseMap === 'string' ? inHouseMap : JSON.stringify(inHouseMap || {}),
+          updated_at: new Date().toISOString()
+        };
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state';
+        var resp = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'apikey': config.key,
+            'Authorization': 'Bearer ' + config.key,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify(payload)
+        });
+        return resp.ok;
+      } catch (e) {}
+    }
+    return false;
+  }
+
+  async function checkinContenderCloud(record) {
+    if (!record || !record.handle) return false;
+    var normHandle = record.handle.toLowerCase().trim();
+    if (!normHandle.startsWith('@')) normHandle = '@' + normHandle;
+
+    var currentMap = {};
+    try {
+      var cloudMap = await fetchInHouseCheckins();
+      if (cloudMap && typeof cloudMap === 'object') {
+        currentMap = cloudMap;
+      } else {
+        var localRaw = localStorage.getItem('techboss_inhouse_checkins');
+        currentMap = localRaw ? JSON.parse(localRaw) : {};
+      }
+    } catch (e) {
+      try {
+        var localRaw2 = localStorage.getItem('techboss_inhouse_checkins');
+        currentMap = localRaw2 ? JSON.parse(localRaw2) : {};
+      } catch (e2) {}
+    }
+
+    currentMap[normHandle] = record;
+    try {
+      localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(currentMap));
+    } catch (e) {}
+
+    return await saveInHouseCheckinsCloud(currentMap);
+  }
+
+  // ==========================================
+  // 5. REAL-TIME SUBSCRIPTIONS
   // ==========================================
 
   function subscribeToRegistrations(onEvent) {
@@ -516,7 +601,34 @@
       var channel = cli
         .channel('public:event_state:' + Date.now())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'event_state' }, function (payload) {
+          // Strictly ignore inhouse_checkins row so it doesn't trigger broadcast announcements
+          if (payload && payload.new && payload.new.id && payload.new.id !== 'global') {
+            return;
+          }
           if (typeof onEvent === 'function') onEvent(payload);
+        })
+        .subscribe();
+
+      return channel;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function subscribeToInHouseCheckins(onUpdate) {
+    var cli = client || initSupabaseClient();
+    if (!cli) return null;
+
+    try {
+      var channel = cli
+        .channel('public:inhouse_checkins:' + Date.now())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'event_state' }, function (payload) {
+          if (payload && payload.new && payload.new.id === 'inhouse_checkins') {
+            try {
+              var map = JSON.parse(payload.new.broadcast_msg || '{}');
+              if (typeof onUpdate === 'function') onUpdate(map, payload);
+            } catch (e) {}
+          }
         })
         .subscribe();
 
@@ -543,8 +655,12 @@
     saveLeaderboard: saveLeaderboard,
     fetchEventState: fetchEventState,
     saveEventState: saveEventState,
+    fetchInHouseCheckins: fetchInHouseCheckins,
+    saveInHouseCheckinsCloud: saveInHouseCheckinsCloud,
+    checkinContenderCloud: checkinContenderCloud,
     subscribeToRegistrations: subscribeToRegistrations,
     subscribeToLeaderboard: subscribeToLeaderboard,
-    subscribeToEventState: subscribeToEventState
+    subscribeToEventState: subscribeToEventState,
+    subscribeToInHouseCheckins: subscribeToInHouseCheckins
   };
 })();

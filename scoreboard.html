@@ -991,6 +991,91 @@
       background: rgba(255, 255, 255, 0.25);
       transform: scale(1.04);
     }
+
+    /* WELCOME GREETING TOAST */
+    .welcome-greeting-toast {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      background: linear-gradient(135deg, rgba(24, 24, 32, 0.96) 0%, rgba(14, 14, 20, 0.98) 100%);
+      border: 1px solid rgba(229, 179, 88, 0.45);
+      border-radius: 16px;
+      padding: 16px 22px;
+      color: #ffffff;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(229, 179, 88, 0.22);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      max-width: 90vw;
+      width: 480px;
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      animation: welcomeSlideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes welcomeSlideDown {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -24px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1);
+      }
+    }
+    .welcome-toast-icon {
+      font-size: 32px;
+      line-height: 1;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 10px rgba(229, 179, 88, 0.5));
+    }
+    .welcome-toast-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .welcome-toast-badge {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      color: var(--apple-gold);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+    .welcome-toast-title {
+      font-size: 15.5px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+    .welcome-toast-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .welcome-toast-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #a1a1a6;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .welcome-toast-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
   </style>
 </head>
 
@@ -1392,15 +1477,18 @@
       // Load Telemetry Stats & Broadcast
       function loadBroadcast(triggerFullscreen) {
         var msg = localStorage.getItem('techboss_custom_broadcast');
-        if (msg && msg.trim()) {
-          var isNew = (lastSeenAnnouncement !== msg);
-          if (broadcastTextEl) broadcastTextEl.textContent = msg;
-          var timeStr = 'UPDATED ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          if (broadcastTimestampEl) broadcastTimestampEl.textContent = timeStr;
+        if (msg && typeof msg === 'string') {
+          msg = msg.trim();
+          if (!msg.startsWith('{') && !msg.startsWith('[')) {
+            var isNew = (lastSeenAnnouncement !== msg);
+            if (broadcastTextEl) broadcastTextEl.textContent = msg;
+            var timeStr = 'UPDATED ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            if (broadcastTimestampEl) broadcastTimestampEl.textContent = timeStr;
 
-          if (isNew || triggerFullscreen) {
-            lastSeenAnnouncement = msg;
-            showKeynoteAnnouncement(msg, timeStr);
+            if (isNew || triggerFullscreen) {
+              lastSeenAnnouncement = msg;
+              showKeynoteAnnouncement(msg, timeStr);
+            }
           }
         }
       }
@@ -1575,6 +1663,104 @@
       // Initial Load
       loadAllData();
 
+      // Welcome Greeting System for Scoreboard
+      function showScoreboardWelcomeGreeting(contenderOrName) {
+        if (!contenderOrName) return;
+        var existing = document.getElementById('sbWelcomeGreetingToast');
+        if (existing && existing.parentNode) {
+          existing.parentNode.removeChild(existing);
+        }
+
+        var name = 'Contender';
+        var handle = '@contender';
+        var regNo = '';
+        var branch = '';
+
+        if (typeof contenderOrName === 'object' && contenderOrName !== null) {
+          name = contenderOrName.name || 'Contender';
+          handle = contenderOrName.handle || '@contender';
+          regNo = contenderOrName.regNo || contenderOrName.reg_no || '';
+          branch = [contenderOrName.branch, contenderOrName.year].filter(Boolean).join(' · ');
+        } else if (typeof contenderOrName === 'string') {
+          name = contenderOrName.replace('@', '');
+          handle = contenderOrName.startsWith('@') ? contenderOrName : ('@' + contenderOrName);
+        }
+
+        if (!handle.startsWith('@')) handle = '@' + handle;
+        var subtitleParts = [handle];
+        if (regNo && regNo !== '--') subtitleParts.push('Roll: ' + regNo);
+        if (branch) subtitleParts.push(branch);
+
+        var toast = document.createElement('div');
+        toast.id = 'sbWelcomeGreetingToast';
+        toast.className = 'welcome-greeting-toast';
+        toast.innerHTML = 
+          '<div class="welcome-toast-icon">🛡️</div>' +
+          '<div class="welcome-toast-body">' +
+            '<div class="welcome-toast-badge">' +
+              '<span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#30d158; box-shadow:0 0 6px #30d158;"></span>' +
+              'IN-HOUSE ARENA ADMISSION VERIFIED' +
+            '</div>' +
+            '<div class="welcome-toast-title">Welcome to Tech Boss 2026, <b style="color:var(--apple-gold);">' + escapeHtml(name) + '</b>!</div>' +
+            '<div class="welcome-toast-subtitle">' + escapeHtml(subtitleParts.join(' · ')) + '</div>' +
+          '</div>' +
+          '<button type="button" class="welcome-toast-close" aria-label="Dismiss">✕</button>';
+
+        var closeBtn = toast.querySelector('.welcome-toast-close');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', function () {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translate(-50%, -20px) scale(0.95)';
+            toast.style.transition = 'all 0.3s ease';
+            setTimeout(function () {
+              if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 300);
+          });
+        }
+
+        document.body.appendChild(toast);
+
+        playKeynoteAnnouncementChime();
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 90,
+            spread: 80,
+            origin: { y: 0.18 },
+            colors: ['#e5b358', '#00f0ff', '#30d158', '#ffffff', '#ff2a85']
+          });
+        }
+
+        setTimeout(function () {
+          if (toast.parentNode) {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translate(-50%, -20px) scale(0.95)';
+            toast.style.transition = 'all 0.4s ease';
+            setTimeout(function () {
+              if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 400);
+          }
+        }, 5000);
+      }
+
+      // Initial check for contender greeting on scoreboard load
+      (function checkInitialContenderGreeting() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var urlUser = urlParams.get('user');
+        var storedProfile = localStorage.getItem('techboss_contender_profile');
+        var storedUser = localStorage.getItem('techboss_contender_username');
+
+        if (urlUser) {
+          showScoreboardWelcomeGreeting(urlUser.trim());
+        } else if (storedProfile) {
+          try {
+            var prof = JSON.parse(storedProfile);
+            if (prof) showScoreboardWelcomeGreeting(prof);
+          } catch (e) {}
+        } else if (storedUser) {
+          showScoreboardWelcomeGreeting(storedUser);
+        }
+      })();
+
       // BroadcastChannel Real-Time Listener
       if (typeof BroadcastChannel !== 'undefined') {
         try {
@@ -1585,9 +1771,12 @@
                 loadAllData();
               } else if (ev.data.type === 'TELEMETRY_BROADCAST') {
                 loadBroadcast();
-              } else if (ev.data.type === 'INHOUSE_CHECKIN') {
+              } else if (ev.data.type === 'INHOUSE_CHECKIN' || ev.data.type === 'INHOUSE_QR_SCANNED') {
                 loadInHouseData();
                 renderScoreboard();
+                if (ev.data.contender || ev.data.handle) {
+                  showScoreboardWelcomeGreeting(ev.data.contender || ev.data.handle);
+                }
               }
             }
           };
@@ -1616,23 +1805,57 @@
             }
 
             var eventState = await window.TechBossSupabase.fetchEventState();
-            if (eventState && eventState.announcement) {
-              localStorage.setItem('techboss_custom_broadcast', eventState.announcement);
+            if (eventState && (eventState.broadcastMsg || eventState.announcement)) {
+              var msg = eventState.broadcastMsg || eventState.announcement;
+              localStorage.setItem('techboss_custom_broadcast', msg);
               loadBroadcast();
+            }
+
+            var cloudInHouse = await window.TechBossSupabase.fetchInHouseCheckins();
+            if (cloudInHouse && typeof cloudInHouse === 'object') {
+              inHouseMap = cloudInHouse;
+              localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(inHouseMap));
+              renderScoreboard();
             }
           } catch (err) { }
         }
       }
       loadCloudState();
 
+      var lastInHouseCount = 0;
       if (window.TechBossSupabase) {
         window.TechBossSupabase.subscribeToLeaderboard(function () {
           loadCloudState();
         });
+        window.TechBossSupabase.subscribeToEventState(function () {
+          loadCloudState();
+        });
+        window.TechBossSupabase.subscribeToInHouseCheckins(function (cloudMap) {
+          if (cloudMap && typeof cloudMap === 'object') {
+            var keys = Object.keys(cloudMap);
+            if (keys.length > lastInHouseCount && lastInHouseCount > 0) {
+              // Find the newest checkin
+              var newest = null;
+              for (var k in cloudMap) {
+                if (!newest || (cloudMap[k].timestamp && cloudMap[k].timestamp > (newest.timestamp || 0))) {
+                  newest = cloudMap[k];
+                }
+              }
+              if (newest) showScoreboardWelcomeGreeting(newest);
+            }
+            lastInHouseCount = keys.length;
+            inHouseMap = cloudMap;
+            localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(inHouseMap));
+            renderScoreboard();
+          }
+        });
       }
 
       // High-Frequency Background Poller
-      setInterval(loadAllData, 2500);
+      setInterval(function () {
+        loadAllData();
+        loadCloudState();
+      }, 2500);
 
       // Search & Segment Filters
       if (searchInput) {

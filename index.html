@@ -2292,6 +2292,63 @@
     </div>
   </div>
 
+  <!-- GAME ZONE & EVENT COUNTDOWN SECTION -->
+  <section id="gamezone" class="gamezone-section" style="padding: 60px 0 80px; position: relative;">
+    <div class="wrap">
+      <div class="countdown-section-card">
+        
+        <!-- Glowing Ambient Ring -->
+        <div style="position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 450px; height: 180px; background: radial-gradient(ellipse, rgba(229, 179, 88, 0.2), transparent 70%); filter: blur(35px); pointer-events: none;"></div>
+
+        <!-- Minimalist Countdown Component matching User's Design -->
+        <div class="minimal-countdown-row" id="eventCountdownGrid">
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdDays">00</div>
+            <div class="time-unit-label">Days</div>
+          </div>
+          <div class="time-colon-sep">:</div>
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdHours">00</div>
+            <div class="time-unit-label">Hours</div>
+          </div>
+          <div class="time-colon-sep">:</div>
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdMins">00</div>
+            <div class="time-unit-label">Minutes</div>
+          </div>
+          <div class="time-colon-sep">:</div>
+          <div class="time-unit-box">
+            <div class="time-digit" id="cdSecs">00</div>
+            <div class="time-unit-label">Seconds</div>
+          </div>
+        </div>
+
+        <!-- TECH BOSS Live Celebration Banner (Revealed when Countdown Ends) -->
+        <div class="tech-boss-live-banner" id="eventLiveBanner">
+          <div class="tb-boss-title">TECH BOSS</div>
+          <p style="font-size: clamp(16px, 2.5vw, 20px); font-weight: 700; color: #ffffff; margin-bottom: 6px;">
+            👑 THE ARENA IS LIVE — THE CHAMPIONSHIP HAS BEGUN!
+          </p>
+          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 0;">
+            September 16, 2026 Solo Engineering Championship in session.
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
+          <a href="#" id="inhouseCheckinBtn" class="btn btn-white" style="font-size: 15px; font-weight: 700; padding: 14px 34px; height: auto; border-radius: 980px; box-shadow: 0 4px 24px rgba(229, 179, 88, 0.35); display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+            <span>🏟️ House Check-In</span>
+            <span style="font-size: 18px;">⚡</span>
+          </a>
+          <a href="#pass-verification" id="verifyPassBtn" class="btn btn-dark" style="font-size: 14px; font-weight: 600; padding: 13px 26px; height: auto; border-radius: 980px; text-decoration: none;">
+            <span>🛡️ Verify Pass Details</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- Prize Showcase Section -->
   <section id="prizes">
     <div class="wrap">
@@ -2348,63 +2405,6 @@
       <div style="margin-top:24px; text-align:center;">
         <span class="apple-badge">Total Prize Pool: ₹2,250 (1st: ₹1,000 · 2nd: ₹750 · 3rd: ₹500) + Official Certificate
           of Merit</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- GAME ZONE & EVENT COUNTDOWN SECTION -->
-  <section id="gamezone" class="gamezone-section" style="padding: 60px 0 80px; position: relative;">
-    <div class="wrap">
-      <div class="countdown-section-card">
-        
-        <!-- Glowing Ambient Ring -->
-        <div style="position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 450px; height: 180px; background: radial-gradient(ellipse, rgba(229, 179, 88, 0.2), transparent 70%); filter: blur(35px); pointer-events: none;"></div>
-
-        <!-- Minimalist Countdown Component matching User's Design -->
-        <div class="minimal-countdown-row" id="eventCountdownGrid">
-          <div class="time-unit-box">
-            <div class="time-digit" id="cdDays">00</div>
-            <div class="time-unit-label">Days</div>
-          </div>
-          <div class="time-colon-sep">:</div>
-          <div class="time-unit-box">
-            <div class="time-digit" id="cdHours">00</div>
-            <div class="time-unit-label">Hours</div>
-          </div>
-          <div class="time-colon-sep">:</div>
-          <div class="time-unit-box">
-            <div class="time-digit" id="cdMins">00</div>
-            <div class="time-unit-label">Minutes</div>
-          </div>
-          <div class="time-colon-sep">:</div>
-          <div class="time-unit-box">
-            <div class="time-digit" id="cdSecs">00</div>
-            <div class="time-unit-label">Seconds</div>
-          </div>
-        </div>
-
-        <!-- TECH BOSS Live Celebration Banner (Revealed when Countdown Ends) -->
-        <div class="tech-boss-live-banner" id="eventLiveBanner">
-          <div class="tb-boss-title">TECH BOSS</div>
-          <p style="font-size: clamp(16px, 2.5vw, 20px); font-weight: 700; color: #ffffff; margin-bottom: 6px;">
-            👑 THE ARENA IS LIVE — THE CHAMPIONSHIP HAS BEGUN!
-          </p>
-          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 0;">
-            September 16, 2026 Solo Engineering Championship in session.
-          </p>
-        </div>
-
-        <!-- Action Buttons -->
-        <div style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
-          <a href="#" id="inhouseCheckinBtn" class="btn btn-white" style="font-size: 15px; font-weight: 700; padding: 14px 34px; height: auto; border-radius: 980px; box-shadow: 0 4px 24px rgba(229, 179, 88, 0.35); display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
-            <span>🏟️ House Check-In</span>
-            <span style="font-size: 18px;">⚡</span>
-          </a>
-          <a href="#pass-verification" id="verifyPassBtn" class="btn btn-dark" style="font-size: 14px; font-weight: 600; padding: 13px 26px; height: auto; border-radius: 980px; text-decoration: none;">
-            <span>🛡️ Verify Pass Details</span>
-          </a>
-        </div>
-
       </div>
     </div>
   </section>
@@ -3283,9 +3283,12 @@
         loadCloudLeaderboard();
       });
       window.TechBossSupabase.subscribeToEventState(function (payload) {
-        if (payload && payload.new) {
+        if (payload && payload.new && (payload.new.id === 'global' || !payload.new.id)) {
           if (payload.new.broadcast_msg !== undefined) {
-            localStorage.setItem('techboss_custom_broadcast', payload.new.broadcast_msg);
+            var bMsg = String(payload.new.broadcast_msg || '').trim();
+            if (!bMsg.startsWith('{') && !bMsg.startsWith('[')) {
+              localStorage.setItem('techboss_custom_broadcast', bMsg);
+            }
           }
           if (payload.new.boss_hp !== undefined) {
             localStorage.setItem('techboss_boss_hp', payload.new.boss_hp);
@@ -3325,10 +3328,10 @@
     ];
     var feedIdx = 0;
     setInterval(function () {
-      var customMsg = localStorage.getItem('techboss_custom_broadcast');
+      var customMsg = (localStorage.getItem('techboss_custom_broadcast') || '').trim();
       var feedEl = document.getElementById('battleFeedText');
       if (feedEl) {
-        if (customMsg) {
+        if (customMsg && !customMsg.startsWith('{') && !customMsg.startsWith('[')) {
           feedEl.textContent = '📢 ' + customMsg;
         } else {
           feedIdx = (feedIdx + 1) % defaultBattleEvents.length;
@@ -3930,11 +3933,19 @@
       localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(inHouseMap));
       localStorage.setItem('techboss_contender_username', normHandle);
 
+      // 1. Sync across tabs on local device
       if (syncBroadcastChannel) {
         try {
           syncBroadcastChannel.postMessage({ type: 'INHOUSE_CHECKIN', contender: checkinRecord, timestamp: Date.now() });
           syncBroadcastChannel.postMessage({ type: 'INHOUSE_QR_SCANNED', handle: normHandle, token: token, time: checkinTime, timestamp: Date.now() });
         } catch (e) {}
+      }
+
+      // 2. Sync to Supabase Cloud Database for cross-device real-time update in Admin Command Center
+      if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
+        window.TechBossSupabase.checkinContenderCloud(checkinRecord).catch(function (err) {
+          console.warn('Cloud in-house checkin error:', err);
+        });
       }
 
       handlePassScannedSuccess(normHandle, sourceName || 'Device Camera Scanner');
