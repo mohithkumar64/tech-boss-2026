@@ -350,15 +350,26 @@
     position: fixed;
     bottom: 24px;
     right: 24px;
-    background: var(--panel-bg);
-    border: 1px solid var(--green);
-    color: var(--green);
-    padding: 12px 20px;
-    border-radius: 4px;
+    background: linear-gradient(135deg, rgba(28, 28, 34, 0.88) 0%, rgba(18, 18, 22, 0.94) 100%);
+    backdrop-filter: blur(32px) saturate(190%);
+    -webkit-backdrop-filter: blur(32px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    padding: 12px 22px;
+    border-radius: 9999px;
     font-size: 13.5px;
-    box-shadow: 0 0 20px var(--green-glow);
+    font-weight: 600;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25);
     z-index: 300;
     display: none;
+    align-items: center;
+    gap: 10px;
+    animation: toastPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes toastPop {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   .table-screenshot-thumb {
