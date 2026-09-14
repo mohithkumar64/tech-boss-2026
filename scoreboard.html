@@ -254,12 +254,12 @@
       max-width: 1280px;
       width: 100%;
       margin: 0 auto;
-      padding: 32px 24px 70px;
+      padding: 16px 20px 48px;
       position: relative;
       z-index: 1;
       display: flex;
       flex-direction: column;
-      gap: 28px;
+      gap: 16px;
     }
 
     /* Apple Bento Glass Card */
@@ -268,8 +268,8 @@
       backdrop-filter: blur(36px) saturate(190%);
       -webkit-backdrop-filter: blur(36px) saturate(190%);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45), inset 0 1px 0 var(--border-highlight);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 var(--border-highlight);
       position: relative;
       overflow: hidden;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -277,16 +277,16 @@
 
     /* Apple Dynamic Announcement Capsule (Dynamic Island Style) */
     .broadcast-banner {
-      padding: 12px 20px;
+      padding: 10px 18px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       border-radius: var(--radius-pill);
       background: rgba(22, 22, 28, 0.65);
       backdrop-filter: blur(32px) saturate(190%);
       -webkit-backdrop-filter: blur(32px) saturate(190%);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.14);
       cursor: pointer;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -294,7 +294,7 @@
     .broadcast-banner:hover {
       background: rgba(28, 28, 36, 0.85);
       border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
       transform: translateY(-1px);
     }
 
@@ -305,18 +305,18 @@
       background: rgba(41, 151, 255, 0.12);
       border: 1px solid rgba(41, 151, 255, 0.28);
       color: #70c4ff;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: var(--radius-pill);
       white-space: nowrap;
     }
 
     .broadcast-text-wrap {
       flex: 1;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 500;
       color: #f5f5f7;
       display: flex;
@@ -333,37 +333,37 @@
       font-weight: 600;
     }
 
-    /* CHAMPIONSHIP GLORY PODIUM - APPLE KEYNOTE STAGE DESIGN */
+    /* CHAMPIONSHIP GLORY PODIUM - COMPACT APPLE KEYNOTE DESIGN */
     .podium-section {
-      padding: 36px 32px 42px;
-      border-radius: var(--radius-xl);
-      background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.08) 0%, transparent 70%),
+      padding: 16px 20px 18px;
+      border-radius: var(--radius-lg);
+      background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.06) 0%, transparent 70%),
                   linear-gradient(180deg, rgba(22, 22, 28, 0.75) 0%, rgba(12, 12, 16, 0.85) 100%);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.16);
     }
 
     .podium-header-wrap {
       text-align: center;
-      margin-bottom: 34px;
+      margin-bottom: 12px;
     }
 
     .podium-eyebrow {
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 2.2px;
+      letter-spacing: 1.8px;
       background: linear-gradient(135deg, #ffd700, #ffae00);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 6px;
+      margin-bottom: 2px;
       display: inline-block;
     }
 
     .podium-main-title {
-      font-size: 32px;
+      font-size: 19px;
       font-weight: 800;
-      letter-spacing: -0.8px;
+      letter-spacing: -0.4px;
       background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -371,10 +371,10 @@
 
     .podium-grid {
       display: grid;
-      grid-template-columns: 1fr 1.18fr 1fr;
-      align-items: flex-end;
-      gap: 24px;
-      max-width: 1080px;
+      grid-template-columns: 1fr 1.12fr 1fr;
+      align-items: stretch;
+      gap: 12px;
+      max-width: 1040px;
       margin: 0 auto;
     }
 
@@ -385,11 +385,11 @@
       }
     }
 
-    /* Pedestal Base Styling */
+    /* Pedestal Base Styling - Compact */
     .podium-pedestal {
       background: rgba(24, 24, 30, 0.8);
-      border-radius: 24px;
-      padding: 28px 22px;
+      border-radius: 18px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -398,41 +398,40 @@
       backdrop-filter: blur(30px);
       -webkit-backdrop-filter: blur(30px);
       border: 1px solid var(--border-subtle);
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 var(--border-highlight);
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 var(--border-highlight);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .podium-pedestal:hover {
-      transform: translateY(-4px);
+      transform: translateY(-2px);
       border-color: var(--border-hover);
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
     }
 
     /* Rank 1 Champion Apex Gold */
     .podium-pedestal.rank-1 {
       background: linear-gradient(180deg, rgba(38, 32, 18, 0.95) 0%, rgba(18, 16, 22, 0.95) 100%);
-      border: 1.5px solid rgba(255, 215, 0, 0.6);
-      box-shadow: 0 0 50px rgba(255, 215, 0, 0.22), 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      border: 1.5px solid rgba(255, 215, 0, 0.55);
+      box-shadow: 0 0 35px rgba(255, 215, 0, 0.18), 0 12px 28px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35);
       order: 2;
-      padding-top: 40px;
-      padding-bottom: 40px;
-      transform: scale(1.03);
+      padding: 16px 18px;
+      transform: scale(1.01);
     }
 
     .podium-pedestal.rank-1:hover {
-      transform: scale(1.03) translateY(-4px);
-      box-shadow: 0 0 65px rgba(255, 215, 0, 0.32), 0 28px 60px rgba(0, 0, 0, 0.7);
+      transform: scale(1.01) translateY(-2px);
+      box-shadow: 0 0 45px rgba(255, 215, 0, 0.26), 0 18px 36px rgba(0, 0, 0, 0.6);
     }
 
     @media (max-width: 860px) {
       .podium-pedestal.rank-1 { order: 1; transform: none; }
-      .podium-pedestal.rank-1:hover { transform: translateY(-4px); }
+      .podium-pedestal.rank-1:hover { transform: translateY(-2px); }
     }
 
     /* Rank 2 Silver */
     .podium-pedestal.rank-2 {
-      border: 1.5px solid rgba(241, 245, 249, 0.35);
-      box-shadow: 0 0 30px rgba(241, 245, 249, 0.1), 0 16px 36px rgba(0, 0, 0, 0.4);
+      border: 1.5px solid rgba(241, 245, 249, 0.3);
+      box-shadow: 0 0 20px rgba(241, 245, 249, 0.08), 0 10px 24px rgba(0, 0, 0, 0.35);
       order: 1;
     }
 
@@ -442,79 +441,79 @@
 
     /* Rank 3 Bronze */
     .podium-pedestal.rank-3 {
-      border: 1.5px solid rgba(255, 157, 92, 0.35);
-      box-shadow: 0 0 30px rgba(255, 157, 92, 0.1), 0 16px 36px rgba(0, 0, 0, 0.4);
+      border: 1.5px solid rgba(255, 157, 92, 0.3);
+      box-shadow: 0 0 20px rgba(255, 157, 92, 0.08), 0 10px 24px rgba(0, 0, 0, 0.35);
       order: 3;
     }
 
-    /* Medal Halo Rings */
+    /* Medal Halo Rings - Compact */
     .medal-halo-ring {
-      width: 64px;
-      height: 64px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
-      margin-bottom: 14px;
+      font-size: 20px;
+      margin-bottom: 6px;
       position: relative;
     }
 
     .rank-1 .medal-halo-ring {
-      width: 84px;
-      height: 84px;
-      font-size: 42px;
-      background: radial-gradient(circle, rgba(255, 215, 0, 0.35) 0%, rgba(255, 215, 0, 0.08) 70%);
-      border: 2px solid var(--apple-gold);
-      box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), inset 0 0 15px rgba(255, 215, 0, 0.3);
+      width: 52px;
+      height: 52px;
+      font-size: 26px;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.06) 70%);
+      border: 1.5px solid var(--apple-gold);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.45), inset 0 0 10px rgba(255, 215, 0, 0.25);
     }
 
     .rank-2 .medal-halo-ring {
-      background: radial-gradient(circle, rgba(241, 245, 249, 0.28) 0%, rgba(241, 245, 249, 0.06) 70%);
-      border: 2px solid var(--apple-silver);
-      box-shadow: 0 0 20px var(--apple-silver-glow);
+      background: radial-gradient(circle, rgba(241, 245, 249, 0.22) 0%, rgba(241, 245, 249, 0.05) 70%);
+      border: 1.5px solid var(--apple-silver);
+      box-shadow: 0 0 14px var(--apple-silver-glow);
     }
 
     .rank-3 .medal-halo-ring {
-      background: radial-gradient(circle, rgba(255, 157, 92, 0.28) 0%, rgba(255, 157, 92, 0.06) 70%);
-      border: 2px solid var(--apple-bronze);
-      box-shadow: 0 0 20px var(--apple-bronze-glow);
+      background: radial-gradient(circle, rgba(255, 157, 92, 0.22) 0%, rgba(255, 157, 92, 0.05) 70%);
+      border: 1.5px solid var(--apple-bronze);
+      box-shadow: 0 0 14px var(--apple-bronze-glow);
     }
 
     .podium-rank-pill {
-      font-size: 11px;
+      font-size: 9.5px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 4px 12px;
+      letter-spacing: 0.8px;
+      padding: 3px 10px;
       border-radius: var(--radius-pill);
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
 
     .rank-1 .podium-rank-pill {
       background: var(--apple-gold);
       color: #000000;
-      box-shadow: 0 2px 12px rgba(255, 215, 0, 0.5);
+      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
     }
 
     .rank-2 .podium-rank-pill {
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.16);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.22);
     }
 
     .rank-3 .podium-rank-pill {
-      background: rgba(255, 157, 92, 0.2);
+      background: rgba(255, 157, 92, 0.18);
       color: #ff9d5c;
-      border: 1px solid rgba(255, 157, 92, 0.35);
+      border: 1px solid rgba(255, 157, 92, 0.3);
     }
 
     .podium-handle {
       font-family: var(--font-mono);
-      font-size: 18px;
+      font-size: 15px;
       font-weight: 800;
       color: #ffffff;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -522,15 +521,15 @@
     }
 
     .rank-1 .podium-handle {
-      font-size: 23px;
+      font-size: 17px;
       color: #fffbeb;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     }
 
     .podium-name {
-      font-size: 13px;
+      font-size: 11px;
       color: var(--text-secondary);
-      margin-bottom: 16px;
+      margin-bottom: 8px;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -539,52 +538,52 @@
 
     .podium-score {
       font-family: var(--font-mono);
-      font-size: 30px;
+      font-size: 22px;
       font-weight: 900;
       color: #ffffff;
       display: flex;
       align-items: baseline;
-      gap: 5px;
-      margin-bottom: 10px;
+      gap: 4px;
+      margin-bottom: 6px;
     }
 
     .rank-1 .podium-score {
-      font-size: 38px;
+      font-size: 26px;
       color: var(--apple-gold);
-      text-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+      text-shadow: 0 0 18px rgba(255, 215, 0, 0.45);
     }
 
     .rank-2 .podium-score {
       color: #f1f5f9;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      text-shadow: 0 0 14px rgba(255, 255, 255, 0.25);
     }
 
     .rank-3 .podium-score {
       color: #ff9d5c;
-      text-shadow: 0 0 20px rgba(255, 157, 92, 0.3);
+      text-shadow: 0 0 14px rgba(255, 157, 92, 0.25);
     }
 
     .podium-score span {
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--text-secondary);
       text-transform: uppercase;
     }
 
     .podium-tier-tag {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      padding: 4px 12px;
+      padding: 3px 9px;
       border-radius: var(--radius-pill);
       background: rgba(255, 255, 255, 0.08);
       color: #e2e8f0;
       border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
-    /* LEADERBOARD TABLE SECTION */
+    /* LEADERBOARD TABLE SECTION - COMPACT ABOVE-THE-FOLD */
     .table-section {
-      padding: 28px;
-      border-radius: var(--radius-xl);
+      padding: 18px 20px 22px;
+      border-radius: var(--radius-lg);
     }
 
     .table-toolbar {
@@ -709,16 +708,16 @@
     .apple-table th {
       background: rgba(255, 255, 255, 0.03);
       color: var(--text-secondary);
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      padding: 14px 18px;
+      padding: 10px 16px;
       border-bottom: 1px solid var(--border-subtle);
     }
 
     .apple-table td {
-      padding: 15px 18px;
+      padding: 11px 16px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       color: #f1f5f9;
       vertical-align: middle;
