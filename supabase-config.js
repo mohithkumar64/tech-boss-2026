@@ -638,6 +638,609 @@
     }
   }
 
+  // ==========================================
+  // 6. 9-ROUND TOURNAMENT SYSTEM API
+  // ==========================================
+
+  var DEFAULT_ROUNDS = [
+    { round_number: 1, title: 'Round 1: Solo Inception', type: 'INDIVIDUAL', status: 'OPEN', team_scope: null },
+    { round_number: 2, title: 'Round 2: Quad Synergy (Auto 4-Player)', type: 'TEAM', status: 'OPEN', team_scope: 'ROUND_2' },
+    { round_number: 3, title: 'Round 3: Alliance Forge (Manual Teams)', type: 'TEAM', status: 'OPEN', team_scope: 'ROUND_3_4' },
+    { round_number: 4, title: 'Round 4: Alliance Climax (Same as Round 3)', type: 'TEAM', status: 'OPEN', team_scope: 'ROUND_3_4' },
+    { round_number: 5, title: 'Round 5: Solo Cyber Duel', type: 'INDIVIDUAL', status: 'OPEN', team_scope: null },
+    { round_number: 6, title: 'Round 6: Tactical Strike (Manual Teams)', type: 'TEAM', status: 'OPEN', team_scope: 'ROUND_6' },
+    { round_number: 7, title: 'Round 7: Apex Legion (Manual Teams)', type: 'TEAM', status: 'OPEN', team_scope: 'ROUND_7' },
+    { round_number: 8, title: 'Round 8: Solo Survival', type: 'INDIVIDUAL', status: 'OPEN', team_scope: null },
+    { round_number: 9, title: 'Round 9: Championship Boss Battle', type: 'INDIVIDUAL', status: 'OPEN', team_scope: null }
+  ];
+
+  function getLocalTournamentRounds() {
+    try {
+      var raw = localStorage.getItem('techboss_tournament_rounds');
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length === 9) return parsed;
+      }
+    } catch (e) {}
+    localStorage.setItem('techboss_tournament_rounds', JSON.stringify(DEFAULT_ROUNDS));
+    return JSON.parse(JSON.stringify(DEFAULT_ROUNDS));
+  }
+
+  function saveLocalTournamentRounds(rounds) {
+    try {
+      localStorage.setItem('techboss_tournament_rounds', JSON.stringify(rounds));
+    } catch (e) {}
+  }
+
+  async function fetchTournamentRounds() {
+    // 1. Try Backend API
+    try {
+      var apiResp = await fetch('/api/rounds');
+      if (apiResp.ok) {
+        var res = await apiResp.json();
+        if (res.success && Array.isArray(res.rounds) && res.rounds.length > 0) {
+          saveLocalTournamentRounds(res.rounds);
+          return res.rounds;
+        }
+      }
+    } catch (e) {}
+
+    // 2. Direct Supabase Fallback
+    var config = getSupabaseConfig();
+    if (config.url && config.key) {
+      try {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/tournament_rounds?select=*&order=round_number.asc';
+        var resp = await fetch(apiUrl, {
+          headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
+        });
+        if (resp.ok) {
+          var rows = await resp.json();
+          if (Array.isArray(rows) && rows.length > 0) {
+            saveLocalTournamentRounds(rows);
+            return rows;
+          }
+        }
+      } catch (e) {}
+    }
+
+    return getLocalTournamentRounds();
+  }
+
+  async function updateRoundStatus(roundNumber, status) {
+    var validStatus = ['NOT_STARTED', 'OPEN', 'LOCKED'].includes(status) ? status : 'OPEN';
+    var rounds = getLocalTournamentRounds();
+    var target = rounds.find(function(r) { return r.round_number === parseInt(roundNumber, 10); });
+    if (target) {
+      target.status = validStatus;
+      saveLocalTournamentRounds(rounds);
+    }
+
+    try {
+      await fetch('/api/rounds', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ round_number: roundNumber, status: validStatus })
+      });
+    } catch (e) {}
+
+    var config = getSupabaseConfig();
+    if (config.url && config.key) {
+      try {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/tournament_rounds?round_number=eq.' + roundNumber;
+        await fetch(apiUrl, {
+          method: 'PATCH',
+          headers: {
+            'apikey': config.key,
+            'Authorization': 'Bearer ' + config.key,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: validStatus, updated_at: new Date().toISOString() })
+        });
+      } catch (e) {}
+    }
+    return true;
+  }
+
+  // --- TEAMS API ---
+  function getLocalTournamentTeams(scope) {
+    try {
+      var raw = localStorage.getItem('techboss_tournament_teams');
+      var map = raw ? JSON.parse(raw) : {};
+      if (scope) {
+        return Array.isArray(map[scope]) ? map[scope] : [];
+      }
+      return map;
+    } catch (e) {
+      return scope ? [] : {};
+    }
+  }
+
+  function saveLocalTournamentTeams(scope, teamList) {
+    try {
+      var raw = localStorage.getItem('techboss_tournament_teams');
+      var map = raw ? JSON.parse(raw) : {};
+      map[scope] = teamList || [];
+      localStorage.setItem('techboss_tournament_teams', JSON.stringify(map));
+    } catch (e) {}
+  }
+
+  async function fetchTournamentTeams(scope) {
+    if (!scope) return [];
+
+    try {
+      var apiResp = await fetch('/api/teams?scope=' + encodeURIComponent(scope));
+      if (apiResp.ok) {
+        var res = await apiResp.json();
+        if (res.success && Array.isArray(res.teams)) {
+          saveLocalTournamentTeams(scope, res.teams);
+          return res.teams;
+        }
+      }
+    } catch (e) {}
+
+    var config = getSupabaseConfig();
+    if (config.url && config.key) {
+      try {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/tournament_teams?round_scope=eq.' + encodeURIComponent(scope) + '&select=*,tournament_team_members(*)';
+        var resp = await fetch(apiUrl, {
+          headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
+        });
+        if (resp.ok) {
+          var rows = await resp.json();
+          var formatted = rows.map(function(t) {
+            return {
+              id: t.id,
+              team_name: t.team_name,
+              round_scope: t.round_scope,
+              members: (t.tournament_team_members || []).map(function(m) {
+                return {
+                  player_handle: m.player_handle,
+                  player_name: m.player_name,
+                  reg_no: m.reg_no
+                };
+              })
+            };
+          });
+          saveLocalTournamentTeams(scope, formatted);
+          return formatted;
+        }
+      } catch (e) {}
+    }
+
+    return getLocalTournamentTeams(scope);
+  }
+
+  async function saveTournamentTeam(scope, team) {
+    if (!scope || !team || !team.team_name) return false;
+    var localTeams = getLocalTournamentTeams(scope);
+    var teamId = team.id || ('team_' + Date.now() + '_' + Math.floor(Math.random() * 1000));
+    var newObj = {
+      id: teamId,
+      team_name: team.team_name.trim(),
+      round_scope: scope,
+      members: Array.isArray(team.members) ? team.members : []
+    };
+
+    var exIdx = localTeams.findIndex(function(t) { return String(t.id) === String(teamId); });
+    if (exIdx >= 0) {
+      localTeams[exIdx] = newObj;
+    } else {
+      localTeams.push(newObj);
+    }
+    saveLocalTournamentTeams(scope, localTeams);
+
+    // Backend / Supabase persistence
+    try {
+      await fetch('/api/teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scope: scope, team: newObj })
+      });
+    } catch (e) {}
+
+    var config = getSupabaseConfig();
+    if (config.url && config.key) {
+      try {
+        // Upsert to Supabase
+        var teamPayload = { team_name: newObj.team_name, round_scope: scope };
+        if (typeof teamId === 'number' || /^\d+$/.test(String(teamId))) {
+          teamPayload.id = parseInt(teamId, 10);
+        }
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/tournament_teams';
+        var tResp = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'apikey': config.key,
+            'Authorization': 'Bearer ' + config.key,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=representation'
+          },
+          body: JSON.stringify(teamPayload)
+        });
+        if (tResp.ok) {
+          var tData = await tResp.json();
+          var actualTeamId = (tData && tData[0] && tData[0].id) || teamId;
+          newObj.id = actualTeamId;
+          // Sync members
+          if (newObj.members.length > 0) {
+            var memPayload = newObj.members.map(function(m) {
+              return {
+                team_id: actualTeamId,
+                player_handle: m.player_handle,
+                player_name: m.player_name || '',
+                reg_no: m.reg_no || ''
+              };
+            });
+            await fetch(config.url.replace(/\/$/, '') + '/rest/v1/tournament_team_members?team_id=eq.' + actualTeamId, {
+              method: 'DELETE',
+              headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
+            });
+            await fetch(config.url.replace(/\/$/, '') + '/rest/v1/tournament_team_members', {
+              method: 'POST',
+              headers: {
+                'apikey': config.key,
+                'Authorization': 'Bearer ' + config.key,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(memPayload)
+            });
+          }
+        }
+      } catch (e) {}
+    }
+
+    return newObj;
+  }
+
+  async function deleteTournamentTeam(scope, teamId) {
+    if (!scope || !teamId) return false;
+    var localTeams = getLocalTournamentTeams(scope);
+    localTeams = localTeams.filter(function(t) { return String(t.id) !== String(teamId); });
+    saveLocalTournamentTeams(scope, localTeams);
+
+    try {
+      await fetch('/api/teams?id=' + encodeURIComponent(teamId) + '&scope=' + encodeURIComponent(scope), {
+        method: 'DELETE'
+      });
+    } catch (e) {}
+
+    var config = getSupabaseConfig();
+    if (config.url && config.key && (/^\d+$/.test(String(teamId)))) {
+      try {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/tournament_teams?id=eq.' + teamId;
+        await fetch(apiUrl, {
+          method: 'DELETE',
+          headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
+        });
+      } catch (e) {}
+    }
+    return true;
+  }
+
+  // Generate Round 2 Teams (Randomized groups of 4 only)
+  async function generateRound2Teams(playerPool) {
+    if (!Array.isArray(playerPool) || playerPool.length === 0) {
+      return { success: false, error: 'No eligible contenders available for team generation.' };
+    }
+
+    // Clean and deduplicate candidates by handle
+    var uniqueCandidates = [];
+    var seenHandles = new Set();
+    playerPool.forEach(function(p) {
+      if (!p) return;
+      var rawH = (p.handle || ('@' + (p.name || 'player').toLowerCase().replace(/[^a-z0-9]/g, ''))).trim();
+      if (!rawH.startsWith('@')) rawH = '@' + rawH;
+      var norm = rawH.toLowerCase();
+      if (!seenHandles.has(norm)) {
+        seenHandles.add(norm);
+        uniqueCandidates.push({
+          player_handle: rawH,
+          player_name: p.name || 'Contender',
+          reg_no: p.regNo || p.reg_no || ''
+        });
+      }
+    });
+
+    if (uniqueCandidates.length < 4) {
+      return {
+        success: false,
+        error: 'At least 4 contenders are required to generate Round 2 teams (found ' + uniqueCandidates.length + ').'
+      };
+    }
+
+    var remainder = uniqueCandidates.length % 4;
+    if (remainder !== 0) {
+      return {
+        success: false,
+        isNotDivisible: true,
+        remainder: remainder,
+        totalPlayers: uniqueCandidates.length,
+        error: 'Player count (' + uniqueCandidates.length + ') cannot be evenly divided into teams of 4 (' + remainder + ' extra player' + (remainder > 1 ? 's' : '') + ').'
+      };
+    }
+
+    // Fisher-Yates shuffle
+    var shuffled = uniqueCandidates.slice();
+    for (var i = shuffled.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = shuffled[i];
+      shuffled[i] = shuffled[j];
+      shuffled[j] = temp;
+    }
+
+    var teamNames = [
+      'TITAN SQUAD', 'APEX WARRIORS', 'CYBER REAPERS', 'PHANTOM PROTOCOL',
+      'VORTEX ELITE', 'SHADOW MATRIX', 'NEXUS DIVISION', 'NEO VANGUARD',
+      'HYPERION FORCE', 'QUANTUM ZERO', 'IRON DRAGONS', 'DELTA STRIKE'
+    ];
+
+    var generatedTeams = [];
+    var teamCount = Math.floor(shuffled.length / 4);
+    for (var t = 0; t < teamCount; t++) {
+      var members = shuffled.slice(t * 4, (t + 1) * 4);
+      var teamName = teamNames[t] || ('TEAM ' + (t + 1));
+      generatedTeams.push({
+        id: 'r2_team_' + (t + 1) + '_' + Date.now(),
+        team_name: teamName,
+        round_scope: 'ROUND_2',
+        members: members
+      });
+    }
+
+    saveLocalTournamentTeams('ROUND_2', generatedTeams);
+    localStorage.setItem('techboss_round2_teams_generated', 'true');
+
+    // Persist to server / Supabase
+    for (var g = 0; g < generatedTeams.length; g++) {
+      await saveTournamentTeam('ROUND_2', generatedTeams[g]);
+    }
+
+    return {
+      success: true,
+      teams: generatedTeams,
+      count: generatedTeams.length
+    };
+  }
+
+  // --- SCORES API ---
+  function getLocalTournamentScores(roundNumber) {
+    try {
+      var raw = localStorage.getItem('techboss_tournament_scores');
+      var map = raw ? JSON.parse(raw) : {};
+      if (roundNumber !== undefined && roundNumber !== null) {
+        return map[String(roundNumber)] || {};
+      }
+      return map;
+    } catch (e) {
+      return roundNumber !== undefined ? {} : {};
+    }
+  }
+
+  function saveLocalTournamentScores(roundNumber, scoresMap) {
+    try {
+      var raw = localStorage.getItem('techboss_tournament_scores');
+      var map = raw ? JSON.parse(raw) : {};
+      map[String(roundNumber)] = scoresMap || {};
+      localStorage.setItem('techboss_tournament_scores', JSON.stringify(map));
+    } catch (e) {}
+  }
+
+  async function fetchTournamentScores(roundNumber) {
+    var rKey = String(roundNumber);
+    try {
+      var apiResp = await fetch('/api/scores?round=' + rKey);
+      if (apiResp.ok) {
+        var res = await apiResp.json();
+        if (res.success && res.scores) {
+          saveLocalTournamentScores(roundNumber, res.scores);
+          return res.scores;
+        }
+      }
+    } catch (e) {}
+
+    var config = getSupabaseConfig();
+    if (config.url && config.key) {
+      try {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/tournament_scores?round_number=eq.' + rKey;
+        var resp = await fetch(apiUrl, {
+          headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
+        });
+        if (resp.ok) {
+          var rows = await resp.json();
+          var mapped = {};
+          rows.forEach(function(row) {
+            var rawH = (row.player_handle || '').toLowerCase();
+            mapped[rawH] = {
+              player_handle: row.player_handle,
+              player_name: row.player_name || '',
+              individual_score: parseInt(row.individual_score, 10) || 0,
+              team_id: row.team_id || null,
+              team_score: parseInt(row.team_score, 10) || 0,
+              round_total: parseInt(row.round_total, 10) || ((parseInt(row.individual_score, 10) || 0) + (parseInt(row.team_score, 10) || 0))
+            };
+          });
+          saveLocalTournamentScores(roundNumber, mapped);
+          return mapped;
+        }
+      } catch (e) {}
+    }
+
+    return getLocalTournamentScores(roundNumber);
+  }
+
+  async function saveTournamentScores(roundNumber, scoresMap) {
+    var rNum = parseInt(roundNumber, 10);
+    saveLocalTournamentScores(rNum, scoresMap);
+
+    // Compute round_total for each entry:
+    // For individual rounds (1, 5, 8, 9): round_total = individual_score
+    // For team rounds (2, 3, 4, 6, 7): round_total = individual_score + team_score (team score added automatically!)
+    var isTeamRound = [2, 3, 4, 6, 7].includes(rNum);
+    var payloadList = [];
+
+    for (var handleKey in scoresMap) {
+      var item = scoresMap[handleKey] || {};
+      var indScore = parseInt(item.individual_score, 10) || 0;
+      var teamScore = isTeamRound ? (parseInt(item.team_score, 10) || 0) : 0;
+      var total = isTeamRound ? (indScore + teamScore) : indScore;
+
+      item.round_total = total;
+      item.team_score = teamScore;
+      item.individual_score = indScore;
+
+      payloadList.push({
+        round_number: rNum,
+        player_handle: item.player_handle || handleKey,
+        player_name: item.player_name || '',
+        individual_score: indScore,
+        team_id: item.team_id || null,
+        team_score: teamScore,
+        round_total: total,
+        updated_at: new Date().toISOString()
+      });
+    }
+
+    saveLocalTournamentScores(rNum, scoresMap);
+
+    // 1. Call Backend API
+    try {
+      await fetch('/api/scores', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ round_number: rNum, scores: payloadList })
+      });
+    } catch (e) {}
+
+    // 2. Direct Supabase Fallback
+    var config = getSupabaseConfig();
+    if (config.url && config.key && payloadList.length > 0) {
+      try {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/tournament_scores';
+        await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'apikey': config.key,
+            'Authorization': 'Bearer ' + config.key,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify(payloadList)
+        });
+      } catch (e) {}
+    }
+
+    // 3. Recalculate Cumulative Leaderboard across all 9 rounds and sync!
+    await calculateAndSyncCumulativeLeaderboard();
+    return true;
+  }
+
+  // --- CUMULATIVE LEADERBOARD CALCULATION (ROUNDS 1 TO 9) ---
+  async function calculateAndSyncCumulativeLeaderboard() {
+    var allScoresMap = getLocalTournamentScores();
+    var playerTotals = new Map();
+
+    // Scan all 9 rounds in localStorage
+    for (var r = 1; r <= 9; r++) {
+      var roundScores = allScoresMap[String(r)] || {};
+      var isTeamRound = [2, 3, 4, 6, 7].includes(r);
+
+      for (var handleKey in roundScores) {
+        var rec = roundScores[handleKey];
+        if (!rec) continue;
+        var rawH = (rec.player_handle || handleKey || '').trim();
+        if (!rawH.startsWith('@')) rawH = '@' + rawH;
+        var norm = rawH.toLowerCase();
+
+        var indScore = parseInt(rec.individual_score, 10) || 0;
+        var teamScore = isTeamRound ? (parseInt(rec.team_score, 10) || 0) : 0;
+        var roundTotal = rec.round_total !== undefined ? parseInt(rec.round_total, 10) : (indScore + teamScore);
+
+        if (!playerTotals.has(norm)) {
+          playerTotals.set(norm, {
+            handle: rawH,
+            name: rec.player_name || '',
+            cumulative_score: 0,
+            rounds: {}
+          });
+        }
+
+        var p = playerTotals.get(norm);
+        if (rec.player_name && !p.name) p.name = rec.player_name;
+        p.rounds[r] = roundTotal;
+        p.cumulative_score += roundTotal;
+      }
+    }
+
+    // In-house checkin filter: ONLY people who check in to house are tournament PLAYERS!
+    // All remaining registrations are organizers and must NOT appear on the scoreboard.
+    var inHouseMap = {};
+    try {
+      var rawInHouse = localStorage.getItem('techboss_inhouse_checkins');
+      if (rawInHouse) inHouseMap = JSON.parse(rawInHouse);
+    } catch (e) {}
+
+    var activePlayerHandles = new Set();
+    for (var k in inHouseMap) {
+      var rec = inHouseMap[k];
+      var rawH = (rec.handle || k || '').trim();
+      if (!rawH.startsWith('@')) rawH = '@' + rawH;
+      var norm = rawH.toLowerCase();
+      activePlayerHandles.add(norm);
+
+      if (!playerTotals.has(norm)) {
+        playerTotals.set(norm, {
+          handle: rawH,
+          name: rec.name || 'Gladiator',
+          cumulative_score: 0,
+          rounds: {}
+        });
+      } else {
+        var p = playerTotals.get(norm);
+        if (rec.name && !p.name) p.name = rec.name;
+      }
+    }
+
+    // Keep ONLY players who are in-house checked in
+    var boardItems = [];
+    playerTotals.forEach(function(pData, normKey) {
+      if (activePlayerHandles.has(normKey)) {
+        boardItems.push(pData);
+      }
+    });
+
+    boardItems.sort(function(a, b) {
+      if (b.cumulative_score !== a.cumulative_score) {
+        return b.cumulative_score - a.cumulative_score;
+      }
+      return a.handle.localeCompare(b.handle);
+    });
+
+    boardItems.forEach(function(item, idx) {
+      item.rank = idx + 1;
+      item.score = item.cumulative_score;
+      item.boss_dmg = item.cumulative_score + ' DMG';
+      item.streak = (item.cumulative_score > 500 ? '3 WINS' : (item.cumulative_score > 0 ? '1 WIN' : '0 WINS'));
+      item.avatar = '0' + ((idx % 8) + 1);
+    });
+
+    // Save locally
+    localStorage.setItem('techboss_solo_leaderboard', JSON.stringify(boardItems));
+    localStorage.setItem('techboss_board_updated_at', Date.now().toString());
+
+    // Sync to Supabase leaderboard table for 100% backward compatibility
+    await saveLeaderboard(boardItems);
+
+    // Broadcast across tabs
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        var ch = new BroadcastChannel('techboss_sync_channel');
+        ch.postMessage({ type: 'SCORE_UPDATE', timestamp: Date.now() });
+      } catch (e) {}
+    }
+
+    return boardItems;
+  }
+
   // Export to window global object
   window.TechBossSupabase = {
     isConfigured: function () {
@@ -661,6 +1264,19 @@
     subscribeToRegistrations: subscribeToRegistrations,
     subscribeToLeaderboard: subscribeToLeaderboard,
     subscribeToEventState: subscribeToEventState,
-    subscribeToInHouseCheckins: subscribeToInHouseCheckins
+    subscribeToInHouseCheckins: subscribeToInHouseCheckins,
+
+    // 9-Round Tournament Exports
+    ROUNDS_METADATA: DEFAULT_ROUNDS,
+    fetchTournamentRounds: fetchTournamentRounds,
+    updateRoundStatus: updateRoundStatus,
+    fetchTournamentTeams: fetchTournamentTeams,
+    saveTournamentTeam: saveTournamentTeam,
+    deleteTournamentTeam: deleteTournamentTeam,
+    generateRound2Teams: generateRound2Teams,
+    fetchTournamentScores: fetchTournamentScores,
+    saveTournamentScores: saveTournamentScores,
+    calculateAndSyncCumulativeLeaderboard: calculateAndSyncCumulativeLeaderboard
   };
 })();
+

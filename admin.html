@@ -392,6 +392,162 @@
     .metrics-grid { grid-template-columns: 1fr 1fr; }
     .form-row { grid-template-columns: 1fr; }
   }
+
+  /* 9-ROUND SCOREBOARD SYSTEM STYLES */
+  .round-nav-wrap {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) rgba(255,255,255,0.06);
+  }
+  .round-nav-wrap::-webkit-scrollbar { height: 5px; }
+  .round-nav-wrap::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+  .round-pill-btn {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 105px;
+    text-align: center;
+  }
+  .round-pill-btn:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(229, 179, 88, 0.4);
+    color: #ffffff;
+  }
+  .round-pill-btn.active {
+    background: linear-gradient(135deg, rgba(229, 179, 88, 0.18), rgba(0, 240, 255, 0.1));
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 0 16px rgba(229, 179, 88, 0.25);
+  }
+  .round-pill-num {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+  .round-pill-tag {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0.85;
+    margin-top: 2px;
+  }
+  .round-pill-status {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 4px;
+    display: inline-block;
+  }
+  .round-pill-status.open { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .round-pill-status.locked { background: var(--pink); box-shadow: 0 0 6px var(--pink); }
+  .round-pill-status.not-started { background: #888; }
+
+  .round-banner-card {
+    background: linear-gradient(135deg, rgba(20, 22, 40, 0.95), rgba(10, 12, 26, 0.95));
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .team-card-group {
+    background: rgba(12, 14, 28, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transition: border-color 0.2s;
+  }
+  .team-card-group:hover {
+    border-color: rgba(0, 240, 255, 0.4);
+  }
+  .team-card-header {
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.08), rgba(229, 179, 88, 0.05));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .team-score-input-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(229, 179, 88, 0.35);
+  }
+  .score-input-field {
+    width: 90px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+    text-align: center;
+  }
+  .score-input-field:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 10px rgba(229, 179, 88, 0.4);
+    outline: none;
+  }
+  .score-input-field:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .round-total-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--green);
+    background: rgba(48, 209, 88, 0.1);
+    border: 1px solid rgba(48, 209, 88, 0.25);
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .player-select-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .player-select-pill.selected {
+    background: rgba(0, 240, 255, 0.15);
+    border-color: var(--cyan);
+    color: #ffffff;
+  }
 </style>
 </head>
 <body>
@@ -483,36 +639,100 @@
     <button class="tab-btn" data-tab="tab-data">💾 Data Backup & Reset</button>
   </div>
 
-  <!-- TAB 1: LEADERBOARD MANAGER -->
+  <!-- TAB 1: 9-ROUND SCOREBOARD MANAGER -->
   <div class="tab-content active" id="tab-leaderboard">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:12px;">
       <div>
-        <h3 style="font-size:18px; font-weight:800;">LIVE SCOREBOARD TELEMETRY</h3>
-        <p style="font-size:13px; color:var(--text-muted);">Insert damage scores, adjust ranks, and manage solo fighters appearing on the public leaderboard.</p>
+        <h3 style="font-size:18px; font-weight:800; display:flex; align-items:center; gap:8px;">
+          <span>🏆</span> LIVE SCOREBOARD TELEMETRY — 9-ROUND CHAMPIONSHIP
+        </h3>
+        <p style="font-size:13px; color:var(--text-muted);">
+          Full 9-round tournament scoring system with automatic Round 2 squads, manual alliances, decoupled team & individual scores, and cumulative rankings.
+        </p>
       </div>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-ghost" id="toggleCumulativeViewBtn">📊 View Cumulative Standings</button>
         <input type="file" id="uploadScoresFileInput" accept=".csv, .tsv, .txt, .json" style="display:none;">
-        <button class="btn btn-ghost" id="openUploadScoresBtn">📥 Upload Scores (CSV/Excel)</button>
-        <button class="btn btn-primary" id="openAddScoreModal">⚡ Add New Challenger Score</button>
+        <button class="btn btn-ghost" id="openUploadScoresBtn">📥 Upload Scores</button>
+        <button class="btn btn-primary" id="openAddScoreModal">⚡ Add Challenger Score</button>
       </div>
     </div>
 
-    <div class="cyber-card table-wrap">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th style="width:60px;">Rank</th>
-            <th>Handle & Name</th>
-            <th>Stage / Track</th>
-            <th style="width:160px;">Damage (Score)</th>
-            <th style="width:110px;">Tier Rank</th>
-            <th style="width:180px; text-align:right;">Quick Actions</th>
-          </tr>
-        </thead>
-        <tbody id="adminBoardBody">
-          <!-- Populated by JS -->
-        </tbody>
-      </table>
+    <!-- 9-ROUND NAVIGATOR -->
+    <div class="round-nav-wrap" id="roundNavWrap">
+      <!-- Populated by JS for Rounds 1 to 9 -->
+    </div>
+
+    <!-- ACTIVE ROUND COMMAND BANNER -->
+    <div class="round-banner-card" id="activeRoundBanner">
+      <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+        <div>
+          <div style="font-size:11px; font-family:'JetBrains Mono', monospace; color:var(--gold);" id="roundFormatTag">ROUND 1 · INDIVIDUAL FORMAT</div>
+          <h4 style="font-size:16px; font-weight:800; color:#ffffff; margin:2px 0 0 0;" id="activeRoundTitle">Round 1: Solo Inception</h4>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <label style="font-size:11.5px; color:var(--text-dim); margin-bottom:0;" for="roundStatusSelect">Status:</label>
+          <select id="roundStatusSelect" style="background:rgba(0,0,0,0.6); border:1px solid var(--panel-border); color:#ffffff; padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700;">
+            <option value="OPEN">🟢 OPEN (Score Entry Active)</option>
+            <option value="NOT_STARTED">⚪ NOT STARTED (Locked)</option>
+            <option value="LOCKED">🔒 LOCKED (Read-Only)</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <!-- Round 2 Auto Team Generation Button -->
+        <button class="btn btn-gold btn-sm" id="genR2TeamsBtn" style="display:none;">⚡ Generate Round 2 Teams (4P)</button>
+        <!-- Manual Team Creator (R3, 6, 7) -->
+        <button class="btn btn-cyan btn-sm" id="openCreateTeamBtn" style="display:none;" onclick="openCreateTeamModal()">➕ Create Manual Team</button>
+        <!-- Round 4 Info Badge -->
+        <span class="badge-status status-verified" id="r4LinkNotice" style="display:none;">⚡ Linked to Round 3 Teams (Separate Scores)</span>
+        <!-- Save Scores -->
+        <button class="btn btn-primary btn-sm" id="saveRoundScoresBtn">💾 Save Round Scores</button>
+        <!-- Recalculate -->
+        <button class="btn btn-ghost btn-sm" id="recalcCumulativeBtn" title="Recompute Cumulative 9-Round Leaderboard">🔄 Recalculate Ranks</button>
+      </div>
+    </div>
+
+    <!-- Round 2 Divisibility Warning Alert -->
+    <div id="r2DivisibilityAlert" style="display:none; background:rgba(255,42,133,0.12); border:1px solid rgba(255,42,133,0.35); border-radius:6px; padding:12px 16px; margin-bottom:18px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+      <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+        <span style="font-size:18px;">⚠️</span>
+        <span id="r2DivisibilityAlertText">Warning: Total eligible contenders cannot be divided into teams of 4.</span>
+      </div>
+      <button class="btn btn-pink btn-sm" id="showR2WarningDetailsBtn">Inspect Mismatch Details</button>
+    </div>
+
+    <!-- MAIN ACTIVE ROUND CONTENT CONTAINER -->
+    <div id="activeRoundViewContainer">
+      <!-- Dynamically filled with Individual Table or Team Group Cards -->
+    </div>
+
+    <!-- CUMULATIVE 9-ROUND STANDINGS CONTAINER (TOGGLEABLE) -->
+    <div id="cumulativeLeaderboardContainer" style="display:none; margin-top:20px;">
+      <div class="cyber-card" style="padding:20px; border-color:rgba(229,179,88,0.4);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <h4 style="font-size:16px; font-weight:800; color:var(--gold); margin:0;">🏆 CUMULATIVE CHAMPIONSHIP STANDINGS (ALL 9 ROUNDS)</h4>
+          <span style="font-size:12px; color:var(--text-dim);">Live sum of all individual round scores & team round awards</span>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width:60px;">Rank</th>
+                <th>Handle & Name</th>
+                <th style="width:140px;">Cumulative Score</th>
+                <th style="width:100px;">Tier Rank</th>
+                <th style="width:100px;">R1-R9 Points</th>
+                <th style="text-align:right;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="cumulativeBoardBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -710,7 +930,7 @@ CREATE TABLE IF NOT EXISTS registrations (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2. Create Leaderboard Table
+-- 2. Create Leaderboard Table (Cumulative 9-Round Standings)
 CREATE TABLE IF NOT EXISTS leaderboard (
   id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
   rank INT,
@@ -732,19 +952,68 @@ CREATE TABLE IF NOT EXISTS event_state (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. Enable Row Level Security with Public Access for the tournament
+-- 4. Create 9-Round Tournament Tables
+CREATE TABLE IF NOT EXISTS tournament_rounds (
+  round_number INT PRIMARY KEY,
+  title TEXT NOT NULL,
+  round_type TEXT NOT NULL,
+  status TEXT DEFAULT 'OPEN',
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS tournament_teams (
+  id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  team_name TEXT NOT NULL,
+  round_scope TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS tournament_team_members (
+  id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  team_id BIGINT REFERENCES tournament_teams(id) ON DELETE CASCADE,
+  player_handle TEXT NOT NULL,
+  player_name TEXT,
+  reg_no TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS tournament_scores (
+  id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  round_number INT NOT NULL,
+  player_handle TEXT NOT NULL,
+  player_name TEXT,
+  individual_score INT DEFAULT 0,
+  team_id BIGINT,
+  team_score INT DEFAULT 0,
+  round_total INT DEFAULT 0,
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(round_number, player_handle)
+);
+
+-- 5. Enable Row Level Security with Public Access
 ALTER TABLE registrations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
 ALTER TABLE event_state ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tournament_rounds ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tournament_teams ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tournament_team_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tournament_scores ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Allow public all access on registrations" ON registrations FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow public all access on leaderboard" ON leaderboard FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow public all access on event_state" ON event_state FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on registrations" ON registrations FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on leaderboard" ON leaderboard FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on event_state" ON event_state FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on tournament_rounds" ON tournament_rounds FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on tournament_teams" ON tournament_teams FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on tournament_team_members" ON tournament_team_members FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on tournament_scores" ON tournament_scores FOR ALL USING (true) WITH CHECK (true);
 
--- 5. Enable Realtime Publications
+-- 6. Enable Realtime Publications
 ALTER PUBLICATION supabase_realtime ADD TABLE registrations;
 ALTER PUBLICATION supabase_realtime ADD TABLE leaderboard;
-ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
+ALTER PUBLICATION supabase_realtime ADD TABLE event_state;
+ALTER PUBLICATION supabase_realtime ADD TABLE tournament_rounds;
+ALTER PUBLICATION supabase_realtime ADD TABLE tournament_teams;
+ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
           </div>
           <p style="margin-top:10px;">3. Copy your <b>Project URL</b> and <b>anon public key</b> from Project Settings → API and paste above!</p>
         </div>
@@ -889,6 +1158,65 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     <div style="display:flex; justify-content:flex-end; gap:10px;">
       <button class="btn btn-ghost" id="closeScreenshotModalBtn">Dismiss</button>
       <button class="btn btn-green" id="approveModalScreenshotBtn">✓ Approve Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Team Management Modal (Rounds 3, 6, 7) -->
+<div class="modal-backdrop" id="teamModal" style="z-index: 1000;">
+  <div class="modal-panel" style="max-width: 580px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h3 style="font-size:18px; font-weight:800; color:var(--gold);" id="teamModalTitle">CREATE MANUAL TEAM</h3>
+      <button class="btn btn-ghost btn-sm" id="closeTeamModal">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label for="teamModalName">Team Name</label>
+      <input type="text" id="teamModalName" placeholder="e.g. CYBER TITANS" style="font-weight:700;">
+    </div>
+
+    <div class="form-group" style="margin-bottom:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <label style="margin-bottom:0;">Select Contenders for this Team (<span id="teamModalSelectedCount" style="color:var(--cyan); font-weight:800;">0</span> Selected)</label>
+        <input type="text" id="teamModalPlayerSearch" placeholder="Filter contenders..." style="width:160px; padding:4px 8px; font-size:11px;">
+      </div>
+      <div id="teamModalPlayerList" style="background:#090a14; border:1px solid var(--panel-border); border-radius:6px; max-height:220px; overflow-y:auto; padding:10px; display:flex; flex-wrap:wrap; gap:8px;">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+      <button class="btn btn-pink btn-sm" id="deleteTeamInModalBtn" style="display:none;">🗑️ Delete Team</button>
+      <div style="display:flex; gap:10px; margin-left:auto;">
+        <button class="btn btn-ghost" id="cancelTeamModalBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveTeamModalBtn">💾 Save Team</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Round 2 Player Count Divisibility Warning Modal -->
+<div class="modal-backdrop" id="round2WarningModal">
+  <div class="modal-panel" style="max-width: 520px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h3 style="font-size:17px; font-weight:800; color:var(--pink); display:flex; align-items:center; gap:8px;">
+        <span>⚠️</span> ROUND 2 TEAM SIZE MISMATCH
+      </h3>
+      <button class="btn btn-ghost btn-sm" id="closeR2WarningModal">✕</button>
+    </div>
+
+    <div style="background:rgba(255,42,133,0.08); border:1px solid rgba(255,42,133,0.3); border-radius:6px; padding:14px; margin-bottom:16px; font-size:13px; line-height:1.5;">
+      <p style="margin-bottom:8px;" id="r2WarningModalText">
+        Eligible player count cannot be evenly divided into teams of 4.
+      </p>
+      <p style="color:var(--text-muted); font-size:12px; margin-bottom:0;">
+        Event Rule: Each Round 2 team must contain <b>EXACTLY 4 players</b>. To maintain tournament integrity, adjust verified registrations or admit additional contenders before auto-generating teams.
+      </p>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn btn-ghost" id="dismissR2WarningModalBtn">Dismiss</button>
+      <button class="btn btn-green" id="gotoRegistrationsTabBtn">📋 Manage Registrations</button>
     </div>
   </div>
 </div>
@@ -1214,7 +1542,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     }
   }
 
-  function saveInHouseCheckins(data) {
+  async function saveInHouseCheckins(data) {
     try {
       localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(data));
       if (syncChannel) {
@@ -1227,6 +1555,15 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     renderMetrics();
     renderRegistrationsTable();
     renderInHouseLog();
+    checkRound2DivisibilityWarning();
+    renderActiveRoundScoreboard();
+    if (window.TechBossSupabase) {
+      try {
+        var updated = await window.TechBossSupabase.calculateAndSyncCumulativeLeaderboard();
+        if (updated && updated.length) boardData = updated;
+        renderCumulativeBoardTable();
+      } catch (e) {}
+    }
   }
 
   window.admitInHouse = function(handle) {
@@ -1324,12 +1661,370 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     document.getElementById('bossHealthVal').textContent = savedHp + '%';
   }
 
-  function renderLeaderboardTable() {
-    var tbody = document.getElementById('adminBoardBody');
+  // ==========================================
+  // 9-ROUND TOURNAMENT CONTROLLER & UI
+  // ==========================================
+  var currentRoundNum = 1;
+  var tournamentRounds = (window.TechBossSupabase && window.TechBossSupabase.ROUNDS_METADATA) ? window.TechBossSupabase.ROUNDS_METADATA.slice() : [];
+  var roundScoresMap = {};
+  var roundTeamsList = [];
+  var isCumulativeViewActive = false;
+  var selectedTeamPlayerHandles = new Set();
+  var editingTeamId = null;
+
+  function initRoundNavigator() {
+    var navWrap = document.getElementById('roundNavWrap');
+    if (!navWrap) return;
+
+    var rounds = tournamentRounds.length ? tournamentRounds : (window.TechBossSupabase ? window.TechBossSupabase.ROUNDS_METADATA : []);
+    navWrap.innerHTML = rounds.map(function(r) {
+      var isAct = r.round_number === currentRoundNum;
+      var statusClass = (r.status === 'LOCKED' ? 'locked' : (r.status === 'NOT_STARTED' ? 'not-started' : 'open'));
+      var typeShort = r.type === 'INDIVIDUAL' ? 'Solo' : (r.round_number === 2 ? '4P Auto' : (r.round_number === 4 ? 'Same R3' : 'Team'));
+      return '<button type="button" class="round-pill-btn ' + (isAct ? 'active' : '') + '" onclick="selectTournamentRound(' + r.round_number + ')">' +
+        '<span class="round-pill-num">ROUND ' + r.round_number + '</span>' +
+        '<span class="round-pill-tag">' + typeShort + '</span>' +
+        '<span class="round-pill-status ' + statusClass + '" title="Status: ' + (r.status || 'OPEN') + '"></span>' +
+        '</button>';
+    }).join('');
+  }
+
+  window.selectTournamentRound = async function(rNum) {
+    currentRoundNum = parseInt(rNum, 10);
+    initRoundNavigator();
+    await loadRoundData(currentRoundNum);
+    renderActiveRoundScoreboard();
+  };
+
+  async function loadRoundData(rNum) {
+    if (window.TechBossSupabase) {
+      var freshRounds = await window.TechBossSupabase.fetchTournamentRounds();
+      if (freshRounds && freshRounds.length) tournamentRounds = freshRounds;
+    }
+
+    var rMeta = tournamentRounds.find(function(r) { return r.round_number === rNum; });
+    if (!rMeta && window.TechBossSupabase) {
+      rMeta = window.TechBossSupabase.ROUNDS_METADATA.find(function(r) { return r.round_number === rNum; });
+    }
+
+    // Update Command Banner Info
+    var titleEl = document.getElementById('activeRoundTitle');
+    var tagEl = document.getElementById('roundFormatTag');
+    var statusSelect = document.getElementById('roundStatusSelect');
+    var genR2Btn = document.getElementById('genR2TeamsBtn');
+    var createTeamBtn = document.getElementById('openCreateTeamBtn');
+    var r4Notice = document.getElementById('r4LinkNotice');
+
+    if (titleEl) titleEl.textContent = rMeta ? rMeta.title : ('Round ' + rNum);
+    if (tagEl) tagEl.textContent = 'ROUND ' + rNum + ' · ' + (rMeta ? rMeta.type : 'INDIVIDUAL') + ' FORMAT';
+    if (statusSelect) statusSelect.value = rMeta ? (rMeta.status || 'OPEN') : 'OPEN';
+
+    if (genR2Btn) {
+      if (rNum === 2) {
+        genR2Btn.style.display = 'inline-flex';
+        var hasR2Teams = localStorage.getItem('techboss_round2_teams_generated') === 'true';
+        genR2Btn.textContent = hasR2Teams ? '🔄 Re-Generate Round 2 Teams (4P)' : '⚡ Generate Round 2 Teams (4P)';
+      } else {
+        genR2Btn.style.display = 'none';
+      }
+    }
+
+    if (createTeamBtn) {
+      createTeamBtn.style.display = (rNum === 3 || rNum === 6 || rNum === 7) ? 'inline-flex' : 'none';
+    }
+
+    if (r4Notice) {
+      r4Notice.style.display = (rNum === 4) ? 'inline-flex' : 'none';
+    }
+
+    // Fetch Teams
+    if (rMeta && rMeta.type === 'TEAM') {
+      var scope = (rNum === 2 ? 'ROUND_2' : (rNum === 3 || rNum === 4 ? 'ROUND_3_4' : ('ROUND_' + rNum)));
+      if (window.TechBossSupabase) {
+        roundTeamsList = await window.TechBossSupabase.fetchTournamentTeams(scope);
+      } else {
+        roundTeamsList = [];
+      }
+    } else {
+      roundTeamsList = [];
+    }
+
+    // Fetch Scores
+    if (window.TechBossSupabase) {
+      roundScoresMap = await window.TechBossSupabase.fetchTournamentScores(rNum);
+    } else {
+      roundScoresMap = {};
+    }
+
+    checkRound2DivisibilityWarning();
+  }
+
+  function checkRound2DivisibilityWarning() {
+    var alertEl = document.getElementById('r2DivisibilityAlert');
+    var alertText = document.getElementById('r2DivisibilityAlertText');
+    if (!alertEl) return;
+
+    if (currentRoundNum !== 2) {
+      alertEl.style.display = 'none';
+      return;
+    }
+
+    var eligibleList = getEligiblePlayerPool();
+    var count = eligibleList.length;
+    var remainder = count % 4;
+
+    if (remainder !== 0 && count > 0) {
+      alertEl.style.display = 'flex';
+      if (alertText) {
+        alertText.innerHTML = '<b>Team Size Warning:</b> ' + count + ' eligible contenders cannot be divided into teams of 4 (' + remainder + ' extra player' + (remainder > 1 ? 's' : '') + ').';
+      }
+    } else {
+      alertEl.style.display = 'none';
+    }
+  }
+
+  function getEligiblePlayerPool() {
+    var pool = [];
+    var seen = new Set();
+
+    // In-house checkins are the ONLY tournament PLAYERS!
+    // Remaining registrations are organizers and must NOT appear in the player pool or scoreboard.
+    var inHouse = getInHouseCheckins();
+    for (var k in inHouse) {
+      var rec = inHouse[k];
+      var rawH = (rec.handle || k || '').trim();
+      if (!rawH.startsWith('@')) rawH = '@' + rawH;
+      var norm = rawH.toLowerCase();
+      if (!seen.has(norm)) {
+        seen.add(norm);
+        pool.push({
+          handle: rawH,
+          name: rec.name || 'Gladiator',
+          regNo: rec.regNo || rec.reg_no || '--',
+          branch: rec.branch || '',
+          inHouse: true
+        });
+      }
+    }
+
+    return pool;
+  }
+
+  // Get cumulative score for a player from boardData
+  function getPlayerCumulativeScore(handle) {
+    if (!handle) return 0;
+    var norm = handle.toLowerCase().replace(/[^a-z0-9_]/g, '');
+    var found = boardData.find(function(b) {
+      return (b.handle || '').toLowerCase().replace(/[^a-z0-9_]/g, '') === norm;
+    });
+    return found ? (found.score || 0) : 0;
+  }
+
+  // RENDER ACTIVE ROUND SCOREBOARD
+  function renderActiveRoundScoreboard() {
+    var container = document.getElementById('activeRoundViewContainer');
+    if (!container) return;
+
+    var rMeta = tournamentRounds.find(function(r) { return r.round_number === currentRoundNum; });
+    var isLocked = rMeta && rMeta.status === 'LOCKED';
+    var isNotStarted = rMeta && rMeta.status === 'NOT_STARTED';
+    var disabledAttr = (isLocked || isNotStarted) ? 'disabled' : '';
+
+    if (isLocked) {
+      container.innerHTML = '<div style="background:rgba(255,42,133,0.08); border:1px solid rgba(255,42,133,0.25); border-radius:6px; padding:10px 16px; margin-bottom:14px; font-size:12.5px; color:var(--pink); display:flex; align-items:center; gap:8px;">' +
+        '<span>🔒</span> <b>ROUND ' + currentRoundNum + ' IS LOCKED:</b> Scores are read-only. Switch status to OPEN above to make adjustments.' +
+        '</div>';
+    } else if (isNotStarted) {
+      container.innerHTML = '<div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:10px 16px; margin-bottom:14px; font-size:12.5px; color:var(--text-muted); display:flex; align-items:center; gap:8px;">' +
+        '<span>⚪</span> <b>ROUND ' + currentRoundNum + ' NOT STARTED:</b> Switch status to OPEN to begin scoring.' +
+        '</div>';
+    } else {
+      container.innerHTML = '';
+    }
+
+    // A. INDIVIDUAL ROUND UI (Rounds 1, 5, 8, 9)
+    if (!rMeta || rMeta.type === 'INDIVIDUAL') {
+      var pool = getEligiblePlayerPool();
+      if (!pool.length) {
+        container.innerHTML += '<div class="cyber-card" style="text-align:center; padding:36px 20px; color:var(--text-dim);">' +
+          '<div style="font-size:32px; margin-bottom:10px;">🏟️</div>' +
+          '<h4 style="color:#ffffff; font-size:16px; font-weight:800; margin-bottom:8px;">No In-House Players Admitted Yet</h4>' +
+          '<p style="max-width:500px; margin:0 auto 16px; font-size:13px; color:var(--text-muted); line-height:1.5;">People who check-in to the house are the tournament players; remaining registrations are organizers. Check-in contenders in Tab 2 or via QR Scanner to activate them as active players for Round ' + currentRoundNum + '.</p>' +
+          '<button class="btn btn-green" onclick="var b=document.querySelector(\'[data-tab=\\\'tab-registrations\\\']\'); if(b) b.click();">🚪 Go to Gate Check-In (Tab 2)</button>' +
+          '</div>';
+        return;
+      }
+
+      var rowsHtml = pool.map(function(item, idx) {
+        var normH = item.handle.toLowerCase();
+        var scoreObj = roundScoresMap[normH] || { individual_score: 0, round_total: 0 };
+        var roundScoreVal = scoreObj.individual_score || 0;
+        var cumScore = getPlayerCumulativeScore(item.handle);
+        var tier = tierFor(cumScore || roundScoreVal);
+
+        return '<tr>' +
+          '<td><b class="mono">#' + (idx + 1) + '</b></td>' +
+          '<td>' +
+            '<div style="font-weight:700; color:var(--text-main);">' + escapeHtml(item.handle) + '</div>' +
+            '<div style="font-size:12px; color:var(--text-dim);">' + escapeHtml(item.name) + (item.regNo && item.regNo !== '--' ? (' · ' + escapeHtml(item.regNo)) : '') + '</div>' +
+          '</td>' +
+          '<td>' +
+            '<input type="number" class="score-input-field" value="' + roundScoreVal + '" min="0" ' + disabledAttr + ' ' +
+              'onchange="onIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(item.name) + '\', this.value)" ' +
+              'onblur="onIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(item.name) + '\', this.value)"> ' +
+            '<span style="font-size:11px; color:var(--text-dim);">DMG</span>' +
+          '</td>' +
+          '<td><span class="mono" style="font-weight:800; color:var(--gold); font-size:15px;">' + cumScore.toLocaleString() + '</span> <span style="font-size:11px; color:var(--text-dim);">DMG</span></td>' +
+          '<td><span class="badge-status status-verified">' + tier + ' RANK</span></td>' +
+          '<td style="text-align:right;">' +
+            '<button class="btn btn-ghost btn-sm" onclick="quickAdjustScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(item.name) + '\', 50)" ' + disabledAttr + ' title="Add 50 DMG">+50</button> ' +
+            '<button class="btn btn-ghost btn-sm" onclick="quickAdjustScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(item.name) + '\', 100)" ' + disabledAttr + ' title="Add 100 DMG">+100</button>' +
+          '</td>' +
+          '</tr>';
+      }).join('');
+
+      container.innerHTML += '<div class="cyber-card table-wrap">' +
+        '<table class="admin-table">' +
+          '<thead>' +
+            '<tr>' +
+              '<th style="width:60px;">Rank</th>' +
+              '<th>Handle & Name</th>' +
+              '<th style="width:170px;">Round ' + currentRoundNum + ' Score</th>' +
+              '<th style="width:150px;">Cumulative Score</th>' +
+              '<th style="width:110px;">Tier Rank</th>' +
+              '<th style="width:140px; text-align:right;">Quick Actions</th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>' + rowsHtml + '</tbody>' +
+        '</table>' +
+      '</div>';
+      return;
+    }
+
+    // B. TEAM ROUND UI (Rounds 2, 3, 4, 6, 7)
+    if (!roundTeamsList || !roundTeamsList.length) {
+      var emptyMsg = '';
+      var emptyActionBtn = '';
+      if (currentRoundNum === 2) {
+        emptyMsg = 'Round 2 requires auto-generated teams of 4. Click the button below to generate squads from eligible contenders.';
+        emptyActionBtn = '<button class="btn btn-gold" onclick="triggerGenerateRound2Teams()">⚡ Generate Round 2 Teams (4P)</button>';
+      } else if (currentRoundNum === 4) {
+        emptyMsg = 'Round 4 reuses the exact same teams created in Round 3. Please create and save teams in Round 3 first.';
+        emptyActionBtn = '<button class="btn btn-cyan" onclick="selectTournamentRound(3)">👉 Go to Round 3 to Setup Teams</button>';
+      } else {
+        emptyMsg = 'No teams created yet for Round ' + currentRoundNum + '. Click the button below to manually assemble teams.';
+        emptyActionBtn = '<button class="btn btn-cyan" onclick="openCreateTeamModal()">➕ Create Manual Team</button>';
+      }
+
+      container.innerHTML += '<div class="cyber-card" style="text-align:center; padding:40px 20px;">' +
+        '<div style="font-size:32px; margin-bottom:10px;">🛡️</div>' +
+        '<h4 style="font-size:16px; font-weight:800; color:#ffffff; margin-bottom:6px;">No Teams Formed for Round ' + currentRoundNum + '</h4>' +
+        '<p style="font-size:13px; color:var(--text-muted); max-width:480px; margin:0 auto 18px; line-height:1.5;">' + emptyMsg + '</p>' +
+        emptyActionBtn +
+        '</div>';
+      return;
+    }
+
+    // Render each team group
+    var teamsHtml = roundTeamsList.map(function(team, tIdx) {
+      var teamId = team.id || ('team_' + tIdx);
+      var teamName = team.team_name || ('TEAM ' + (tIdx + 1));
+      var members = team.members || [];
+
+      // Find team score from first member or map
+      var sampleH = members[0] ? (members[0].player_handle || '').toLowerCase() : '';
+      var currentTeamScore = (roundScoresMap[sampleH] && roundScoresMap[sampleH].team_score) ? roundScoresMap[sampleH].team_score : 0;
+
+      // Edit / Delete buttons for manual rounds (3, 6, 7)
+      var canEditTeam = (currentRoundNum === 3 || currentRoundNum === 6 || currentRoundNum === 7);
+      var teamActionsHtml = canEditTeam ? (
+        '<div style="display:flex; gap:6px;">' +
+          '<button class="btn btn-ghost btn-sm" onclick="openCreateTeamModal(\'' + escapeHtml(teamId) + '\')" ' + disabledAttr + ' title="Edit Team">✏️ Edit Team</button>' +
+          '<button class="btn btn-pink btn-sm" onclick="handleDeleteTeamAction(\'' + escapeHtml(teamId) + '\')" ' + disabledAttr + ' title="Delete Team">🗑️</button>' +
+        '</div>'
+      ) : (
+        '<span class="badge-status status-verified" style="font-size:11px;">' + (currentRoundNum === 2 ? 'Auto Squad (4P)' : 'Linked to Round 3') + '</span>'
+      );
+
+      var memberRows = members.map(function(m) {
+        var normH = (m.player_handle || '').toLowerCase();
+        var scoreObj = roundScoresMap[normH] || { individual_score: 0, team_score: currentTeamScore, round_total: currentTeamScore };
+        var indScore = scoreObj.individual_score || 0;
+        var roundTotal = indScore + currentTeamScore; // Team score added automatically!
+        var cumScore = getPlayerCumulativeScore(m.player_handle);
+        var tier = tierFor(cumScore || roundTotal);
+
+        return '<tr>' +
+          '<td>' +
+            '<div style="font-weight:700; color:var(--text-main);">' + escapeHtml(m.player_handle) + '</div>' +
+            '<div style="font-size:11.5px; color:var(--text-dim);">' + escapeHtml(m.player_name || 'Gladiator') + (m.reg_no ? (' · ' + escapeHtml(m.reg_no)) : '') + '</div>' +
+          '</td>' +
+          '<td>' +
+            '<input type="number" class="score-input-field" value="' + indScore + '" min="0" ' + disabledAttr + ' ' +
+              'onchange="onMemberIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', this.value)" ' +
+              'onblur="onMemberIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', this.value)"> ' +
+            '<span style="font-size:11px; color:var(--text-dim);">DMG</span>' +
+          '</td>' +
+          '<td>' +
+            '<span class="round-total-badge">' + roundTotal.toLocaleString() + ' DMG</span> ' +
+            '<span style="font-size:11px; color:var(--text-dim);">(' + indScore + ' + ' + currentTeamScore + ')</span>' +
+          '</td>' +
+          '<td><span class="mono" style="font-weight:800; color:var(--gold); font-size:14px;">' + cumScore.toLocaleString() + '</span> <span style="font-size:11px; color:var(--text-dim);">DMG</span></td>' +
+          '<td><span class="badge-status status-verified">' + tier + ' RANK</span></td>' +
+          '<td style="text-align:right;">' +
+            '<button class="btn btn-ghost btn-sm" onclick="quickAdjustMemberScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', 25)" ' + disabledAttr + ' title="Add 25 DMG">+25</button> ' +
+            '<button class="btn btn-ghost btn-sm" onclick="quickAdjustMemberScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', 50)" ' + disabledAttr + ' title="Add 50 DMG">+50</button>' +
+          '</td>' +
+          '</tr>';
+      }).join('');
+
+      return '<div class="team-card-group">' +
+        '<div class="team-card-header">' +
+          '<div style="display:flex; align-items:center; gap:12px;">' +
+            '<div style="font-weight:800; font-size:15px; color:var(--cyan); letter-spacing:0.5px;">🛡️ ' + escapeHtml(teamName) + '</div>' +
+            '<span style="font-size:12px; color:var(--text-dim);">' + members.length + ' Members</span>' +
+          '</div>' +
+          '<div style="display:flex; align-items:center; gap:14px;">' +
+            '<div class="team-score-input-box">' +
+              '<span style="font-size:11.5px; font-weight:700; color:var(--gold);">TEAM SCORE:</span>' +
+              '<input type="number" class="score-input-field" style="color:var(--gold); width:95px;" value="' + currentTeamScore + '" min="0" ' + disabledAttr + ' ' +
+                'onchange="onTeamScoreChange(\'' + escapeHtml(teamId) + '\', this.value)" ' +
+                'onblur="onTeamScoreChange(\'' + escapeHtml(teamId) + '\', this.value)">' +
+              '<span style="font-size:11px; color:var(--text-dim);">DMG</span>' +
+            '</div>' +
+            teamActionsHtml +
+          '</div>' +
+        '</div>' +
+        '<div class="table-wrap" style="margin:0; border:none; border-radius:0;">' +
+          '<table class="admin-table">' +
+            '<thead>' +
+              '<tr>' +
+                '<th>Player Handle & Name</th>' +
+                '<th style="width:160px;">Individual Score</th>' +
+                '<th style="width:170px;">Round Total (Ind + Team)</th>' +
+                '<th style="width:150px;">Cumulative Score</th>' +
+                '<th style="width:100px;">Tier Rank</th>' +
+                '<th style="width:130px; text-align:right;">Quick Actions</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>' + memberRows + '</tbody>' +
+          '</table>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    container.innerHTML += teamsHtml;
+  }
+
+  // RENDER CUMULATIVE BOARD TABLE
+  function renderCumulativeBoardTable() {
+    var tbody = document.getElementById('cumulativeBoardBody');
+    if (!tbody) return;
+
     boardData.sort(function(a, b) { return b.score - a.score; });
 
     if (!boardData.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--text-dim);">No contenders on scoreboard. Click "Add New Challenger Score" above.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--text-dim);">No cumulative standings computed yet. Enter round scores above and click "Save Round Scores".</td></tr>';
       return;
     }
 
@@ -1338,17 +2033,21 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
       return '<tr>' +
         '<td><b class="mono">#' + (idx + 1) + '</b></td>' +
         '<td><div style="font-weight:700; color:var(--text-main);">' + escapeHtml(item.handle) + '</div><div style="font-size:12px; color:var(--text-dim);">' + escapeHtml(item.name || 'Solo Gladiator') + '</div></td>' +
-        '<td><span class="mono" style="font-size:12px; color:var(--cyan);">' + escapeHtml(item.track) + '</span></td>' +
-        '<td><span class="mono" style="font-weight:800; color:var(--gold); font-size:15px;">' + item.score + '</span> <span style="font-size:11px; color:var(--text-dim);">DMG</span></td>' +
+        '<td><span class="mono" style="font-weight:800; color:var(--gold); font-size:15px;">' + (item.score || 0).toLocaleString() + '</span> <span style="font-size:11px; color:var(--text-dim);">DMG</span></td>' +
         '<td><span class="badge-status status-verified">' + tier + ' RANK</span></td>' +
-        '<td style="text-align:right;">' +
-          '<button class="btn btn-ghost btn-sm" onclick="adjustScore(' + idx + ', 50)" title="Add 50 DMG">+50</button> ' +
-          '<button class="btn btn-ghost btn-sm" onclick="editChallenger(' + idx + ')">✏️</button> ' +
-          '<button class="btn btn-pink btn-sm" onclick="deleteChallenger(' + idx + ')">🗑️</button>' +
-        '</td>' +
+        '<td><span class="mono" style="font-size:12px; color:var(--cyan);">' + (item.boss_dmg || (item.score + ' DMG')) + '</span></td>' +
+        '<td style="text-align:right;"><span class="badge-status status-verified">ACTIVE</span></td>' +
         '</tr>';
     }).join('');
   }
+
+  // Unified renderLeaderboardTable function called across admin.html
+  function renderLeaderboardTable() {
+    initRoundNavigator();
+    renderActiveRoundScoreboard();
+    renderCumulativeBoardTable();
+  }
+
 
   function renderRegistrationsTable() {
     var tbody = document.getElementById('adminRegBody');
@@ -1381,14 +2080,14 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
 
       var inHouseHtml = '';
       if (checkinInfo) {
-        inHouseHtml = '<span class="badge-status" style="background:rgba(48,209,88,0.15); color:var(--green); border:1px solid rgba(48,209,88,0.35); font-weight:700; font-size:11.5px; display:inline-flex; align-items:center; gap:5px;"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green);"></span>IN-HOUSE (' + (checkinInfo.time || 'Entered') + ')</span>';
+        inHouseHtml = '<span class="badge-status" style="background:rgba(48,209,88,0.15); color:var(--green); border:1px solid rgba(48,209,88,0.35); font-weight:700; font-size:11px; display:inline-flex; align-items:center; gap:5px;"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green);"></span>PLAYER (IN-HOUSE)</span>';
       } else {
-        inHouseHtml = '<span class="badge-status" style="background:rgba(255,255,255,0.04); color:var(--text-dim); border:1px solid var(--panel-border); font-size:11.5px;">⚪ Not Entered</span>';
+        inHouseHtml = '<span class="badge-status" style="background:rgba(255,255,255,0.04); color:var(--text-dim); border:1px solid var(--panel-border); font-size:11px;">👔 ORGANIZER</span>';
       }
 
       var inHouseActionBtn = checkinInfo ?
-        '<button class="btn btn-ghost btn-sm" onclick="resetInHouseEntry(\'' + escapeHtml(rawH) + '\')" title="Reset In-House Check-In (Allow Re-Entry)" style="color:var(--pink); border-color:rgba(255,42,133,0.3); font-size:11px; padding:3px 7px; margin-right:4px;">↩️ Reset Entry</button>' :
-        '<button class="btn btn-ghost btn-sm" onclick="admitInHouse(\'' + escapeHtml(rawH) + '\')" title="Manually admit into house" style="color:var(--green); border-color:rgba(48,209,88,0.3); font-size:11px; padding:3px 7px; margin-right:4px;">🚪 Check-In</button>';
+        '<button class="btn btn-ghost btn-sm" onclick="resetInHouseEntry(\'' + escapeHtml(rawH) + '\')" title="Reset check-in (revert to Organizer status)" style="color:var(--pink); border-color:rgba(255,42,133,0.3); font-size:11px; padding:3px 7px; margin-right:4px;">↩️ Reset</button>' :
+        '<button class="btn btn-ghost btn-sm" onclick="admitInHouse(\'' + escapeHtml(rawH) + '\')" title="Check-in to house as active tournament player" style="color:var(--green); border-color:rgba(48,209,88,0.3); font-size:11px; padding:3px 7px; margin-right:4px;">🚪 Check-In</button>';
 
       return '<tr>' +
         '<td><div style="font-weight:700; color:var(--text-main);">' + escapeHtml(item.name || item.handle) + '</div><div style="font-size:12px; color:var(--gold); font-weight:700;">' + escapeHtml(item.handle || '') + '</div></td>' +
@@ -1543,6 +2242,451 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     renderLeaderboardTable();
     scoreModal.classList.remove('show');
   });
+
+  // ---------- 9-ROUND SCORE & TEAM ACTIONS ----------
+  window.onIndividualScoreChange = function(handle, name, val) {
+    if (!handle) return;
+    var normH = handle.toLowerCase();
+    var sc = Math.max(0, parseInt(val, 10) || 0);
+
+    if (!roundScoresMap[normH]) {
+      roundScoresMap[normH] = {
+        player_handle: handle,
+        player_name: name || '',
+        individual_score: sc,
+        team_id: null,
+        team_score: 0,
+        round_total: sc
+      };
+    } else {
+      roundScoresMap[normH].individual_score = sc;
+      roundScoresMap[normH].round_total = sc;
+      if (name && !roundScoresMap[normH].player_name) roundScoresMap[normH].player_name = name;
+    }
+  };
+
+  window.quickAdjustScore = function(handle, name, delta) {
+    var normH = handle.toLowerCase();
+    var currentSc = (roundScoresMap[normH] && roundScoresMap[normH].individual_score) ? roundScoresMap[normH].individual_score : 0;
+    var newSc = Math.max(0, currentSc + delta);
+    window.onIndividualScoreChange(handle, name, newSc);
+    renderActiveRoundScoreboard();
+    showToast('Score: ' + handle + ' -> ' + newSc + ' DMG');
+  };
+
+  window.onTeamScoreChange = function(teamId, val) {
+    var sc = Math.max(0, parseInt(val, 10) || 0);
+    var team = roundTeamsList.find(function(t) { return String(t.id) === String(teamId); });
+    if (!team) return;
+
+    // Update team score for all members of this team and auto-sum to player round total!
+    (team.members || []).forEach(function(m) {
+      var normH = (m.player_handle || '').toLowerCase();
+      if (!roundScoresMap[normH]) {
+        roundScoresMap[normH] = {
+          player_handle: m.player_handle,
+          player_name: m.player_name || '',
+          individual_score: 0,
+          team_id: teamId,
+          team_score: sc,
+          round_total: sc
+        };
+      } else {
+        roundScoresMap[normH].team_id = teamId;
+        roundScoresMap[normH].team_score = sc;
+        roundScoresMap[normH].round_total = (roundScoresMap[normH].individual_score || 0) + sc;
+      }
+    });
+
+    renderActiveRoundScoreboard();
+    showToast('Team ' + team.team_name + ' score updated to ' + sc + ' DMG');
+  };
+
+  window.onMemberIndividualScoreChange = function(handle, name, teamId, val) {
+    if (!handle) return;
+    var normH = handle.toLowerCase();
+    var sc = Math.max(0, parseInt(val, 10) || 0);
+
+    // Find current team score
+    var team = roundTeamsList.find(function(t) { return String(t.id) === String(teamId); });
+    var tScore = 0;
+    if (team && team.members && team.members.length) {
+      var firstH = (team.members[0].player_handle || '').toLowerCase();
+      if (roundScoresMap[firstH] && roundScoresMap[firstH].team_score) {
+        tScore = roundScoresMap[firstH].team_score;
+      }
+    }
+
+    if (!roundScoresMap[normH]) {
+      roundScoresMap[normH] = {
+        player_handle: handle,
+        player_name: name || '',
+        individual_score: sc,
+        team_id: teamId,
+        team_score: tScore,
+        round_total: sc + tScore
+      };
+    } else {
+      roundScoresMap[normH].individual_score = sc;
+      roundScoresMap[normH].team_id = teamId;
+      roundScoresMap[normH].team_score = tScore;
+      roundScoresMap[normH].round_total = sc + tScore;
+    }
+
+    renderActiveRoundScoreboard();
+  };
+
+  window.quickAdjustMemberScore = function(handle, name, teamId, delta) {
+    var normH = handle.toLowerCase();
+    var cur = (roundScoresMap[normH] && roundScoresMap[normH].individual_score) ? roundScoresMap[normH].individual_score : 0;
+    var newSc = Math.max(0, cur + delta);
+    window.onMemberIndividualScoreChange(handle, name, teamId, newSc);
+    showToast('Adjusted ' + handle + ' individual score: ' + newSc + ' DMG');
+  };
+
+  // Save Round Scores Handler
+  var saveRoundScoresBtn = document.getElementById('saveRoundScoresBtn');
+  if (saveRoundScoresBtn) {
+    saveRoundScoresBtn.addEventListener('click', async function() {
+      saveRoundScoresBtn.disabled = true;
+      saveRoundScoresBtn.innerHTML = '💾 Saving...';
+      try {
+        if (window.TechBossSupabase) {
+          await window.TechBossSupabase.saveTournamentScores(currentRoundNum, roundScoresMap);
+          // Refresh local cumulative board
+          var updatedBoard = await window.TechBossSupabase.calculateAndSyncCumulativeLeaderboard();
+          if (updatedBoard && updatedBoard.length) {
+            boardData = updatedBoard;
+          }
+        }
+        renderActiveRoundScoreboard();
+        renderCumulativeBoardTable();
+        renderMetrics();
+        showToast('✅ Round ' + currentRoundNum + ' scores saved & cumulative standings synced!');
+      } catch (err) {
+        alert('Error saving scores: ' + err.message);
+      } finally {
+        saveRoundScoresBtn.disabled = false;
+        saveRoundScoresBtn.innerHTML = '💾 Save Round Scores';
+      }
+    });
+  }
+
+  // Recalculate Cumulative Leaderboard
+  var recalcCumulativeBtn = document.getElementById('recalcCumulativeBtn');
+  if (recalcCumulativeBtn) {
+    recalcCumulativeBtn.addEventListener('click', async function() {
+      recalcCumulativeBtn.disabled = true;
+      recalcCumulativeBtn.innerHTML = '🔄 Syncing...';
+      try {
+        if (window.TechBossSupabase) {
+          var updated = await window.TechBossSupabase.calculateAndSyncCumulativeLeaderboard();
+          if (updated && updated.length) boardData = updated;
+        }
+        renderActiveRoundScoreboard();
+        renderCumulativeBoardTable();
+        renderMetrics();
+        showToast('✅ Cumulative standings re-computed across all 9 rounds!');
+      } catch (e) {
+        showToast('Recalculation error: ' + e.message);
+      } finally {
+        recalcCumulativeBtn.disabled = false;
+        recalcCumulativeBtn.innerHTML = '🔄 Recalculate Ranks';
+      }
+    });
+  }
+
+  // Toggle Cumulative Standings View
+  var toggleCumulativeViewBtn = document.getElementById('toggleCumulativeViewBtn');
+  var cumulativeContainer = document.getElementById('cumulativeLeaderboardContainer');
+  if (toggleCumulativeViewBtn && cumulativeContainer) {
+    toggleCumulativeViewBtn.addEventListener('click', function() {
+      if (cumulativeContainer.style.display === 'none' || !cumulativeContainer.style.display) {
+        cumulativeContainer.style.display = 'block';
+        toggleCumulativeViewBtn.textContent = '🔼 Hide Cumulative Standings';
+        cumulativeContainer.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        cumulativeContainer.style.display = 'none';
+        toggleCumulativeViewBtn.textContent = '📊 View Cumulative Standings';
+      }
+    });
+  }
+
+  // Status Selector Change
+  var roundStatusSelect = document.getElementById('roundStatusSelect');
+  if (roundStatusSelect) {
+    roundStatusSelect.addEventListener('change', async function() {
+      var newStatus = this.value;
+      if (window.TechBossSupabase) {
+        await window.TechBossSupabase.updateRoundStatus(currentRoundNum, newStatus);
+      }
+      var target = tournamentRounds.find(function(r) { return r.round_number === currentRoundNum; });
+      if (target) target.status = newStatus;
+      initRoundNavigator();
+      renderActiveRoundScoreboard();
+      showToast('Round ' + currentRoundNum + ' status changed to ' + newStatus);
+    });
+  }
+
+  // Round 2 Auto Team Generation
+  var genR2TeamsBtn = document.getElementById('genR2TeamsBtn');
+  window.triggerGenerateRound2Teams = async function() {
+    var pool = getEligiblePlayerPool();
+    if (!pool.length) {
+      alert('No eligible registered contenders found to generate teams.');
+      return;
+    }
+
+    var remainder = pool.length % 4;
+    if (remainder !== 0) {
+      var warningModal = document.getElementById('round2WarningModal');
+      var modalText = document.getElementById('r2WarningModalText');
+      if (modalText) {
+        modalText.innerHTML = 'Total eligible players: <b>' + pool.length + '</b>.<br>' +
+          'Teams of 4 require an exact multiple of 4. There are currently <b>' + remainder + ' unassigned player' + (remainder > 1 ? 's' : '') + '</b>.<br><br>' +
+          'Please verify registrations in Tab 2 to make the pool a multiple of 4.';
+      }
+      if (warningModal) warningModal.classList.add('show');
+      return;
+    }
+
+    if (localStorage.getItem('techboss_round2_teams_generated') === 'true') {
+      if (!confirm('Round 2 teams have already been generated. Re-generating will create new random 4-player teams. Continue?')) {
+        return;
+      }
+    }
+
+    if (window.TechBossSupabase) {
+      showToast('⚡ Generating Round 2 teams of 4...');
+      var res = await window.TechBossSupabase.generateRound2Teams(pool);
+      if (res.success) {
+        roundTeamsList = res.teams;
+        renderActiveRoundScoreboard();
+        showToast('✅ Created ' + res.count + ' Round 2 teams (4 players each)!');
+        if (genR2TeamsBtn) genR2TeamsBtn.textContent = '🔄 Re-Generate Round 2 Teams (4P)';
+      } else {
+        alert(res.error || 'Failed to generate teams.');
+      }
+    }
+  };
+
+  if (genR2TeamsBtn) {
+    genR2TeamsBtn.addEventListener('click', window.triggerGenerateRound2Teams);
+  }
+
+  // Round 2 Warning Modal controls
+  var closeR2WarningModal = document.getElementById('closeR2WarningModal');
+  var dismissR2WarningModalBtn = document.getElementById('dismissR2WarningModalBtn');
+  var gotoRegistrationsTabBtn = document.getElementById('gotoRegistrationsTabBtn');
+  var showR2WarningDetailsBtn = document.getElementById('showR2WarningDetailsBtn');
+  var round2WarningModal = document.getElementById('round2WarningModal');
+
+  function hideR2WarningModal() {
+    if (round2WarningModal) round2WarningModal.classList.remove('show');
+  }
+
+  if (closeR2WarningModal) closeR2WarningModal.addEventListener('click', hideR2WarningModal);
+  if (dismissR2WarningModalBtn) dismissR2WarningModalBtn.addEventListener('click', hideR2WarningModal);
+  if (showR2WarningDetailsBtn) showR2WarningDetailsBtn.addEventListener('click', window.triggerGenerateRound2Teams);
+  if (gotoRegistrationsTabBtn) {
+    gotoRegistrationsTabBtn.addEventListener('click', function() {
+      hideR2WarningModal();
+      var regTabBtn = document.querySelector('[data-tab="tab-registrations"]');
+      if (regTabBtn) regTabBtn.click();
+    });
+  }
+
+  // --- MANUAL TEAM CREATION MODAL (Rounds 3, 6, 7) ---
+  var teamModal = document.getElementById('teamModal');
+  var openCreateTeamBtn = document.getElementById('openCreateTeamBtn');
+  var closeTeamModal = document.getElementById('closeTeamModal');
+  var cancelTeamModalBtn = document.getElementById('cancelTeamModalBtn');
+  var saveTeamModalBtn = document.getElementById('saveTeamModalBtn');
+  var deleteTeamInModalBtn = document.getElementById('deleteTeamInModalBtn');
+  var teamModalName = document.getElementById('teamModalName');
+  var teamModalPlayerList = document.getElementById('teamModalPlayerList');
+  var teamModalSelectedCount = document.getElementById('teamModalSelectedCount');
+  var teamModalPlayerSearch = document.getElementById('teamModalPlayerSearch');
+
+  window.openCreateTeamModal = function(teamIdToEdit) {
+    var pool = getEligiblePlayerPool();
+    if (!pool.length && !teamIdToEdit) {
+      alert('⚠️ No in-house players found!\n\nNote: People who check-in to the house are the tournament players; remaining registrations are organizers.\n\nPlease admit or QR check-in contenders in Tab 2 (Gate Check-In) first before creating teams.');
+      return;
+    }
+
+    editingTeamId = teamIdToEdit || null;
+    selectedTeamPlayerHandles.clear();
+
+    var titleEl = document.getElementById('teamModalTitle');
+    if (titleEl) {
+      titleEl.textContent = editingTeamId ? 'EDIT TEAM — ROUND ' + currentRoundNum : 'CREATE TEAM — ROUND ' + currentRoundNum;
+    }
+
+    if (deleteTeamInModalBtn) {
+      deleteTeamInModalBtn.style.display = editingTeamId ? 'inline-block' : 'none';
+    }
+
+    if (editingTeamId) {
+      var found = roundTeamsList.find(function(t) { return String(t.id) === String(editingTeamId); });
+      if (found) {
+        if (teamModalName) teamModalName.value = found.team_name || '';
+        (found.members || []).forEach(function(m) {
+          selectedTeamPlayerHandles.add((m.player_handle || '').toLowerCase());
+        });
+      }
+    } else {
+      if (teamModalName) teamModalName.value = 'TEAM ' + (roundTeamsList.length + 1);
+    }
+
+    renderTeamModalPlayerPicker();
+    var modal = document.getElementById('teamModal');
+    if (modal) {
+      modal.classList.add('show');
+      modal.style.display = 'flex';
+    }
+  };
+
+  if (openCreateTeamBtn) {
+    openCreateTeamBtn.addEventListener('click', function() { window.openCreateTeamModal(); });
+  }
+
+  function hideTeamModal() {
+    var modal = document.getElementById('teamModal');
+    if (modal) {
+      modal.classList.remove('show');
+      modal.style.display = 'none';
+    }
+    editingTeamId = null;
+    selectedTeamPlayerHandles.clear();
+  }
+  window.hideTeamModal = hideTeamModal;
+
+  if (closeTeamModal) closeTeamModal.addEventListener('click', hideTeamModal);
+  if (cancelTeamModalBtn) cancelTeamModalBtn.addEventListener('click', hideTeamModal);
+
+  function renderTeamModalPlayerPicker(filterText) {
+    if (!teamModalPlayerList) return;
+    var pool = getEligiblePlayerPool();
+    var q = (filterText || '').toLowerCase().trim();
+
+    // Identify players already in other teams for this round
+    var takenHandles = new Set();
+    roundTeamsList.forEach(function(t) {
+      if (String(t.id) !== String(editingTeamId)) {
+        (t.members || []).forEach(function(m) {
+          takenHandles.add((m.player_handle || '').toLowerCase());
+        });
+      }
+    });
+
+    var filtered = pool.filter(function(p) {
+      if (!q) return true;
+      return (p.handle && p.handle.toLowerCase().includes(q)) || (p.name && p.name.toLowerCase().includes(q));
+    });
+
+    if (!filtered.length) {
+      teamModalPlayerList.innerHTML = '<div style="font-size:12px; color:var(--text-dim); padding:10px;">No matching contenders found.</div>';
+      return;
+    }
+
+    teamModalPlayerList.innerHTML = filtered.map(function(p) {
+      var normH = (p.handle || '').toLowerCase();
+      var isSelected = selectedTeamPlayerHandles.has(normH);
+      var isTaken = takenHandles.has(normH);
+      var disabledStyle = isTaken ? 'opacity:0.4; cursor:not-allowed;' : '';
+
+      return '<div class="player-select-pill ' + (isSelected ? 'selected' : '') + '" style="' + disabledStyle + '" onclick="toggleTeamPlayerSelection(\'' + escapeHtml(normH) + '\', ' + isTaken + ')">' +
+        '<input type="checkbox" ' + (isSelected ? 'checked' : '') + ' ' + (isTaken ? 'disabled' : '') + ' style="pointer-events:none;">' +
+        '<span><b>' + escapeHtml(p.handle) + '</b> (' + escapeHtml(p.name || 'Gladiator') + ')</span>' +
+        (isTaken ? '<span style="font-size:10px; color:var(--pink);">[In other team]</span>' : '') +
+        '</div>';
+    }).join('');
+
+    if (teamModalSelectedCount) {
+      teamModalSelectedCount.textContent = selectedTeamPlayerHandles.size;
+    }
+  }
+
+  window.toggleTeamPlayerSelection = function(handle, isTaken) {
+    if (isTaken) return;
+    var norm = handle.toLowerCase();
+    if (selectedTeamPlayerHandles.has(norm)) {
+      selectedTeamPlayerHandles.delete(norm);
+    } else {
+      selectedTeamPlayerHandles.add(norm);
+    }
+    renderTeamModalPlayerPicker(teamModalPlayerSearch ? teamModalPlayerSearch.value : '');
+  };
+
+  if (teamModalPlayerSearch) {
+    teamModalPlayerSearch.addEventListener('input', function() {
+      renderTeamModalPlayerPicker(this.value);
+    });
+  }
+
+  if (saveTeamModalBtn) {
+    saveTeamModalBtn.addEventListener('click', async function() {
+      var name = teamModalName ? teamModalName.value.trim() : '';
+      if (!name) {
+        alert('Please enter a team name.');
+        return;
+      }
+
+      if (selectedTeamPlayerHandles.size === 0) {
+        alert('Please select at least one player for this team.');
+        return;
+      }
+
+      var pool = getEligiblePlayerPool();
+      var members = [];
+      selectedTeamPlayerHandles.forEach(function(h) {
+        var found = pool.find(function(p) { return p.handle.toLowerCase() === h; });
+        members.push({
+          player_handle: found ? found.handle : h,
+          player_name: found ? found.name : 'Contender',
+          reg_no: found ? found.regNo : '--'
+        });
+      });
+
+      var scope = (currentRoundNum === 3 || currentRoundNum === 4 ? 'ROUND_3_4' : ('ROUND_' + currentRoundNum));
+      var teamObj = {
+        id: editingTeamId || ('team_' + Date.now()),
+        team_name: name,
+        round_scope: scope,
+        members: members
+      };
+
+      if (window.TechBossSupabase) {
+        await window.TechBossSupabase.saveTournamentTeam(scope, teamObj);
+        roundTeamsList = await window.TechBossSupabase.fetchTournamentTeams(scope);
+      }
+
+      renderActiveRoundScoreboard();
+      hideTeamModal();
+      showToast('✅ Saved team: ' + name + ' with ' + members.length + ' members!');
+    });
+  }
+
+  window.handleDeleteTeamAction = async function(teamId) {
+    if (!confirm('Delete this team and remove its roster from Round ' + currentRoundNum + '?')) return;
+    var scope = (currentRoundNum === 3 || currentRoundNum === 4 ? 'ROUND_3_4' : ('ROUND_' + currentRoundNum));
+    if (window.TechBossSupabase) {
+      await window.TechBossSupabase.deleteTournamentTeam(scope, teamId);
+      roundTeamsList = await window.TechBossSupabase.fetchTournamentTeams(scope);
+    }
+    renderActiveRoundScoreboard();
+    showToast('Team removed.');
+  };
+
+  if (deleteTeamInModalBtn) {
+    deleteTeamInModalBtn.addEventListener('click', async function() {
+      if (editingTeamId) {
+        await window.handleDeleteTeamAction(editingTeamId);
+        hideTeamModal();
+      }
+    });
+  }
 
   // ---------- FILE UPLOAD SCORES (CSV / EXCEL / JSON) ----------
   var openUploadScoresBtn = document.getElementById('openUploadScoresBtn');
@@ -2363,6 +3507,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE event_state;</pre>
     loadSheetUrl();
     initRealtimeListeners();
     renderInHouseLog();
+    selectTournamentRound(1);
 
     // Background Auto-Sync (Every 3 seconds) for 100% real-time reliability
     setInterval(function() {
