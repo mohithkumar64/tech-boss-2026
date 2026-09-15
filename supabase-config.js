@@ -468,6 +468,20 @@
     return false;
   }
 
+  async function triggerArenaAudio(trackName) {
+    try {
+      var payload = JSON.stringify({
+        type: 'AUDIO_TRIGGER',
+        track: trackName || 'times-9am',
+        timestamp: Date.now()
+      });
+      var hp = localStorage.getItem('techboss_boss_hp') || '78';
+      return await saveEventState(hp, payload);
+    } catch (e) {
+      return false;
+    }
+  }
+
   // ==========================================
   // 4. IN-HOUSE CHECK-INS CLOUD API
   // ==========================================
@@ -685,19 +699,37 @@
       }
     } catch (e) {}
 
-    // 2. Direct Supabase Fallback
+    // 2. Try Supabase event_state: id=eq.tournament_rounds
     var config = getSupabaseConfig();
     if (config.url && config.key) {
       try {
-        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/tournament_rounds?select=*&order=round_number.asc';
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state?id=eq.tournament_rounds';
         var resp = await fetch(apiUrl, {
           headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
         });
         if (resp.ok) {
           var rows = await resp.json();
-          if (Array.isArray(rows) && rows.length > 0) {
-            saveLocalTournamentRounds(rows);
-            return rows;
+          if (rows.length > 0 && rows[0].broadcast_msg) {
+            var parsedRounds = JSON.parse(rows[0].broadcast_msg);
+            if (Array.isArray(parsedRounds) && parsedRounds.length > 0) {
+              saveLocalTournamentRounds(parsedRounds);
+              return parsedRounds;
+            }
+          }
+        }
+      } catch (e) {}
+
+      // Fallback to tournament_rounds table if exists
+      try {
+        var apiUrl2 = config.url.replace(/\/$/, '') + '/rest/v1/tournament_rounds?select=*&order=round_number.asc';
+        var resp2 = await fetch(apiUrl2, {
+          headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
+        });
+        if (resp2.ok) {
+          var rows2 = await resp2.json();
+          if (Array.isArray(rows2) && rows2.length > 0) {
+            saveLocalTournamentRounds(rows2);
+            return rows2;
           }
         }
       } catch (e) {}
@@ -715,6 +747,14 @@
       saveLocalTournamentRounds(rounds);
     }
 
+    // Broadcast live round update to scoreboard across browser tabs
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        var ch = new BroadcastChannel('techboss_sync_channel');
+        ch.postMessage({ type: 'ROUND_STATUS_CHANGED', round_number: parseInt(roundNumber, 10), status: validStatus, rounds: rounds });
+      } catch (e) {}
+    }
+
     try {
       await fetch('/api/rounds', {
         method: 'PATCH',
@@ -726,15 +766,21 @@
     var config = getSupabaseConfig();
     if (config.url && config.key) {
       try {
-        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/tournament_rounds?round_number=eq.' + roundNumber;
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state';
         await fetch(apiUrl, {
-          method: 'PATCH',
+          method: 'POST',
           headers: {
             'apikey': config.key,
             'Authorization': 'Bearer ' + config.key,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
           },
-          body: JSON.stringify({ status: validStatus, updated_at: new Date().toISOString() })
+          body: JSON.stringify({
+            id: 'tournament_rounds',
+            boss_hp: '0',
+            broadcast_msg: JSON.stringify(rounds),
+            updated_at: new Date().toISOString()
+          })
         });
       } catch (e) {}
     }
@@ -889,6 +935,13 @@
       } catch (e) {}
     }
 
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        var ch = new BroadcastChannel('techboss_sync_channel');
+        ch.postMessage({ type: 'TEAMS_UPDATED', scope: scope, teams: localTeams, timestamp: Date.now() });
+      } catch (e) {}
+    }
+
     return newObj;
   }
 
@@ -914,6 +967,14 @@
         });
       } catch (e) {}
     }
+
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        var ch = new BroadcastChannel('techboss_sync_channel');
+        ch.postMessage({ type: 'TEAMS_UPDATED', scope: scope, teams: localTeams, timestamp: Date.now() });
+      } catch (e) {}
+    }
+
     return true;
   }
 
@@ -941,21 +1002,10 @@
       }
     });
 
-    if (uniqueCandidates.length < 4) {
+    if (uniqueCandidates.length < 2) {
       return {
         success: false,
-        error: 'At least 4 contenders are required to generate Round 2 teams (found ' + uniqueCandidates.length + ').'
-      };
-    }
-
-    var remainder = uniqueCandidates.length % 4;
-    if (remainder !== 0) {
-      return {
-        success: false,
-        isNotDivisible: true,
-        remainder: remainder,
-        totalPlayers: uniqueCandidates.length,
-        error: 'Player count (' + uniqueCandidates.length + ') cannot be evenly divided into teams of 4 (' + remainder + ' extra player' + (remainder > 1 ? 's' : '') + ').'
+        error: 'At least 2 contenders are required to generate teams (found ' + uniqueCandidates.length + ').'
       };
     }
 
@@ -971,20 +1021,23 @@
     var teamNames = [
       'TITAN SQUAD', 'APEX WARRIORS', 'CYBER REAPERS', 'PHANTOM PROTOCOL',
       'VORTEX ELITE', 'SHADOW MATRIX', 'NEXUS DIVISION', 'NEO VANGUARD',
-      'HYPERION FORCE', 'QUANTUM ZERO', 'IRON DRAGONS', 'DELTA STRIKE'
+      'HYPERION FORCE', 'QUANTUM ZERO', 'IRON DRAGONS', 'DELTA STRIKE',
+      'OMEGA SENTINELS', 'VALKYRIE SQUAD', 'ECHO PROTOCOL', 'GHOST SQUADRON'
     ];
 
     var generatedTeams = [];
-    var teamCount = Math.floor(shuffled.length / 4);
-    for (var t = 0; t < teamCount; t++) {
-      var members = shuffled.slice(t * 4, (t + 1) * 4);
-      var teamName = teamNames[t] || ('TEAM ' + (t + 1));
+    var teamIndex = 0;
+    // Chunk in groups of 4; any remaining contenders (e.g. 1, 2, or 3) form the extra squad
+    for (var i = 0; i < shuffled.length; i += 4) {
+      var members = shuffled.slice(i, i + 4);
+      var teamName = teamNames[teamIndex] || ('TEAM ' + (teamIndex + 1));
       generatedTeams.push({
-        id: 'r2_team_' + (t + 1) + '_' + Date.now(),
+        id: 'r2_team_' + (teamIndex + 1) + '_' + Date.now(),
         team_name: teamName,
         round_scope: 'ROUND_2',
         members: members
       });
+      teamIndex++;
     }
 
     saveLocalTournamentTeams('ROUND_2', generatedTeams);
@@ -995,10 +1048,18 @@
       await saveTournamentTeam('ROUND_2', generatedTeams[g]);
     }
 
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        var ch = new BroadcastChannel('techboss_sync_channel');
+        ch.postMessage({ type: 'TEAMS_UPDATED', scope: 'ROUND_2', teams: generatedTeams, timestamp: Date.now() });
+      } catch (e) {}
+    }
+
     return {
       success: true,
       teams: generatedTeams,
-      count: generatedTeams.length
+      count: generatedTeams.length,
+      totalPlayers: shuffled.length
     };
   }
 
@@ -1027,54 +1088,53 @@
 
   async function fetchTournamentScores(roundNumber) {
     var rKey = String(roundNumber);
+    var localScores = getLocalTournamentScores(roundNumber);
+
+    // 1. Try Backend API
     try {
       var apiResp = await fetch('/api/scores?round=' + rKey);
       if (apiResp.ok) {
         var res = await apiResp.json();
-        if (res.success && res.scores) {
-          saveLocalTournamentScores(roundNumber, res.scores);
-          return res.scores;
+        if (res.success && res.scores && typeof res.scores === 'object' && Object.keys(res.scores).length > 0) {
+          var merged = Object.assign({}, localScores, res.scores);
+          saveLocalTournamentScores(roundNumber, merged);
+          return merged;
         }
       }
     } catch (e) {}
 
+    // 2. Try Supabase event_state: id=eq.tournament_scores (permanent cloud store)
     var config = getSupabaseConfig();
     if (config.url && config.key) {
       try {
-        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/tournament_scores?round_number=eq.' + rKey;
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state?id=eq.tournament_scores';
         var resp = await fetch(apiUrl, {
           headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
         });
         if (resp.ok) {
           var rows = await resp.json();
-          var mapped = {};
-          rows.forEach(function(row) {
-            var rawH = (row.player_handle || '').toLowerCase();
-            mapped[rawH] = {
-              player_handle: row.player_handle,
-              player_name: row.player_name || '',
-              individual_score: parseInt(row.individual_score, 10) || 0,
-              team_id: row.team_id || null,
-              team_score: parseInt(row.team_score, 10) || 0,
-              round_total: parseInt(row.round_total, 10) || ((parseInt(row.individual_score, 10) || 0) + (parseInt(row.team_score, 10) || 0))
-            };
-          });
-          saveLocalTournamentScores(roundNumber, mapped);
-          return mapped;
+          if (rows.length > 0 && rows[0].broadcast_msg) {
+            var cloudAll = JSON.parse(rows[0].broadcast_msg);
+            var cloudRound = cloudAll[rKey] || {};
+            if (cloudRound && Object.keys(cloudRound).length > 0) {
+              var merged2 = Object.assign({}, localScores, cloudRound);
+              saveLocalTournamentScores(roundNumber, merged2);
+              return merged2;
+            }
+          }
         }
       } catch (e) {}
     }
 
-    return getLocalTournamentScores(roundNumber);
+    // Return existing local scores without ever wiping
+    return localScores;
   }
 
   async function saveTournamentScores(roundNumber, scoresMap) {
     var rNum = parseInt(roundNumber, 10);
+    var rKey = String(rNum);
     saveLocalTournamentScores(rNum, scoresMap);
 
-    // Compute round_total for each entry:
-    // For individual rounds (1, 5, 8, 9): round_total = individual_score
-    // For team rounds (2, 3, 4, 6, 7): round_total = individual_score + team_score (team score added automatically!)
     var isTeamRound = [2, 3, 4, 6, 7].includes(rNum);
     var payloadList = [];
 
@@ -1082,7 +1142,7 @@
       var item = scoresMap[handleKey] || {};
       var indScore = parseInt(item.individual_score, 10) || 0;
       var teamScore = isTeamRound ? (parseInt(item.team_score, 10) || 0) : 0;
-      var total = isTeamRound ? (indScore + teamScore) : indScore;
+      var total = item.round_total !== undefined ? parseInt(item.round_total, 10) : (isTeamRound ? (indScore + teamScore) : indScore);
 
       item.round_total = total;
       item.team_score = teamScore;
@@ -1107,15 +1167,17 @@
       await fetch('/api/scores', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ round_number: rNum, scores: payloadList })
+        body: JSON.stringify({ round_number: rNum, scores: payloadList, scoresMap: scoresMap })
       });
     } catch (e) {}
 
-    // 2. Direct Supabase Fallback
+    // 2. Direct Supabase Fallback using event_state (id: tournament_scores)
     var config = getSupabaseConfig();
-    if (config.url && config.key && payloadList.length > 0) {
+    if (config.url && config.key) {
       try {
-        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/tournament_scores';
+        var allScores = getLocalTournamentScores();
+        allScores[rKey] = scoresMap;
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state';
         await fetch(apiUrl, {
           method: 'POST',
           headers: {
@@ -1124,7 +1186,12 @@
             'Content-Type': 'application/json',
             'Prefer': 'resolution=merge-duplicates'
           },
-          body: JSON.stringify(payloadList)
+          body: JSON.stringify({
+            id: 'tournament_scores',
+            boss_hp: '0',
+            broadcast_msg: JSON.stringify(allScores),
+            updated_at: new Date().toISOString()
+          })
         });
       } catch (e) {}
     }
@@ -1140,6 +1207,8 @@
     var playerTotals = new Map();
 
     // Scan all 9 rounds in localStorage
+    // Since scores are maintained till the end across rounds,
+    // a player's cumulative score is the highest/maximum score reached across all played rounds.
     for (var r = 1; r <= 9; r++) {
       var roundScores = allScoresMap[String(r)] || {};
       var isTeamRound = [2, 3, 4, 6, 7].includes(r);
@@ -1167,7 +1236,10 @@
         var p = playerTotals.get(norm);
         if (rec.player_name && !p.name) p.name = rec.player_name;
         p.rounds[r] = roundTotal;
-        p.cumulative_score += roundTotal;
+        // Scores maintained till end: cumulative score is highest score reached across rounds
+        if (roundTotal > p.cumulative_score) {
+          p.cumulative_score = roundTotal;
+        }
       }
     }
 
@@ -1258,6 +1330,7 @@
     saveLeaderboard: saveLeaderboard,
     fetchEventState: fetchEventState,
     saveEventState: saveEventState,
+    triggerArenaAudio: triggerArenaAudio,
     fetchInHouseCheckins: fetchInHouseCheckins,
     saveInHouseCheckinsCloud: saveInHouseCheckinsCloud,
     checkinContenderCloud: checkinContenderCloud,
@@ -1274,6 +1347,8 @@
     saveTournamentTeam: saveTournamentTeam,
     deleteTournamentTeam: deleteTournamentTeam,
     generateRound2Teams: generateRound2Teams,
+    getLocalTournamentScores: getLocalTournamentScores,
+    saveLocalTournamentScores: saveLocalTournamentScores,
     fetchTournamentScores: fetchTournamentScores,
     saveTournamentScores: saveTournamentScores,
     calculateAndSyncCumulativeLeaderboard: calculateAndSyncCumulativeLeaderboard

@@ -72,7 +72,7 @@
     }
 
     body {
-      background-color: var(--bg-black);
+      background-color: #07080c;
       color: var(--text-primary);
       font-family: var(--font-system);
       line-height: 1.5;
@@ -85,9 +85,10 @@
       letter-spacing: -0.018em;
       position: relative;
       background-image: 
-        radial-gradient(circle at 50% -80px, rgba(41, 151, 255, 0.18) 0%, transparent 60%),
-        radial-gradient(circle at 80% 20%, rgba(229, 179, 88, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 20% 60%, rgba(191, 90, 242, 0.08) 0%, transparent 45%);
+        radial-gradient(circle at 50% 120px, rgba(255, 215, 0, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 85% 20%, rgba(41, 151, 255, 0.14) 0%, transparent 55%),
+        radial-gradient(circle at 15% 65%, rgba(191, 90, 242, 0.10) 0%, transparent 50%),
+        radial-gradient(circle at 50% 100%, rgba(48, 209, 88, 0.08) 0%, transparent 60%);
       background-attachment: fixed;
     }
 
@@ -281,20 +282,9 @@
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Apple Dynamic Announcement Capsule (Dynamic Island Style) */
-    .broadcast-banner {
-      padding: 11px 20px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      border-radius: var(--radius-pill);
-      background: rgba(22, 22, 28, 0.75);
-      backdrop-filter: blur(36px) saturate(200%);
-      -webkit-backdrop-filter: blur(36px) saturate(200%);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Text announcements removed per user request: pure audible sound notes */
+    .broadcast-banner, #broadcastCard, #appleKeynoteOverlay {
+      display: none !important;
     }
 
     .broadcast-banner:hover {
@@ -342,49 +332,73 @@
       letter-spacing: 0.4px;
     }
 
-    /* CHAMPIONSHIP GLORY PODIUM - COMPACT APPLE KEYNOTE DESIGN */
+    /* ========================================================
+       APPLE PRO GLASSMORPHIC STUDIO — GRAND CHAMPIONSHIP PODIUM
+       ======================================================== */
     .podium-section {
-      padding: 18px 22px 20px;
-      border-radius: var(--radius-lg);
-      background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.1) 0%, transparent 70%),
-                  linear-gradient(180deg, rgba(22, 22, 28, 0.82) 0%, rgba(12, 12, 16, 0.92) 100%);
-      border: 1.5px solid rgba(255, 255, 255, 0.14);
-      box-shadow: 0 20px 42px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      padding: 32px 28px 30px;
+      border-radius: var(--radius-xl);
+      background: radial-gradient(ellipse 65% 45% at 50% -5%, rgba(255, 215, 0, 0.18) 0%, rgba(255, 215, 0, 0.03) 60%, transparent 100%),
+                  linear-gradient(180deg, rgba(16, 19, 28, 0.76) 0%, rgba(8, 10, 15, 0.90) 100%);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .podium-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.7) 50%, transparent 100%);
+      pointer-events: none;
     }
 
     .podium-header-wrap {
       text-align: center;
-      margin-bottom: 12px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 2;
     }
 
     .podium-eyebrow {
       font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      background: linear-gradient(135deg, #ffd700, #ffae00);
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, #ffd700 0%, #ff9500 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
       display: inline-block;
     }
 
     .podium-main-title {
-      font-size: 21px;
+      font-size: 26px;
       font-weight: 900;
-      letter-spacing: -0.5px;
-      background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
+      letter-spacing: -0.7px;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
+    /* STEPPED 3D PODIUM GRID - Olympic/Studio Stepped Alignment */
     .podium-grid {
       display: grid;
-      grid-template-columns: 1fr 1.15fr 1fr;
-      align-items: stretch;
-      gap: 14px;
-      max-width: 1060px;
+      grid-template-columns: 1fr 1.18fr 1fr;
+      align-items: flex-end; /* CRITICAL for stepped heights */
+      gap: 20px;
+      max-width: 1080px;
       margin: 0 auto;
+      padding-top: 16px;
+      position: relative;
+      z-index: 2;
     }
 
     @media (max-width: 860px) {
@@ -394,153 +408,252 @@
       }
     }
 
-    /* Pedestal Base Styling - Bold Compact */
+    /* Pedestal Base Styling - Apple Pro Glass */
     .podium-pedestal {
-      background: rgba(26, 26, 34, 0.85);
-      border-radius: 20px;
-      padding: 16px 18px;
+      border-radius: 24px;
+      padding: 24px 20px 18px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       position: relative;
-      backdrop-filter: blur(32px);
-      -webkit-backdrop-filter: blur(32px);
-      border: 1.5px solid var(--border-subtle);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 var(--border-highlight);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(36px) saturate(200%);
+      -webkit-backdrop-filter: blur(36px) saturate(200%);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
     }
 
     .podium-pedestal:hover {
-      transform: translateY(-2px);
-      border-color: var(--border-hover);
-      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
 
-    /* Rank 1 Champion Apex Gold */
+    /* ----------------------------------------------------
+       RANK 1: CHAMPION APEX GOLD (TALLEST / HERO ELEVATED)
+       ---------------------------------------------------- */
     .podium-pedestal.rank-1 {
-      background: linear-gradient(180deg, rgba(42, 34, 18, 0.96) 0%, rgba(20, 18, 24, 0.98) 100%);
-      border: 2px solid rgba(255, 215, 0, 0.75);
-      box-shadow: 0 0 40px rgba(255, 215, 0, 0.25), 0 14px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      min-height: 380px;
       order: 2;
-      padding: 18px 20px;
-      transform: scale(1.02);
+      background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.28) 0%, rgba(255, 215, 0, 0.05) 55%, transparent 100%),
+                  linear-gradient(180deg, rgba(46, 36, 18, 0.88) 0%, rgba(18, 16, 24, 0.95) 100%);
+      border: 1.5px solid rgba(255, 215, 0, 0.75);
+      box-shadow: 0 0 60px rgba(255, 215, 0, 0.26), 0 24px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      z-index: 2;
     }
 
     .podium-pedestal.rank-1:hover {
-      transform: scale(1.02) translateY(-2px);
-      box-shadow: 0 0 50px rgba(255, 215, 0, 0.35), 0 20px 40px rgba(0, 0, 0, 0.7);
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 0 75px rgba(255, 215, 0, 0.35), 0 30px 60px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Champion Top Light Cone */
+    .podium-pedestal.rank-1::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 15%;
+      right: 15%;
+      height: 90px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255, 215, 0, 0.45) 0%, transparent 80%);
+      pointer-events: none;
     }
 
     @media (max-width: 860px) {
-      .podium-pedestal.rank-1 { order: 1; transform: none; }
-      .podium-pedestal.rank-1:hover { transform: translateY(-2px); }
+      .podium-pedestal.rank-1 {
+        order: 1;
+        min-height: auto;
+      }
+      .podium-pedestal.rank-1:hover {
+        transform: translateY(-3px);
+      }
     }
 
-    /* Rank 2 Silver */
+    /* ----------------------------------------------------
+       RANK 2: PLATINUM SILVER (STEPPED DOWN)
+       ---------------------------------------------------- */
     .podium-pedestal.rank-2 {
-      border: 1.5px solid rgba(241, 245, 249, 0.4);
-      box-shadow: 0 0 24px rgba(241, 245, 249, 0.12), 0 12px 28px rgba(0, 0, 0, 0.4);
+      min-height: 320px;
       order: 1;
+      background: radial-gradient(circle at 50% 0%, rgba(241, 245, 249, 0.18) 0%, transparent 60%),
+                  linear-gradient(180deg, rgba(26, 29, 38, 0.84) 0%, rgba(13, 14, 20, 0.94) 100%);
+      border: 1.5px solid rgba(241, 245, 249, 0.45);
+      box-shadow: 0 0 32px rgba(241, 245, 249, 0.12), 0 18px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25);
     }
 
     @media (max-width: 860px) {
-      .podium-pedestal.rank-2 { order: 2; }
+      .podium-pedestal.rank-2 {
+        order: 2;
+        min-height: auto;
+      }
     }
 
-    /* Rank 3 Bronze */
+    /* ----------------------------------------------------
+       RANK 3: WARM BRONZE (STEPPED LOWEST)
+       ---------------------------------------------------- */
     .podium-pedestal.rank-3 {
-      border: 1.5px solid rgba(255, 157, 92, 0.4);
-      box-shadow: 0 0 24px rgba(255, 157, 92, 0.12), 0 12px 28px rgba(0, 0, 0, 0.4);
+      min-height: 280px;
       order: 3;
+      background: radial-gradient(circle at 50% 0%, rgba(255, 157, 92, 0.18) 0%, transparent 60%),
+                  linear-gradient(180deg, rgba(35, 24, 18, 0.84) 0%, rgba(15, 13, 18, 0.94) 100%);
+      border: 1.5px solid rgba(255, 157, 92, 0.45);
+      box-shadow: 0 0 32px rgba(255, 157, 92, 0.12), 0 16px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
 
-    /* Medal Halo Rings - Compact */
+    @media (max-width: 860px) {
+      .podium-pedestal.rank-3 {
+        order: 3;
+        min-height: auto;
+      }
+    }
+
+    /* ----------------------------------------------------
+       STEPPED 3D PEDESTAL BASE FOUNDATIONS (01, 02, 03)
+       ---------------------------------------------------- */
+    .podium-3d-step {
+      margin-top: auto;
+      width: 100%;
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .step-rank-digit {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .step-rank-title {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+    }
+
+    .podium-3d-step.step-1 {
+      background: linear-gradient(180deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 215, 0, 0.08) 100%);
+      border: 1px solid rgba(255, 215, 0, 0.45);
+      color: var(--apple-gold);
+      box-shadow: 0 4px 18px rgba(255, 215, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      padding: 12px 14px;
+    }
+
+    .podium-3d-step.step-2 {
+      background: linear-gradient(180deg, rgba(241, 245, 249, 0.16) 0%, rgba(241, 245, 249, 0.05) 100%);
+      border: 1px solid rgba(241, 245, 249, 0.35);
+      color: #f1f5f9;
+      box-shadow: 0 4px 14px rgba(241, 245, 249, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .podium-3d-step.step-3 {
+      background: linear-gradient(180deg, rgba(255, 157, 92, 0.16) 0%, rgba(255, 157, 92, 0.05) 100%);
+      border: 1px solid rgba(255, 157, 92, 0.35);
+      color: #ffb07c;
+      box-shadow: 0 4px 14px rgba(255, 157, 92, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    /* Medal Halo Rings */
     .medal-halo-ring {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
-      margin-bottom: 8px;
+      font-size: 26px;
+      margin-bottom: 10px;
       position: relative;
+      transition: transform 0.3s ease;
     }
 
     .rank-1 .medal-halo-ring {
-      width: 56px;
-      height: 56px;
-      font-size: 28px;
-      background: radial-gradient(circle, rgba(255, 215, 0, 0.35) 0%, rgba(255, 215, 0, 0.08) 70%);
+      width: 66px;
+      height: 66px;
+      font-size: 34px;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.42) 0%, rgba(255, 215, 0, 0.08) 70%);
       border: 2px solid var(--apple-gold);
-      box-shadow: 0 0 24px rgba(255, 215, 0, 0.55), inset 0 0 12px rgba(255, 215, 0, 0.3);
+      box-shadow: 0 0 32px rgba(255, 215, 0, 0.65), inset 0 0 16px rgba(255, 215, 0, 0.4);
+      animation: goldFloat 3.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes goldFloat {
+      0% { transform: translateY(0) scale(1); box-shadow: 0 0 26px rgba(255, 215, 0, 0.5); }
+      100% { transform: translateY(-5px) scale(1.06); box-shadow: 0 0 42px rgba(255, 215, 0, 0.8); }
     }
 
     .rank-2 .medal-halo-ring {
       background: radial-gradient(circle, rgba(241, 245, 249, 0.25) 0%, rgba(241, 245, 249, 0.06) 70%);
       border: 2px solid var(--apple-silver);
-      box-shadow: 0 0 18px var(--apple-silver-glow);
+      box-shadow: 0 0 20px var(--apple-silver-glow);
     }
 
     .rank-3 .medal-halo-ring {
       background: radial-gradient(circle, rgba(255, 157, 92, 0.25) 0%, rgba(255, 157, 92, 0.06) 70%);
       border: 2px solid var(--apple-bronze);
-      box-shadow: 0 0 18px var(--apple-bronze-glow);
+      box-shadow: 0 0 20px var(--apple-bronze-glow);
     }
 
     .podium-rank-pill {
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.9px;
-      padding: 4px 12px;
+      letter-spacing: 1px;
+      padding: 4px 14px;
       border-radius: var(--radius-pill);
       margin-bottom: 8px;
     }
 
     .rank-1 .podium-rank-pill {
-      background: var(--apple-gold);
+      background: linear-gradient(135deg, #ffd700 0%, #ffae00 100%);
       color: #000000;
-      box-shadow: 0 2px 12px rgba(255, 215, 0, 0.5);
+      box-shadow: 0 2px 14px rgba(255, 215, 0, 0.5);
     }
 
     .rank-2 .podium-rank-pill {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.18);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.35);
     }
 
     .rank-3 .podium-rank-pill {
-      background: rgba(255, 157, 92, 0.22);
+      background: rgba(255, 157, 92, 0.2);
       color: #ffb07c;
       border: 1px solid rgba(255, 157, 92, 0.4);
     }
 
-    .podium-handle {
-      font-family: var(--font-mono);
-      font-size: 16px;
+    .podium-title-main {
+      font-size: 19px;
       font-weight: 900;
       color: #ffffff;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       letter-spacing: -0.3px;
+      text-transform: uppercase;
     }
 
-    .rank-1 .podium-handle {
-      font-size: 18px;
+    .rank-1 .podium-title-main {
+      font-size: 22px;
       color: #fffbeb;
-      text-shadow: 0 0 14px rgba(255, 215, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.6);
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.6);
     }
 
-    .podium-name {
-      font-size: 12px;
+    .podium-submeta {
+      font-size: 12.5px;
       font-weight: 700;
-      color: #cbd5e1;
-      margin-bottom: 8px;
+      color: #94a3b8;
+      margin-bottom: 10px;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -549,19 +662,19 @@
 
     .podium-score {
       font-family: var(--font-mono);
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 900;
       color: #ffffff;
       display: flex;
       align-items: baseline;
-      gap: 5px;
-      margin-bottom: 8px;
+      gap: 6px;
+      margin-bottom: 10px;
     }
 
     .rank-1 .podium-score {
-      font-size: 28px;
+      font-size: 32px;
       color: var(--apple-gold);
-      text-shadow: 0 0 22px rgba(255, 215, 0, 0.55);
+      text-shadow: 0 0 24px rgba(255, 215, 0, 0.6);
     }
 
     .rank-2 .podium-score {
@@ -575,28 +688,365 @@
     }
 
     .podium-score span {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 800;
       color: var(--text-secondary);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
     }
 
     .podium-tier-tag {
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 800;
-      padding: 4px 11px;
+      padding: 4px 13px;
       border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
       color: #ffffff;
       border: 1px solid rgba(255, 255, 255, 0.18);
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
     }
 
-    /* LEADERBOARD TABLE SECTION - COMPACT ABOVE-THE-FOLD */
+    /* TEAM SQUADS BATTLE GRID & SQUAD CARDS */
+    .arena-squad-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .arena-squad-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .squad-card {
+      background: rgba(22, 22, 28, 0.82);
+      backdrop-filter: blur(36px);
+      -webkit-backdrop-filter: blur(36px);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+      transition: all 0.25s ease;
+    }
+
+    .squad-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .squad-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+    }
+
+    .squad-identity {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .squad-rank-badge {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+    .squad-rank-badge.rank-1 { background: var(--apple-gold); color: #000000; box-shadow: 0 2px 10px rgba(255, 215, 0, 0.4); }
+    .squad-rank-badge.rank-2 { background: var(--apple-silver); color: #000000; }
+    .squad-rank-badge.rank-3 { background: var(--apple-bronze); color: #000000; }
+
+    .squad-name {
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+    }
+
+    .team-score-badge {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--apple-gold);
+      background: rgba(255, 215, 0, 0.15);
+      border: 1.5px solid rgba(255, 215, 0, 0.45);
+      border-radius: var(--radius-pill);
+      padding: 4px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 0 14px rgba(255, 215, 0, 0.2);
+    }
+
+    .squad-member-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .squad-member-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      gap: 10px;
+    }
+
+    .squad-member-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      min-width: 0;
+    }
+
+    .squad-member-name {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #ffffff;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .squad-member-meta {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .squad-member-score-wrap {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .squad-member-total {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      font-weight: 900;
+      color: var(--apple-gold);
+    }
+
+    .squad-member-breakdown {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+    }
+
+    /* APPLE PRO ARENA ROUND NAVIGATION DOCK */
+    .arena-round-nav {
+      margin-bottom: 22px;
+      width: 100%;
+    }
+
+    .round-dock-container {
+      background: rgba(18, 20, 28, 0.78);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      flex-wrap: wrap;
+    }
+
+    .round-dock-scroll {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 2px 0;
+    }
+
+    .round-dock-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .round-pill-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: inherit;
+    }
+
+    .round-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.18);
+      transform: translateY(-1px);
+    }
+
+    .round-pill-btn.active {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+      box-shadow: 0 4px 16px rgba(255, 255, 255, 0.35);
+    }
+
+    .round-pill-btn.highlight-gold {
+      border-color: rgba(255, 215, 0, 0.35);
+      color: #f8fafc;
+    }
+    .round-pill-btn.highlight-gold:hover {
+      border-color: var(--apple-gold);
+      box-shadow: 0 0 14px rgba(255, 215, 0, 0.25);
+    }
+    .round-pill-btn.highlight-gold.active {
+      background: linear-gradient(135deg, #ffd700 0%, #ffae00 100%);
+      color: #000000;
+      border-color: #ffd700;
+      box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5);
+    }
+
+    .pill-dot.live {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #30d158;
+      box-shadow: 0 0 8px #30d158;
+      display: inline-block;
+      animation: apple-pulse 2s infinite;
+    }
+    .round-pill-btn.active .pill-dot.live {
+      background: #000000;
+      box-shadow: none;
+    }
+
+    .pill-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+    }
+    .pill-badge.solo {
+      background: rgba(255, 255, 255, 0.1);
+      color: inherit;
+    }
+    .pill-badge.squad {
+      background: rgba(255, 215, 0, 0.2);
+      color: var(--apple-gold);
+    }
+    .round-pill-btn.active .pill-badge.squad {
+      background: rgba(0, 0, 0, 0.15);
+      color: #000000;
+    }
+    .round-pill-btn.active .pill-badge.solo {
+      background: rgba(0, 0, 0, 0.1);
+      color: #000000;
+    }
+
+    .round-dock-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .dock-meta-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dock-status-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: rgba(48, 209, 88, 0.15);
+      color: var(--apple-green);
+      border: 1px solid rgba(48, 209, 88, 0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dock-format-tag {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      white-space: nowrap;
+    }
+
+    .dock-view-switch {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 3px;
+      display: inline-flex;
+      gap: 4px;
+    }
+
+    .dock-switch-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .dock-switch-btn:hover {
+      color: #ffffff;
+    }
+
+    .dock-switch-btn.active {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    /* LEADERBOARD TABLE SECTION - APPLE PRO GLASS */
     .table-section {
-      padding: 20px 24px 24px;
-      border-radius: var(--radius-lg);
+      padding: 28px 30px 32px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(16, 19, 28, 0.72) 0%, rgba(9, 11, 16, 0.88) 100%);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 28px 64px -16px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.16);
     }
 
     .table-toolbar {
@@ -712,13 +1162,13 @@
       pointer-events: none;
     }
 
-    /* Apple Clean Table - BOLD */
+    /* Apple Clean Table - Apple Pro Glass */
     .table-container {
       overflow-x: auto;
       border-radius: var(--radius-md);
-      border: 1.5px solid var(--border-subtle);
-      background: rgba(14, 14, 18, 0.7);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 12, 18, 0.65);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .apple-table {
@@ -729,29 +1179,30 @@
     }
 
     .apple-table th {
-      background: rgba(255, 255, 255, 0.05);
-      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.04);
+      color: #94a3b8;
       font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 12px 18px;
-      border-bottom: 1.5px solid var(--border-subtle);
+      letter-spacing: 1.2px;
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .apple-table td {
-      padding: 13px 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       color: #f1f5f9;
       vertical-align: middle;
+      transition: background 0.2s ease;
     }
 
     .apple-table tbody tr {
-      transition: background 0.15s ease;
+      transition: background 0.2s ease, transform 0.2s ease;
     }
 
     .apple-table tbody tr:hover {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.04);
     }
 
     /* Rank Cell Inside Table */
@@ -764,28 +1215,38 @@
       gap: 7px;
     }
 
-    .rank-cell.rank-1 { color: var(--apple-gold); text-shadow: 0 0 12px rgba(255, 215, 0, 0.5); }
-    .rank-cell.rank-2 { color: var(--apple-silver); text-shadow: 0 0 10px rgba(255, 255, 255, 0.4); }
-    .rank-cell.rank-3 { color: var(--apple-bronze); text-shadow: 0 0 10px rgba(255, 157, 92, 0.4); }
+    .rank-cell.rank-1 { color: var(--apple-gold); text-shadow: 0 0 14px rgba(255, 215, 0, 0.6); }
+    .rank-cell.rank-2 { color: var(--apple-silver); text-shadow: 0 0 12px rgba(255, 255, 255, 0.5); }
+    .rank-cell.rank-3 { color: var(--apple-bronze); text-shadow: 0 0 12px rgba(255, 157, 92, 0.5); }
 
     .contender-identity {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
     }
 
-    .contender-tag {
-      font-family: var(--font-mono);
-      font-weight: 800;
-      color: #ffffff;
+    .contender-fullname-main {
       font-size: 15px;
-      letter-spacing: -0.3px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.2px;
+      text-transform: uppercase;
     }
 
-    .contender-fullname {
-      font-size: 12.5px;
-      font-weight: 700;
-      color: #cbd5e1;
+    .contender-sub-meta {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .contender-roll-tag {
+      font-family: var(--font-mono);
+      color: var(--apple-cyan);
+      font-weight: 800;
     }
 
     .damage-cell {
@@ -1204,86 +1665,159 @@
   <!-- MAIN CONTAINER -->
   <main class="main-wrap">
 
-    <!-- LIVE ORGANIZER BROADCAST BANNER -->
-    <div class="broadcast-banner" id="broadcastCard">
+    <!-- LIVE ORGANIZER BROADCAST BANNER (HIDDEN - AUDIO ONLY PER USER SPECIFICATION) -->
+    <div class="broadcast-banner" id="broadcastCard" style="display:none !important;">
       <div class="broadcast-badge">
         <span>⚡</span> Announcement
       </div>
       <div class="broadcast-text-wrap">
-        <span id="broadcastText">🏆 TOURNAMENT ACTIVE: Contenders battling in Phase 02 Boss Gauntlet. Live damage calculations synced directly from Organizer Core.</span>
-        <span class="broadcast-time" id="broadcastTimestamp">JUST NOW</span>
+        <span id="broadcastText"></span>
+        <span class="broadcast-time" id="broadcastTimestamp"></span>
       </div>
     </div>
+
+
+    <!-- APPLE PRO ARENA ROUND NAVIGATION DOCK -->
+    <nav class="arena-round-nav" aria-label="Tournament Rounds Navigation">
+      <div class="round-dock-container">
+        <div class="round-dock-scroll">
+          <button type="button" class="round-pill-btn active" id="pillRoundAuto" onclick="selectRoundScope('AUTO')" title="Follow Open Active Round">
+            <span class="pill-dot live"></span>
+            <span>Auto Live</span>
+          </button>
+          <button type="button" class="round-pill-btn" id="pillRound1" onclick="selectRoundScope(1)">
+            <span class="pill-badge solo">R1</span>
+            <span>Solo Inception</span>
+          </button>
+          <button type="button" class="round-pill-btn highlight-gold" id="pillRound2" onclick="selectRoundScope(2)">
+            <span class="pill-badge squad">👥 R2</span>
+            <span>Tournament Squads</span>
+          </button>
+          <button type="button" class="round-pill-btn" id="pillRound3" onclick="selectRoundScope(3)">
+            <span class="pill-badge squad">👥 R3</span>
+            <span>Alliances</span>
+          </button>
+          <button type="button" class="round-pill-btn" id="pillRound4" onclick="selectRoundScope(4)">
+            <span class="pill-badge squad">👥 R4</span>
+            <span>Protocol</span>
+          </button>
+          <button type="button" class="round-pill-btn" id="pillRound5" onclick="selectRoundScope(5)">
+            <span class="pill-badge solo">R5</span>
+            <span>Duel</span>
+          </button>
+          <button type="button" class="round-pill-btn" id="pillRoundCumulative" onclick="selectRoundScope('CUMULATIVE')">
+            <span class="pill-badge crown">🏆</span>
+            <span>Cumulative</span>
+          </button>
+        </div>
+
+        <div class="round-dock-meta">
+          <div class="dock-meta-info">
+            <span class="dock-status-pill" id="arenaLiveIndicator">
+              <span class="live-dot" style="width:6px; height:6px;"></span>
+              <span id="arenaLiveStatusText">OPEN IN ARENA</span>
+            </span>
+            <span class="dock-format-tag" id="arenaRoundFormatTag">ROUND 1 · SOLO</span>
+          </div>
+
+          <!-- Squad View Mode Toggle (Squad Cards vs Individual Operatives) -->
+          <div class="dock-view-switch" id="squadViewToggle" style="display:none;">
+            <button type="button" class="dock-switch-btn active" id="btnViewSquads" onclick="setSquadViewMode('SQUADS')">👥 Squads</button>
+            <button type="button" class="dock-switch-btn" id="btnViewIndividual" onclick="setSquadViewMode('INDIVIDUAL')">👤 Roster</button>
+          </div>
+        </div>
+      </div>
+    </nav>
 
     <!-- TOP 3 CHAMPIONSHIP GLORY PODIUM -->
     <section class="podium-section">
       <div class="podium-header-wrap">
-        <span class="podium-eyebrow">Grand Championship Podium</span>
-        <h2 class="podium-main-title">Top 3 Glory Showcase</h2>
+        <span class="podium-eyebrow" id="podiumEyebrow">Grand Championship Podium</span>
+        <h2 class="podium-main-title" id="podiumMainTitle">Top 3 Glory Showcase</h2>
       </div>
 
       <div class="podium-grid">
         <!-- 2nd Place Silver -->
         <div class="podium-pedestal rank-2" id="podiumRank2">
           <div class="medal-halo-ring">🥈</div>
-          <div class="podium-rank-pill">2nd Place</div>
-          <div class="podium-handle" id="podiumHandle2">@runnerup</div>
-          <div class="podium-name" id="podiumName2">Awaiting Contender</div>
+          <div class="podium-rank-pill" id="podiumRankPill2">2nd Place</div>
+          <div class="podium-title-main" id="podiumName2">Awaiting Contender</div>
+          <div class="podium-submeta" id="podiumMeta2">Roll: --</div>
           <div class="podium-score" id="podiumScore2">0 <span>DMG</span></div>
           <div class="podium-tier-tag" id="podiumTier2">Tier A</div>
+          <div class="podium-3d-step step-2">
+            <span class="step-rank-digit">2</span>
+            <span class="step-rank-title">2ND PLACE</span>
+          </div>
         </div>
 
         <!-- 1st Place Champion Apex Gold -->
         <div class="podium-pedestal rank-1" id="podiumRank1">
           <div class="medal-halo-ring">👑</div>
-          <div class="podium-rank-pill">Champion #1</div>
-          <div class="podium-handle" id="podiumHandle1">@champion</div>
-          <div class="podium-name" id="podiumName1">Awaiting Apex Contender</div>
+          <div class="podium-rank-pill" id="podiumRankPill1">Champion #1</div>
+          <div class="podium-title-main" id="podiumName1">Awaiting Apex Contender</div>
+          <div class="podium-submeta" id="podiumMeta1">Roll: --</div>
           <div class="podium-score" id="podiumScore1">0 <span>DMG</span></div>
           <div class="podium-tier-tag" id="podiumTier1" style="background: rgba(255,215,0,0.18); color: var(--apple-gold); border: 1px solid var(--apple-gold);">Tier S Apex</div>
+          <div class="podium-3d-step step-1">
+            <span class="step-rank-digit">1</span>
+            <span class="step-rank-title">APEX CHAMPION</span>
+          </div>
         </div>
 
         <!-- 3rd Place Bronze -->
         <div class="podium-pedestal rank-3" id="podiumRank3">
           <div class="medal-halo-ring">🥉</div>
-          <div class="podium-rank-pill">3rd Place</div>
-          <div class="podium-handle" id="podiumHandle3">@challenger</div>
-          <div class="podium-name" id="podiumName3">Awaiting Contender</div>
+          <div class="podium-rank-pill" id="podiumRankPill3">3rd Place</div>
+          <div class="podium-title-main" id="podiumName3">Awaiting Contender</div>
+          <div class="podium-submeta" id="podiumMeta3">Roll: --</div>
           <div class="podium-score" id="podiumScore3">0 <span>DMG</span></div>
           <div class="podium-tier-tag" id="podiumTier3">Tier B</div>
+          <div class="podium-3d-step step-3">
+            <span class="step-rank-digit">3</span>
+            <span class="step-rank-title">3RD PLACE</span>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- FULL LEADERBOARD TABLE -->
-    <section class="apple-card table-section">
+    <section class="apple-card table-section" id="arenaLeaderboardSection">
       <div class="table-toolbar">
         <div class="table-heading">
-          <span>Live Arena Leaderboard</span>
+          <span id="arenaSectionTitle">Live Arena Leaderboard</span>
           <span class="count-capsule" id="contenderCountBadge">0 Warriors</span>
         </div>
 
         <div class="table-actions">
-          <div class="segmented-control">
-            <button class="segment-btn active" data-filter="all">All Players</button>
+          <div class="segmented-control" id="tableFilterSegments">
+            <button class="segment-btn active" data-filter="all">All Contenders</button>
             <button class="segment-btn" data-filter="top10">Top 10</button>
             <button class="segment-btn" data-filter="tierSA">Tier S & A</button>
           </div>
 
           <div class="apple-search-wrap">
             <span class="search-glyph">🔍</span>
-            <input type="text" id="scoreboardSearchInput" placeholder="Search contender...">
+            <input type="text" id="scoreboardSearchInput" placeholder="Search contender, roll, squad...">
           </div>
         </div>
       </div>
 
-      <div class="table-container">
+      <!-- SQUAD BATTLE VIEW (For Team Rounds) -->
+      <div id="teamSquadsContainer" style="display:none; margin-bottom: 8px;">
+        <div class="arena-squad-grid" id="squadsGrid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- INDIVIDUAL LEADERBOARD TABLE (For Solo Rounds or Roster View) -->
+      <div class="table-container" id="individualTableContainer">
         <table class="apple-table">
           <thead>
             <tr>
               <th style="width: 85px; text-align: center;">Rank</th>
-              <th>Contender</th>
-              <th style="min-width: 170px;">Damage Telemetry</th>
+              <th>Contender Name & Roll</th>
+              <th style="min-width: 170px;" id="damageColumnHeader">Damage Telemetry</th>
               <th style="width: 90px; text-align: center;">Tier</th>
               <th style="width: 120px; text-align: center;">Status</th>
             </tr>
@@ -1411,43 +1945,9 @@
         setTimeout(function () { playTone(880, 0.35, 'sine'); }, 300); // A5
       }
 
+      // Text announcements disabled per user request: Live Arena uses purely audible hourly sound notes
       function showKeynoteAnnouncement(text, timestampStr) {
-        if (!text || !text.trim()) return;
-        if (keynoteOverlayEl) {
-          if (keynoteMessageTextEl) keynoteMessageTextEl.textContent = text;
-          if (keynoteTimestampEl) keynoteTimestampEl.textContent = timestampStr || ('UPDATED ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-          keynoteOverlayEl.style.display = 'flex';
-
-          playKeynoteAnnouncementChime();
-
-          if (typeof confetti === 'function') {
-            confetti({
-              particleCount: 110,
-              spread: 90,
-              origin: { y: 0.4 },
-              colors: ['#ffd700', '#2997ff', '#30d158', '#ffffff']
-            });
-          }
-
-          if (keynoteTimer) clearTimeout(keynoteTimer);
-          if (keynoteProgressTimer) clearInterval(keynoteProgressTimer);
-
-          var totalMs = 14000;
-          var startMs = Date.now();
-          if (keynoteProgressFillEl) keynoteProgressFillEl.style.width = '100%';
-
-          keynoteProgressTimer = setInterval(function () {
-            var elapsed = Date.now() - startMs;
-            var remainPct = Math.max(0, 100 - (elapsed / totalMs) * 100);
-            if (keynoteProgressFillEl) keynoteProgressFillEl.style.width = remainPct + '%';
-            if (elapsed >= totalMs) {
-              clearInterval(keynoteProgressTimer);
-              closeKeynoteAnnouncement();
-            }
-          }, 100);
-
-          keynoteTimer = setTimeout(closeKeynoteAnnouncement, totalMs);
-        }
+        return;
       }
 
       function closeKeynoteAnnouncement() {
@@ -1455,24 +1955,6 @@
         if (keynoteProgressTimer) clearInterval(keynoteProgressTimer);
         if (keynoteOverlayEl) keynoteOverlayEl.style.display = 'none';
       }
-
-      if (keynoteDismissBtn) keynoteDismissBtn.addEventListener('click', closeKeynoteAnnouncement);
-      if (keynoteBackdrop) keynoteBackdrop.addEventListener('click', closeKeynoteAnnouncement);
-      if (broadcastCardEl) {
-        broadcastCardEl.style.cursor = 'pointer';
-        broadcastCardEl.title = 'Click to view Fullscreen Announcement';
-        broadcastCardEl.addEventListener('click', function () {
-          var msg = localStorage.getItem('techboss_custom_broadcast');
-          if (msg && msg.trim()) {
-            showKeynoteAnnouncement(msg);
-          }
-        });
-      }
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && keynoteOverlayEl && keynoteOverlayEl.style.display === 'flex') {
-          closeKeynoteAnnouncement();
-        }
-      });
 
       // Live Apple Clock
       function updateClock() {
@@ -1503,33 +1985,99 @@
           .replace(/'/g, '&#039;');
       }
 
-      // Strictly In-House Contenders Board (Aggregates checkins from QR scanner, Admin, GameZone & Cloud)
-      function getInHouseBoard(includeUnchecked) {
-        var map = new Map();
+      // State for 9-Round Tournament & Active Telemetry
+      var tournamentRounds = [];
+      var selectedRoundScope = 'AUTO'; // 'AUTO', 1..9, 'CUMULATIVE'
+      var activeRoundNum = 1;
+      var activeRoundScores = {};
+      var activeRoundTeams = [];
+      var squadViewMode = 'SQUADS'; // 'SQUADS', 'INDIVIDUAL'
+      var registrationsList = [];
 
-        // Helper to normalize handles for dictionary mapping
-        function normalizeKey(str) {
-          if (!str) return '';
-          return str.toString().toLowerCase().trim().replace(/[^a-z0-9_]/g, '');
+      // Load all registrations for resolving official full name, roll no, branch
+      function loadRegistrationsData() {
+        try {
+          var raw = localStorage.getItem('techboss_registrations');
+          if (raw) {
+            var parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) registrationsList = parsed;
+          }
+        } catch (e) {}
+      }
+
+      // Helper to normalize handles for dictionary mapping
+      function normalizeKey(str) {
+        if (!str) return '';
+        return str.toString().toLowerCase().trim().replace(/[^a-z0-9_]/g, '');
+      }
+
+      // Contender profile resolver (extracts full name, roll, branch, eliminating clumsy usernames)
+      function getContenderProfile(handle, fallbackName) {
+        var cleanH = normalizeKey(handle);
+        var res = {
+          name: '',
+          regNo: '',
+          branch: '',
+          year: '',
+          handle: handle || ''
+        };
+
+        // Check in-house map
+        if (inHouseMap) {
+          for (var k in inHouseMap) {
+            var rec = inHouseMap[k] || {};
+            var rH = normalizeKey(rec.handle || k);
+            if (rH === cleanH) {
+              if (rec.name) res.name = rec.name.trim();
+              if (rec.regNo || rec.reg_no) res.regNo = (rec.regNo || rec.reg_no).trim();
+              if (rec.branch) res.branch = rec.branch.trim();
+              if (rec.year) res.year = rec.year.trim();
+              break;
+            }
+          }
         }
 
-        // 1. Gather all check-ins from inHouseMap (QR scanner, Admin gate, Gamezone)
+        // Check registrations
+        if ((!res.name || !res.regNo || res.regNo === '--') && Array.isArray(registrationsList)) {
+          var match = registrationsList.find(function (r) {
+            return normalizeKey(r.handle) === cleanH ||
+              (r.name && fallbackName && r.name.toLowerCase().trim() === fallbackName.toLowerCase().trim());
+          });
+          if (match) {
+            if (!res.name && match.name) res.name = match.name.trim();
+            if ((!res.regNo || res.regNo === '--') && (match.regNo || match.reg_no)) res.regNo = (match.regNo || match.reg_no).trim();
+            if (!res.branch && match.branch) res.branch = match.branch.trim();
+            if (!res.year && match.year) res.year = match.year.trim();
+          }
+        }
+
+        // Fallback display name
+        if (!res.name) {
+          res.name = fallbackName ? fallbackName.replace(/^@/, '') : (handle ? handle.replace(/^@/, '') : 'Gladiator');
+        }
+
+        return res;
+      }
+
+      // Strictly In-House Contenders Board (Aggregates checkins from QR scanner, Admin, GameZone & Cloud)
+      function getInHouseBoard() {
+        var map = new Map();
+
         // ONLY people who check in to the house are tournament PLAYERS!
-        // All remaining registrations are organizers and do not appear on the scoreboard.
         for (var k in inHouseMap) {
           var rec = inHouseMap[k] || {};
           var rawH = (rec.handle || k || '').trim();
           var handle = rawH ? (rawH.startsWith('@') ? rawH : ('@' + rawH)) : '@contender';
-          var name = (rec.name || '').trim();
           var cleanKey = normalizeKey(handle);
 
           if (cleanKey) {
+            var prof = getContenderProfile(handle, rec.name);
             map.set(cleanKey, {
               handle: handle,
-              name: name,
-              regNo: rec.regNo || rec.reg_no || '',
-              branch: rec.branch || '',
-              year: rec.year || '',
+              name: prof.name,
+              regNo: prof.regNo || '--',
+              branch: prof.branch || '',
+              year: prof.year || '',
               score: 0,
               tier: 'C',
               inHouse: true,
@@ -1538,176 +2086,296 @@
           }
         }
 
-        // 2. Enrich in-house players with registration profile info (roll, branch, year)
-        try {
-          var rawRegs = localStorage.getItem('techboss_registrations');
-          if (rawRegs) {
-            var regList = JSON.parse(rawRegs);
-            if (Array.isArray(regList)) {
-              regList.forEach(function (r) {
-                if (!r) return;
-                var rawH = (r.handle || '').trim();
-                var handle = rawH ? (rawH.startsWith('@') ? rawH : ('@' + rawH)) : '';
-                var cleanKey = normalizeKey(handle);
-                if (cleanKey && map.has(cleanKey)) {
-                  var existing = map.get(cleanKey);
-                  if (!existing.name && r.name) existing.name = r.name;
-                  if (!existing.regNo && (r.regNo || r.reg_no)) existing.regNo = (r.regNo || r.reg_no);
-                  if (!existing.branch && r.branch) existing.branch = r.branch;
-                  if (!existing.year && r.year) existing.year = r.year;
-                }
-              });
+        return Array.from(map.values());
+      }
+
+      // Identify Open Round from tournamentRounds
+      function getOpenRoundMeta() {
+        if (!Array.isArray(tournamentRounds) || !tournamentRounds.length) {
+          return { round_number: 1, title: 'The Awakening', format: 'Individual', type: 'INDIVIDUAL', status: 'OPEN' };
+        }
+        var openR = tournamentRounds.find(function (r) { return r.status === 'OPEN'; });
+        if (openR) return openR;
+        return tournamentRounds[0];
+      }
+
+      // Switch Round Scope (AUTO, 1..9, 'CUMULATIVE')
+      window.selectRoundScope = function (scope) {
+        selectedRoundScope = scope;
+        // Update pill UI active states
+        var pills = document.querySelectorAll('.round-nav-pill, .round-pill-btn');
+        pills.forEach(function (p) { p.classList.remove('active'); });
+
+        if (scope === 'AUTO') {
+          var autoBtn = document.getElementById('pillRoundAuto');
+          if (autoBtn) autoBtn.classList.add('active');
+        } else if (scope === 'CUMULATIVE') {
+          var cumBtn = document.getElementById('pillRoundCumulative');
+          if (cumBtn) cumBtn.classList.add('active');
+        } else {
+          var pill = document.getElementById('pillRound' + scope);
+          if (pill) pill.classList.add('active');
+        }
+
+        loadActiveRoundData();
+      };
+
+      // Switch Squad View Mode ('SQUADS' vs 'INDIVIDUAL')
+      window.setSquadViewMode = function (mode) {
+        squadViewMode = mode || 'SQUADS';
+        var btnSquads = document.getElementById('btnViewSquads');
+        var btnIndiv = document.getElementById('btnViewIndividual');
+        if (btnSquads) {
+          if (squadViewMode === 'SQUADS') btnSquads.classList.add('active');
+          else btnSquads.classList.remove('active');
+        }
+        if (btnIndiv) {
+          if (squadViewMode === 'INDIVIDUAL') btnIndiv.classList.add('active');
+          else btnIndiv.classList.remove('active');
+        }
+        renderArenaTelemetry();
+      };
+
+      // Load active round metadata, teams, and scores
+      async function loadActiveRoundData() {
+        loadRegistrationsData();
+        loadInHouseData();
+
+        // 1. Fetch Rounds
+        if (window.TechBossSupabase) {
+          try {
+            var rList = await window.TechBossSupabase.fetchTournamentRounds();
+            if (Array.isArray(rList) && rList.length) tournamentRounds = rList;
+          } catch (e) {}
+        }
+
+        // 2. Resolve Active Round
+        var isCumulative = (selectedRoundScope === 'CUMULATIVE');
+        var rMeta;
+        if (selectedRoundScope === 'AUTO') {
+          var hasR2Teams = localStorage.getItem('techboss_round2_teams_generated') === 'true';
+          var activeOverride = localStorage.getItem('techboss_active_round');
+          if (activeOverride) {
+            activeRoundNum = parseInt(activeOverride, 10);
+            rMeta = tournamentRounds.find(function (r) { return r.round_number === activeRoundNum; });
+          } else if (hasR2Teams) {
+            var r2Meta = tournamentRounds.find(function (r) { return r.round_number === 2; });
+            var r1Meta = tournamentRounds.find(function (r) { return r.round_number === 1; });
+            if (r2Meta && r2Meta.status === 'OPEN') {
+              activeRoundNum = 2;
+              rMeta = r2Meta;
+            } else if (!r1Meta || r1Meta.status !== 'OPEN') {
+              activeRoundNum = 2;
+              rMeta = r2Meta;
+            } else {
+              rMeta = getOpenRoundMeta();
+              activeRoundNum = rMeta.round_number;
             }
+          } else {
+            rMeta = getOpenRoundMeta();
+            activeRoundNum = rMeta.round_number;
           }
-        } catch (e) { }
 
-        // 3. Attach live damage scores from memoryBoard for verified in-house players
-        if (Array.isArray(memoryBoard)) {
-          memoryBoard.forEach(function (item) {
-            if (!item) return;
-            var rawH = (item.handle || '').trim();
-            var handle = rawH ? (rawH.startsWith('@') ? rawH : ('@' + rawH)) : '';
-            var cleanH = normalizeKey(handle);
-            var scoreVal = parseInt(item.score || 0, 10);
-            if (isNaN(scoreVal)) scoreVal = 0;
+          if (!rMeta) {
+            rMeta = {
+              round_number: activeRoundNum,
+              title: activeRoundNum === 2 ? 'Round 2: Tournament Squads' : ('Round ' + activeRoundNum),
+              format: ([2, 3, 4, 6, 7].includes(activeRoundNum)) ? 'Teams of 4' : 'Individual',
+              type: ([2, 3, 4, 6, 7].includes(activeRoundNum)) ? 'TEAM' : 'INDIVIDUAL',
+              status: 'OPEN'
+            };
+          }
+        } else if (typeof selectedRoundScope === 'number') {
+          activeRoundNum = selectedRoundScope;
+          rMeta = (tournamentRounds && tournamentRounds.find(function (r) { return r.round_number === activeRoundNum; })) || {
+            round_number: activeRoundNum,
+            title: activeRoundNum === 2 ? 'Round 2: Tournament Squads' : ('Round ' + activeRoundNum),
+            format: ([2, 3, 4, 6, 7].includes(activeRoundNum)) ? 'Teams of 4' : 'Individual',
+            type: ([2, 3, 4, 6, 7].includes(activeRoundNum)) ? 'TEAM' : 'INDIVIDUAL',
+            status: 'OPEN'
+          };
+        } else {
+          // CUMULATIVE
+          activeRoundNum = 1;
+          rMeta = { round_number: 0, title: '9-Round Cumulative Championship', format: 'Overall Cumulative', type: 'INDIVIDUAL', status: 'OPEN' };
+        }
 
-            var target = cleanH ? map.get(cleanH) : null;
-            if (!target && item.name) {
-              var cleanN = (item.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-              for (var pair of map.entries()) {
-                var cName = (pair[1].name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                if (cName && cName === cleanN) {
-                  target = pair[1];
-                  break;
+        // Highlight corresponding pill in dock
+        var activePillId = isCumulative ? 'pillRoundCumulative' : (selectedRoundScope === 'AUTO' ? 'pillRoundAuto' : ('pillRound' + activeRoundNum));
+        var targetPill = document.getElementById(activePillId);
+        if (targetPill) {
+          var allPills = document.querySelectorAll('.round-nav-pill, .round-pill-btn');
+          allPills.forEach(function (p) { p.classList.remove('active'); });
+          targetPill.classList.add('active');
+        }
+
+        // 3. Update Round Dock Header UI
+        var roundTitleEl = document.getElementById('arenaRoundTitle');
+        var formatTagEl = document.getElementById('arenaRoundFormatTag');
+        var statusTagEl = document.getElementById('arenaLiveStatusText');
+        var liveIndicatorEl = document.getElementById('arenaLiveIndicator');
+        var squadToggleEl = document.getElementById('squadViewToggle');
+
+        if (roundTitleEl) {
+          roundTitleEl.textContent = isCumulative ? 'Cumulative 9-Round Championship Standings' : ('Round ' + rMeta.round_number + ': ' + (rMeta.title || 'Live Arena'));
+        }
+        if (formatTagEl) {
+          formatTagEl.textContent = isCumulative ? 'Grand Cumulative' : (rMeta.type === 'TEAM' ? ('👥 ' + (rMeta.format || 'Team Battle')) : '👤 Solo Individual');
+        }
+        if (statusTagEl && liveIndicatorEl) {
+          if (rMeta.status === 'LOCKED') {
+            statusTagEl.textContent = 'ROUND LOCKED';
+            liveIndicatorEl.style.background = 'rgba(255, 69, 58, 0.18)';
+            liveIndicatorEl.style.color = 'var(--apple-red)';
+            liveIndicatorEl.style.borderColor = 'rgba(255, 69, 58, 0.4)';
+          } else if (rMeta.status === 'NOT_STARTED') {
+            statusTagEl.textContent = 'NOT STARTED';
+            liveIndicatorEl.style.background = 'rgba(255, 255, 255, 0.1)';
+            liveIndicatorEl.style.color = '#94a3b8';
+            liveIndicatorEl.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+          } else {
+            statusTagEl.textContent = '🟢 OPEN IN COMMAND CENTER';
+            liveIndicatorEl.style.background = 'rgba(48, 209, 88, 0.18)';
+            liveIndicatorEl.style.color = 'var(--apple-green)';
+            liveIndicatorEl.style.borderColor = 'rgba(48, 209, 88, 0.4)';
+          }
+        }
+
+        // Show/hide squad view toggle based on format
+        if (squadToggleEl) {
+          squadToggleEl.style.display = (!isCumulative && rMeta.type === 'TEAM') ? 'inline-flex' : 'none';
+        }
+
+        // 4. Fetch Scores for active round
+        if (!isCumulative && window.TechBossSupabase) {
+          try {
+            activeRoundScores = await window.TechBossSupabase.fetchTournamentScores(activeRoundNum) || {};
+          } catch (e) {}
+        } else {
+          activeRoundScores = {};
+        }
+
+        // 5. Fetch Teams if team round
+        if (!isCumulative && rMeta.type === 'TEAM') {
+          var scopeKey = 'ROUND_' + activeRoundNum;
+          if (activeRoundNum === 4) scopeKey = 'ROUND_3'; // Round 4 teams linked to Round 3
+          activeRoundTeams = [];
+          if (window.TechBossSupabase) {
+            try {
+              activeRoundTeams = await window.TechBossSupabase.fetchTournamentTeams(scopeKey) || [];
+            } catch (e) {}
+          }
+          if (!Array.isArray(activeRoundTeams) || activeRoundTeams.length === 0) {
+            try {
+              if (window.TechBossSupabase && typeof window.TechBossSupabase.getLocalTournamentTeams === 'function') {
+                activeRoundTeams = window.TechBossSupabase.getLocalTournamentTeams(scopeKey) || [];
+              }
+              if (!Array.isArray(activeRoundTeams) || activeRoundTeams.length === 0) {
+                var rawT = localStorage.getItem('techboss_tournament_teams');
+                if (rawT) {
+                  var mapT = JSON.parse(rawT);
+                  activeRoundTeams = mapT[scopeKey] || (Array.isArray(mapT) ? mapT : []);
                 }
               }
-            }
-
-            if (target) {
-              target.score = scoreVal;
-              target.tier = tierFor(target.score);
-            }
-          });
-        }
-
-        var result = Array.from(map.values());
-        // Sort primarily by Damage Score descending; tie-breaker: handle
-        result.sort(function (a, b) {
-          if (b.score !== a.score) return b.score - a.score;
-          return a.handle.localeCompare(b.handle);
-        });
-        return result;
-      }
-
-      // Load Telemetry Stats & Broadcast
-      function loadBroadcast(triggerFullscreen) {
-        var msg = localStorage.getItem('techboss_custom_broadcast');
-        if (msg && typeof msg === 'string') {
-          msg = msg.trim();
-          if (!msg.startsWith('{') && !msg.startsWith('[')) {
-            var isNew = (lastSeenAnnouncement !== msg);
-            if (broadcastTextEl) broadcastTextEl.textContent = msg;
-            var timeStr = 'UPDATED ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            if (broadcastTimestampEl) broadcastTimestampEl.textContent = timeStr;
-
-            if (isNew || triggerFullscreen) {
-              lastSeenAnnouncement = msg;
-              showKeynoteAnnouncement(msg, timeStr);
-            }
+            } catch (e) {}
           }
+        } else {
+          activeRoundTeams = [];
         }
+
+        renderArenaTelemetry();
       }
 
-      function loadInHouseData() {
-        try {
-          var raw = localStorage.getItem('techboss_inhouse_checkins');
-          inHouseMap = raw ? JSON.parse(raw) : {};
-        } catch (e) {
-          inHouseMap = {};
-        }
-      }
+      // Main Render Coordinator
+      function renderArenaTelemetry() {
+        var isCumulative = (selectedRoundScope === 'CUMULATIVE');
+        var rMeta = isCumulative ? null : (tournamentRounds.find(function (r) { return r.round_number === activeRoundNum; }) || {
+          round_number: activeRoundNum,
+          type: ([2, 3, 4, 6, 7].includes(activeRoundNum)) ? 'TEAM' : 'INDIVIDUAL'
+        });
 
-      function renderPodium(items) {
-        var p1 = items[0];
-        var p2 = items[1];
-        var p3 = items[2];
-
-        // Rank 1
-        if (p1 && p1.score > 0) {
-          document.getElementById('podiumHandle1').textContent = p1.handle;
-          document.getElementById('podiumName1').textContent = p1.name || 'Arena Warrior';
-          document.getElementById('podiumScore1').innerHTML = p1.score.toLocaleString() + ' <span>DMG</span>';
-          document.getElementById('podiumTier1').textContent = 'Tier ' + tierFor(p1.score);
-        } else if (p1) {
-          document.getElementById('podiumHandle1').textContent = p1.handle;
-          document.getElementById('podiumName1').textContent = p1.name || 'Arena Warrior';
-          document.getElementById('podiumScore1').innerHTML = '0 <span>DMG</span>';
-          document.getElementById('podiumTier1').textContent = 'Tier C';
-        } else {
-          document.getElementById('podiumHandle1').textContent = '@challenger_1';
-          document.getElementById('podiumName1').textContent = 'Awaiting In-House Player';
-          document.getElementById('podiumScore1').innerHTML = '0 <span>DMG</span>';
-          document.getElementById('podiumTier1').textContent = 'Tier S';
-        }
-
-        // Rank 2
-        if (p2 && p2.score > 0) {
-          document.getElementById('podiumHandle2').textContent = p2.handle;
-          document.getElementById('podiumName2').textContent = p2.name || 'Arena Warrior';
-          document.getElementById('podiumScore2').innerHTML = p2.score.toLocaleString() + ' <span>DMG</span>';
-          document.getElementById('podiumTier2').textContent = 'Tier ' + tierFor(p2.score);
-        } else if (p2) {
-          document.getElementById('podiumHandle2').textContent = p2.handle;
-          document.getElementById('podiumName2').textContent = p2.name || 'Arena Warrior';
-          document.getElementById('podiumScore2').innerHTML = '0 <span>DMG</span>';
-          document.getElementById('podiumTier2').textContent = 'Tier C';
-        } else {
-          document.getElementById('podiumHandle2').textContent = '@challenger_2';
-          document.getElementById('podiumName2').textContent = 'Awaiting In-House Player';
-          document.getElementById('podiumScore2').innerHTML = '0 <span>DMG</span>';
-          document.getElementById('podiumTier2').textContent = 'Tier A';
-        }
-
-        // Rank 3
-        if (p3 && p3.score > 0) {
-          document.getElementById('podiumHandle3').textContent = p3.handle;
-          document.getElementById('podiumName3').textContent = p3.name || 'Arena Warrior';
-          document.getElementById('podiumScore3').innerHTML = p3.score.toLocaleString() + ' <span>DMG</span>';
-          document.getElementById('podiumTier3').textContent = 'Tier ' + tierFor(p3.score);
-        } else if (p3) {
-          document.getElementById('podiumHandle3').textContent = p3.handle;
-          document.getElementById('podiumName3').textContent = p3.name || 'Arena Warrior';
-          document.getElementById('podiumScore3').innerHTML = '0 <span>DMG</span>';
-          document.getElementById('podiumTier3').textContent = 'Tier C';
-        } else {
-          document.getElementById('podiumHandle3').textContent = '@challenger_3';
-          document.getElementById('podiumName3').textContent = 'Awaiting In-House Player';
-          document.getElementById('podiumScore3').innerHTML = '0 <span>DMG</span>';
-          document.getElementById('podiumTier3').textContent = 'Tier B';
-        }
-      }
-
-      function renderScoreboard() {
-        var dataset = getInHouseBoard();
-
-        // Podium highlights top in-house contenders
-        renderPodium(dataset);
+        var inHousePlayers = getInHouseBoard();
 
         if (countBadgeEl) {
-          countBadgeEl.textContent = dataset.length + ' In-House Players';
+          countBadgeEl.textContent = inHousePlayers.length + ' In-House Players';
         }
 
-        // Filtering & Search
+        if (!isCumulative && rMeta && rMeta.type === 'TEAM') {
+          renderTeamArena(inHousePlayers);
+        } else {
+          renderSoloArena(inHousePlayers, isCumulative);
+        }
+      }
+
+      // Render Individual Round or Cumulative Standings
+      function renderSoloArena(inHousePlayers, isCumulative) {
+        var squadsViewEl = document.getElementById('teamSquadsContainer');
+        var individualViewEl = document.getElementById('individualTableContainer');
+        var podiumEyebrowEl = document.getElementById('podiumEyebrow');
+        var podiumMainTitleEl = document.getElementById('podiumMainTitle');
+        var damageHeaderEl = document.getElementById('damageColumnHeader');
+
+        if (squadsViewEl) squadsViewEl.style.display = 'none';
+        if (individualViewEl) individualViewEl.style.display = 'block';
+
+        if (podiumEyebrowEl) {
+          podiumEyebrowEl.textContent = isCumulative ? 'Grand Championship Apex' : ('Round ' + activeRoundNum + ' Apex Standings');
+        }
+        if (podiumMainTitleEl) {
+          podiumMainTitleEl.textContent = isCumulative ? 'Top 3 Glory Showcase' : ('Top 3 Gladiators · Round ' + activeRoundNum);
+        }
+        if (damageHeaderEl) {
+          damageHeaderEl.textContent = isCumulative ? 'Cumulative Damage' : ('Round ' + activeRoundNum + ' Damage');
+        }
+
+        // Attach round scores or cumulative scores
+        var dataset = inHousePlayers.map(function (p) {
+          var normH = normalizeKey(p.handle);
+          var scoreVal = 0;
+          if (isCumulative) {
+            // Find cumulative score from memoryBoard
+            var memItem = memoryBoard.find(function (m) { return normalizeKey(m.handle) === normH; });
+            scoreVal = memItem ? (parseInt(memItem.score, 10) || 0) : 0;
+          } else {
+            // Find round individual score saved in admin panel
+            var scObj = activeRoundScores[normH];
+            if (scObj && scObj.individual_score !== undefined) {
+              scoreVal = parseInt(scObj.individual_score, 10) || 0;
+            } else if (scObj && scObj.round_total !== undefined) {
+              scoreVal = parseInt(scObj.round_total, 10) || 0;
+            }
+          }
+          return {
+            handle: p.handle,
+            name: p.name,
+            regNo: p.regNo,
+            branch: p.branch,
+            year: p.year,
+            score: scoreVal,
+            tier: tierFor(scoreVal),
+            inHouse: p.inHouse,
+            checkinTime: p.checkinTime
+          };
+        });
+
+        // Sort primarily by score descending
+        dataset.sort(function (a, b) {
+          if (b.score !== a.score) return b.score - a.score;
+          return a.name.localeCompare(b.name);
+        });
+
+        // Render Podium with Player Names (No Usernames!)
+        renderSoloPodium(dataset);
+
+        // Filter & Search Table
         var filtered = dataset.filter(function (item) {
           var q = currentSearch.toLowerCase();
           var matchesSearch = !q ||
-            (item.handle && item.handle.toLowerCase().includes(q)) ||
             (item.name && item.name.toLowerCase().includes(q)) ||
             (item.regNo && item.regNo.toLowerCase().includes(q)) ||
             (item.branch && item.branch.toLowerCase().includes(q));
 
           if (!matchesSearch) return false;
-
           if (currentFilter === 'top10') return true;
           if (currentFilter === 'tierSA') {
             var t = tierFor(item.score);
@@ -1723,10 +2391,9 @@
         if (!filtered.length) {
           tableBodyEl.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 40px 20px; color: var(--text-secondary);">' +
             '<div style="font-size: 32px; margin-bottom: 8px;">🏟️</div>' +
-            '<div style="font-weight: 700; color: #ffffff; font-size: 16px; margin-bottom: 4px;">Awaiting In-House Player Check-Ins</div>' +
-            '<div style="font-size: 13px; max-width: 460px; margin: 0 auto; line-height: 1.5; color: var(--text-secondary);">' +
-              'Contenders admitted at the Arena Gate Scanner will dynamically appear here in real-time.<br>' +
-              '<span style="color:var(--text-tertiary); font-size:12px;">(Contenders who check-in to the house are the tournament players; remaining registrations are organizers.)</span>' +
+            '<div style="font-weight: 700; color: #ffffff; font-size: 16px; margin-bottom: 4px;">Awaiting In-House Contenders</div>' +
+            '<div style="font-size: 13px; color: var(--text-secondary); max-width: 480px; margin: 0 auto; line-height: 1.5;">' +
+              'Contenders admitted at the Arena Gate will appear here in real-time. Scores saved in the Admin Command Center update automatically.' +
             '</div>' +
             '</td></tr>';
           return;
@@ -1734,53 +2401,28 @@
 
         var maxScore = dataset[0] && dataset[0].score > 0 ? dataset[0].score : 1000;
 
-        var html = filtered.map(function (item, idx) {
+        tableBodyEl.innerHTML = filtered.map(function (item, idx) {
           var rank = idx + 1;
           var tier = tierFor(item.score);
-
           var rankDisplay = rank === 1 ? '🥇 1st' : (rank === 2 ? '🥈 2nd' : (rank === 3 ? '🥉 3rd' : '#' + rank));
           var rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
-
           var barWidth = item.score > 0 ? Math.min(100, Math.max(8, Math.round((item.score / maxScore) * 100))) : 0;
-          var barGradient = item.score > 0 
-            ? 'background: linear-gradient(90deg, #2997ff, #30d158);' 
-            : 'background: rgba(255,255,255,0.06);';
+          var barGradient = item.score > 0 ? 'background: linear-gradient(90deg, #2997ff, #30d158);' : 'background: rgba(255,255,255,0.06);';
 
           var subMeta = [];
-          if (item.name) subMeta.push('<span style="color:#ffffff; font-weight:700;">' + escapeHtml(item.name) + '</span>');
-          if (item.regNo && item.regNo !== '--') subMeta.push('Roll: <b style="color:#38bdf8;">' + escapeHtml(item.regNo) + '</b>');
+          if (item.regNo && item.regNo !== '--') subMeta.push('Roll: <span class="contender-roll-tag">' + escapeHtml(item.regNo) + '</span>');
           if (item.branch) subMeta.push(escapeHtml(item.branch) + (item.year ? (' (' + escapeHtml(item.year) + ')') : ''));
 
-          // Tournament Squad badge if player is in a team
-          try {
-            var normH = normalizeKey(item.handle);
-            var rawTeams = localStorage.getItem('techboss_tournament_teams');
-            if (rawTeams) {
-              var parsedT = JSON.parse(rawTeams);
-              for (var sc in parsedT) {
-                if (Array.isArray(parsedT[sc])) {
-                  parsedT[sc].forEach(function(t) {
-                    (t.members || []).forEach(function(m) {
-                      if (normalizeKey(m.player_handle) === normH) {
-                        subMeta.push('<span style="color:#00f0ff; font-weight:800; background:rgba(0,240,255,0.1); border:1px solid rgba(0,240,255,0.25); border-radius:4px; padding:1px 6px; font-size:11px;">🛡️ ' + escapeHtml(t.team_name) + '</span>');
-                      }
-                    });
-                  });
-                }
-              }
-            }
-          } catch (e) {}
-
           var statusPill = item.inHouse
-            ? '<span class="status-pill"><span class="live-dot" style="width:7px; height:7px; background:var(--apple-green); display:inline-block; border-radius:50%; box-shadow:0 0 10px var(--apple-green);"></span> In House' + (item.checkinTime ? (' · ' + escapeHtml(item.checkinTime)) : '') + '</span>'
-            : '<span class="status-pill" style="color:var(--text-secondary); background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.14); font-weight:700;">⚪ Awaiting Entry</span>';
+            ? '<span class="status-pill"><span class="live-dot" style="width:7px; height:7px;"></span> In House' + (item.checkinTime ? (' · ' + escapeHtml(item.checkinTime)) : '') + '</span>'
+            : '<span class="status-pill" style="color:var(--text-secondary); background:rgba(255,255,255,0.06);">⚪ Awaiting Entry</span>';
 
           return '<tr>' +
             '<td><div class="rank-cell ' + rankClass + '">' + rankDisplay + '</div></td>' +
             '<td>' +
               '<div class="contender-identity">' +
-                '<span class="contender-tag">' + escapeHtml(item.handle) + '</span>' +
-                (subMeta.length ? '<span class="contender-fullname">' + subMeta.join(' · ') + '</span>' : '') +
+                '<span class="contender-fullname-main">' + escapeHtml(item.name.toUpperCase()) + '</span>' +
+                (subMeta.length ? '<span class="contender-sub-meta">' + subMeta.join(' · ') + '</span>' : '') +
               '</div>' +
             '</td>' +
             '<td>' +
@@ -1795,8 +2437,358 @@
             '<td style="text-align: center;">' + statusPill + '</td>' +
           '</tr>';
         }).join('');
+      }
 
-        tableBodyEl.innerHTML = html;
+      // Solo Podium Renderer (Shows Player Names prominently - No Usernames!)
+      function renderSoloPodium(items) {
+        var p1 = items[0];
+        var p2 = items[1];
+        var p3 = items[2];
+
+        // Rank 1
+        var pName1 = document.getElementById('podiumName1');
+        var pMeta1 = document.getElementById('podiumMeta1');
+        var pScore1 = document.getElementById('podiumScore1');
+        var pTier1 = document.getElementById('podiumTier1');
+        var pRankPill1 = document.getElementById('podiumRankPill1');
+
+        if (pRankPill1) pRankPill1.textContent = 'Champion #1';
+        if (p1) {
+          if (pName1) pName1.textContent = p1.name.toUpperCase();
+          if (pMeta1) pMeta1.textContent = (p1.regNo && p1.regNo !== '--' ? ('Roll: ' + p1.regNo) : '') + (p1.branch ? (' · ' + p1.branch) : '');
+          if (pScore1) pScore1.innerHTML = p1.score.toLocaleString() + ' <span>DMG</span>';
+          if (pTier1) pTier1.textContent = 'Tier ' + tierFor(p1.score) + ' Apex';
+        } else {
+          if (pName1) pName1.textContent = 'Awaiting In-House Contender';
+          if (pMeta1) pMeta1.textContent = 'Roll: --';
+          if (pScore1) pScore1.innerHTML = '0 <span>DMG</span>';
+          if (pTier1) pTier1.textContent = 'Tier S Apex';
+        }
+
+        // Rank 2
+        var pName2 = document.getElementById('podiumName2');
+        var pMeta2 = document.getElementById('podiumMeta2');
+        var pScore2 = document.getElementById('podiumScore2');
+        var pTier2 = document.getElementById('podiumTier2');
+        var pRankPill2 = document.getElementById('podiumRankPill2');
+
+        if (pRankPill2) pRankPill2.textContent = '2nd Place';
+        if (p2) {
+          if (pName2) pName2.textContent = p2.name.toUpperCase();
+          if (pMeta2) pMeta2.textContent = (p2.regNo && p2.regNo !== '--' ? ('Roll: ' + p2.regNo) : '') + (p2.branch ? (' · ' + p2.branch) : '');
+          if (pScore2) pScore2.innerHTML = p2.score.toLocaleString() + ' <span>DMG</span>';
+          if (pTier2) pTier2.textContent = 'Tier ' + tierFor(p2.score);
+        } else {
+          if (pName2) pName2.textContent = 'Awaiting Contender';
+          if (pMeta2) pMeta2.textContent = 'Roll: --';
+          if (pScore2) pScore2.innerHTML = '0 <span>DMG</span>';
+          if (pTier2) pTier2.textContent = 'Tier A';
+        }
+
+        // Rank 3
+        var pName3 = document.getElementById('podiumName3');
+        var pMeta3 = document.getElementById('podiumMeta3');
+        var pScore3 = document.getElementById('podiumScore3');
+        var pTier3 = document.getElementById('podiumTier3');
+        var pRankPill3 = document.getElementById('podiumRankPill3');
+
+        if (pRankPill3) pRankPill3.textContent = '3rd Place';
+        if (p3) {
+          if (pName3) pName3.textContent = p3.name.toUpperCase();
+          if (pMeta3) pMeta3.textContent = (p3.regNo && p3.regNo !== '--' ? ('Roll: ' + p3.regNo) : '') + (p3.branch ? (' · ' + p3.branch) : '');
+          if (pScore3) pScore3.innerHTML = p3.score.toLocaleString() + ' <span>DMG</span>';
+          if (pTier3) pTier3.textContent = 'Tier ' + tierFor(p3.score);
+        } else {
+          if (pName3) pName3.textContent = 'Awaiting Contender';
+          if (pMeta3) pMeta3.textContent = 'Roll: --';
+          if (pScore3) pScore3.innerHTML = '0 <span>DMG</span>';
+          if (pTier3) pTier3.textContent = 'Tier B';
+        }
+      }
+
+      // Render Team Round (Squad Cards & Team Podium)
+      function renderTeamArena(inHousePlayers) {
+        var squadsViewEl = document.getElementById('teamSquadsContainer');
+        var individualViewEl = document.getElementById('individualTableContainer');
+        var squadsGridEl = document.getElementById('squadsGrid');
+        var podiumEyebrowEl = document.getElementById('podiumEyebrow');
+        var podiumMainTitleEl = document.getElementById('podiumMainTitle');
+
+        if (podiumEyebrowEl) podiumEyebrowEl.textContent = 'Round ' + activeRoundNum + ' Team Apex';
+        if (podiumMainTitleEl) podiumMainTitleEl.textContent = 'Top 3 Squad Glory Showcase';
+
+        if (!activeRoundTeams || !activeRoundTeams.length) {
+          if (squadsViewEl) {
+            squadsViewEl.style.display = 'block';
+            squadsGridEl.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: rgba(22, 22, 28, 0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);">' +
+              '<div style="font-size: 36px; margin-bottom: 8px;">🛡️</div>' +
+              '<h3 style="font-size: 18px; font-weight: 800; color: #ffffff; margin-bottom: 6px;">Awaiting Round ' + activeRoundNum + ' Squad Generation</h3>' +
+              '<p style="font-size: 13px; color: var(--text-secondary); max-width: 460px; margin: 0 auto;">' +
+                'Teams have not been generated yet for Round ' + activeRoundNum + ' in the Admin Dashboard. Once generated and scored, live squad damage telemetry will appear here.' +
+              '</p>' +
+              '</div>';
+          }
+          if (individualViewEl) individualViewEl.style.display = 'none';
+          renderSoloPodium([]);
+          return;
+        }
+
+        // Process squads data
+        var squads = activeRoundTeams.map(function (team, tIdx) {
+          var teamName = team.team_name || ('TEAM ' + (tIdx + 1));
+          var members = (team.members || []).map(function (m) {
+            var rawH = m.player_handle || '';
+            var prof = getContenderProfile(rawH, m.player_name);
+            var normH = normalizeKey(rawH);
+            var scObj = activeRoundScores[normH] || {};
+            var teamSc = parseInt(scObj.team_score, 10) || 0;
+            var indSc = parseInt(scObj.individual_score, 10) || 0;
+            var roundTotal = scObj.round_total !== undefined ? parseInt(scObj.round_total, 10) : (indSc > 0 ? indSc : teamSc);
+
+            return {
+              handle: rawH,
+              name: prof.name,
+              regNo: (m.reg_no || m.regNo || prof.regNo || '--'),
+              branch: prof.branch || '',
+              year: prof.year || '',
+              teamScore: teamSc,
+              individualScore: indSc,
+              roundTotal: roundTotal
+            };
+          });
+
+          // Squad score is the team_score saved in admin panel
+          var squadScore = 0;
+          members.forEach(function (m) {
+            if (m.teamScore > squadScore) squadScore = m.teamScore;
+          });
+
+          return {
+            id: team.id || ('team_' + tIdx),
+            name: teamName,
+            score: squadScore,
+            members: members
+          };
+        });
+
+        // Sort squads by team score descending
+        squads.sort(function (a, b) {
+          if (b.score !== a.score) return b.score - a.score;
+          return a.name.localeCompare(b.name);
+        });
+
+        // Update section heading and count
+        var titleEl = document.getElementById('arenaSectionTitle');
+        if (titleEl) {
+          titleEl.textContent = 'Round ' + activeRoundNum + ' Tournament Squads Battle Grid';
+        }
+        var countEl = document.getElementById('contenderCountBadge');
+        if (countEl) {
+          var totalMembers = squads.reduce(function(acc, s) { return acc + (s.members ? s.members.length : 0); }, 0);
+          countEl.textContent = squads.length + ' Combat Squads (' + totalMembers + ' Operatives)';
+        }
+
+        // Render Team Podium
+        renderTeamPodium(squads);
+
+        // Render Views based on squadViewMode
+        if (squadViewMode === 'SQUADS') {
+          if (squadsViewEl) squadsViewEl.style.display = 'block';
+          if (individualViewEl) individualViewEl.style.display = 'none';
+
+          var filteredSquads = squads;
+          var q = (currentSearch || '').trim().toLowerCase();
+          if (q) {
+            filteredSquads = squads.filter(function (sq) {
+              if (sq.name && sq.name.toLowerCase().includes(q)) return true;
+              return (sq.members || []).some(function (m) {
+                return (m.name && m.name.toLowerCase().includes(q)) ||
+                  (m.handle && m.handle.toLowerCase().includes(q)) ||
+                  (m.regNo && m.regNo.toLowerCase().includes(q));
+              });
+            });
+          }
+
+          if (!filteredSquads.length) {
+            squadsGridEl.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: rgba(22, 22, 28, 0.6); border: 1px dashed var(--border-subtle); border-radius: var(--radius-md);">' +
+              '<div style="font-size: 32px; margin-bottom: 8px;">🔍</div>' +
+              '<h3 style="font-size: 16px; font-weight: 800; color: #ffffff; margin-bottom: 4px;">No Squads Found</h3>' +
+              '<p style="font-size: 13px; color: var(--text-secondary); margin: 0;">No squads or operatives match "' + escapeHtml(q) + '".</p>' +
+              '</div>';
+          } else {
+            squadsGridEl.innerHTML = filteredSquads.map(function (squad, sIdx) {
+              var rank = sIdx + 1;
+              var rankBadgeClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
+              var rankText = rank === 1 ? '🥇 #1' : (rank === 2 ? '🥈 #2' : (rank === 3 ? '🥉 #3' : '#' + rank));
+
+              var memberRowsHtml = squad.members.map(function (m) {
+                var regTag = m.regNo && m.regNo !== '--' ? (' · <b style="color:var(--apple-cyan);">' + escapeHtml(m.regNo) + '</b>') : '';
+                return '<div class="squad-member-row">' +
+                  '<div class="squad-member-info">' +
+                    '<span class="squad-member-name">' + escapeHtml(m.name.toUpperCase()) + '</span>' +
+                    '<span class="squad-member-meta">' + (m.branch ? escapeHtml(m.branch) : 'Contender') + regTag + '</span>' +
+                  '</div>' +
+                  '<div class="squad-member-score-wrap">' +
+                    '<div class="squad-member-total">' + m.roundTotal.toLocaleString() + ' <span style="font-size:10px; color:#a1a1aa;">DMG</span></div>' +
+                    '<div class="squad-member-breakdown">' + (m.teamScore > 0 ? ('Team: ' + m.teamScore) : '') + (m.individualScore > 0 ? (' + Indiv: ' + m.individualScore) : '') + '</div>' +
+                  '</div>' +
+                  '</div>';
+              }).join('');
+
+              return '<div class="squad-card">' +
+                '<div class="squad-header">' +
+                  '<div class="squad-identity">' +
+                    '<span class="squad-rank-badge ' + rankBadgeClass + '">' + rankText + '</span>' +
+                    '<h3 class="squad-name">' + escapeHtml(squad.name) + '</h3>' +
+                  '</div>' +
+                  '<span class="team-score-badge">🛡️ TEAM SCORE: ' + squad.score.toLocaleString() + ' DMG</span>' +
+                '</div>' +
+                '<div class="squad-member-list">' + memberRowsHtml + '</div>' +
+                '</div>';
+            }).join('');
+          }
+
+        } else {
+          // INDIVIDUAL ROSTER VIEW FOR TEAM ROUND
+          if (squadsViewEl) squadsViewEl.style.display = 'none';
+          if (individualViewEl) individualViewEl.style.display = 'block';
+
+          var allMembers = [];
+          squads.forEach(function (sq) {
+            sq.members.forEach(function (m) {
+              allMembers.push(Object.assign({}, m, { squadName: sq.name }));
+            });
+          });
+
+          // Sort members by roundTotal descending
+          allMembers.sort(function (a, b) {
+            if (b.roundTotal !== a.roundTotal) return b.roundTotal - a.roundTotal;
+            return a.name.localeCompare(b.name);
+          });
+
+          // Search filtering
+          var q = currentSearch.toLowerCase();
+          var filteredMembers = allMembers.filter(function (item) {
+            return !q ||
+              (item.name && item.name.toLowerCase().includes(q)) ||
+              (item.regNo && item.regNo.toLowerCase().includes(q)) ||
+              (item.squadName && item.squadName.toLowerCase().includes(q));
+          });
+
+          var maxScore = allMembers[0] && allMembers[0].roundTotal > 0 ? allMembers[0].roundTotal : 1000;
+
+          tableBodyEl.innerHTML = filteredMembers.map(function (item, idx) {
+            var rank = idx + 1;
+            var tier = tierFor(item.roundTotal);
+            var rankDisplay = rank === 1 ? '🥇 1st' : (rank === 2 ? '🥈 2nd' : (rank === 3 ? '🥉 3rd' : '#' + rank));
+            var rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
+            var barWidth = item.roundTotal > 0 ? Math.min(100, Math.max(8, Math.round((item.roundTotal / maxScore) * 100))) : 0;
+
+            return '<tr>' +
+              '<td><div class="rank-cell ' + rankClass + '">' + rankDisplay + '</div></td>' +
+              '<td>' +
+                '<div class="contender-identity">' +
+                  '<span class="contender-fullname-main">' + escapeHtml(item.name.toUpperCase()) + '</span>' +
+                  '<span class="contender-sub-meta">' +
+                    '<span style="color:#00f0ff; font-weight:800; background:rgba(0,240,255,0.1); border:1px solid rgba(0,240,255,0.25); border-radius:4px; padding:1px 6px; font-size:11px;">🛡️ ' + escapeHtml(item.squadName) + '</span>' +
+                    (item.regNo && item.regNo !== '--' ? (' · Roll: <span class="contender-roll-tag">' + escapeHtml(item.regNo) + '</span>') : '') +
+                  '</span>' +
+                '</div>' +
+              '</td>' +
+              '<td>' +
+                '<div class="damage-cell">' +
+                  '<span class="damage-num">' + item.roundTotal.toLocaleString() + ' <span style="font-size:11.5px; color:#a1a1aa; font-weight:800;">DMG</span></span>' +
+                  '<div class="damage-bar-wrap">' +
+                    '<div class="damage-bar-fill" style="width: ' + barWidth + '%;"></div>' +
+                  '</div>' +
+                '</div>' +
+              '</td>' +
+              '<td style="text-align: center;"><span class="tier-pill tier-' + tier + '">Tier ' + tier + '</span></td>' +
+              '<td style="text-align: center;"><span class="status-pill"><span class="live-dot" style="width:7px; height:7px;"></span> In House</span></td>' +
+            '</tr>';
+          }).join('');
+        }
+      }
+
+      // Team Podium Renderer (Shows Top 3 Squads with Team Scores)
+      function renderTeamPodium(squads) {
+        var s1 = squads[0];
+        var s2 = squads[1];
+        var s3 = squads[2];
+
+        // Rank 1 Squad
+        var pName1 = document.getElementById('podiumName1');
+        var pMeta1 = document.getElementById('podiumMeta1');
+        var pScore1 = document.getElementById('podiumScore1');
+        var pTier1 = document.getElementById('podiumTier1');
+        var pRankPill1 = document.getElementById('podiumRankPill1');
+
+        if (pRankPill1) pRankPill1.textContent = 'Squad Champion #1';
+        if (s1) {
+          if (pName1) pName1.textContent = s1.name;
+          if (pMeta1) pMeta1.textContent = (s1.members || []).map(function (m) { return m.name; }).join(' · ');
+          if (pScore1) pScore1.innerHTML = s1.score.toLocaleString() + ' <span>DMG</span>';
+          if (pTier1) pTier1.textContent = 'Team Score';
+        } else {
+          if (pName1) pName1.textContent = 'Awaiting Squad';
+          if (pMeta1) pMeta1.textContent = 'Roster: --';
+          if (pScore1) pScore1.innerHTML = '0 <span>DMG</span>';
+          if (pTier1) pTier1.textContent = 'Squad S';
+        }
+
+        // Rank 2 Squad
+        var pName2 = document.getElementById('podiumName2');
+        var pMeta2 = document.getElementById('podiumMeta2');
+        var pScore2 = document.getElementById('podiumScore2');
+        var pTier2 = document.getElementById('podiumTier2');
+        var pRankPill2 = document.getElementById('podiumRankPill2');
+
+        if (pRankPill2) pRankPill2.textContent = '2nd Place Squad';
+        if (s2) {
+          if (pName2) pName2.textContent = s2.name;
+          if (pMeta2) pMeta2.textContent = (s2.members || []).map(function (m) { return m.name; }).join(' · ');
+          if (pScore2) pScore2.innerHTML = s2.score.toLocaleString() + ' <span>DMG</span>';
+          if (pTier2) pTier2.textContent = 'Team Score';
+        } else {
+          if (pName2) pName2.textContent = 'Awaiting Squad';
+          if (pMeta2) pMeta2.textContent = 'Roster: --';
+          if (pScore2) pScore2.innerHTML = '0 <span>DMG</span>';
+          if (pTier2) pTier2.textContent = 'Squad A';
+        }
+
+        // Rank 3 Squad
+        var pName3 = document.getElementById('podiumName3');
+        var pMeta3 = document.getElementById('podiumMeta3');
+        var pScore3 = document.getElementById('podiumScore3');
+        var pTier3 = document.getElementById('podiumTier3');
+        var pRankPill3 = document.getElementById('podiumRankPill3');
+
+        if (pRankPill3) pRankPill3.textContent = '3rd Place Squad';
+        if (s3) {
+          if (pName3) pName3.textContent = s3.name;
+          if (pMeta3) pMeta3.textContent = (s3.members || []).map(function (m) { return m.name; }).join(' · ');
+          if (pScore3) pScore3.innerHTML = s3.score.toLocaleString() + ' <span>DMG</span>';
+          if (pTier3) pTier3.textContent = 'Team Score';
+        } else {
+          if (pName3) pName3.textContent = 'Awaiting Squad';
+          if (pMeta3) pMeta3.textContent = 'Roster: --';
+          if (pScore3) pScore3.innerHTML = '0 <span>DMG</span>';
+          if (pTier3) pTier3.textContent = 'Squad B';
+        }
+      }
+
+      // Text announcements disabled per user request
+      function loadBroadcast(triggerFullscreen) {
+        return;
+      }
+
+      function loadInHouseData() {
+        try {
+          var raw = localStorage.getItem('techboss_inhouse_checkins');
+          inHouseMap = raw ? JSON.parse(raw) : {};
+        } catch (e) {
+          inHouseMap = {};
+        }
       }
 
       // Main Data Loader
@@ -1812,8 +2804,7 @@
         } catch (e) { }
 
         loadBroadcast();
-        loadInHouseData();
-        renderScoreboard();
+        loadActiveRoundData();
       }
 
       // Initial Load
@@ -2045,12 +3036,20 @@
           syncChannel.onmessage = function (ev) {
             if (ev.data) {
               if (ev.data.type === 'SCORE_UPDATE' || ev.data.type === 'BOARD_UPDATED') {
-                loadAllData();
+                loadActiveRoundData();
+              } else if (ev.data.type === 'ROUND_STATUS_CHANGED') {
+                loadActiveRoundData();
+              } else if (ev.data.type === 'TEAMS_UPDATED') {
+                if (ev.data.scope === 'ROUND_2' || (ev.data.teams && ev.data.teams.length > 0)) {
+                  window.selectRoundScope(2);
+                } else {
+                  loadActiveRoundData();
+                }
               } else if (ev.data.type === 'TELEMETRY_BROADCAST') {
                 loadBroadcast();
-              } else if (ev.data.type === 'INHOUSE_CHECKIN' || ev.data.type === 'INHOUSE_QR_SCANNED') {
+              } else if (ev.data.type === 'INHOUSE_CHECKIN' || ev.data.type === 'INHOUSE_QR_SCANNED' || ev.data.type === 'INHOUSE_UPDATE') {
                 loadInHouseData();
-                renderScoreboard();
+                loadActiveRoundData();
                 if (ev.data.contender || ev.data.handle) {
                   showScoreboardWelcomeGreeting(ev.data.contender || ev.data.handle);
                 }
@@ -2072,10 +3071,21 @@
 
       // Storage event listener across tabs
       window.addEventListener('storage', function (e) {
+        if (e.key === 'techboss_tournament_teams' || e.key === 'techboss_round2_teams_generated') {
+          if (selectedRoundScope === 'AUTO' || selectedRoundScope === 1) {
+            window.selectRoundScope(2);
+          } else {
+            loadAllData();
+          }
+          return;
+        }
         if (e.key === 'techboss_solo_leaderboard' ||
+            e.key === 'techboss_tournament_scores' ||
+            e.key === 'techboss_tournament_rounds' ||
             e.key === 'techboss_board_updated_at' ||
             e.key === 'techboss_custom_broadcast' ||
             e.key === 'techboss_inhouse_checkins' ||
+            e.key === 'techboss_registrations' ||
             e.key === 'techboss_scheduled_audio_time') {
           loadAllData();
         }
@@ -2089,7 +3099,6 @@
             if (cloudBoard && Array.isArray(cloudBoard) && cloudBoard.length > 0) {
               memoryBoard = cloudBoard;
               localStorage.setItem('techboss_solo_leaderboard', JSON.stringify(memoryBoard));
-              renderScoreboard();
             }
 
             var eventState = await window.TechBossSupabase.fetchEventState();
@@ -2103,8 +3112,9 @@
             if (cloudInHouse && typeof cloudInHouse === 'object') {
               inHouseMap = cloudInHouse;
               localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(inHouseMap));
-              renderScoreboard();
             }
+
+            loadActiveRoundData();
           } catch (err) { }
         }
       }
@@ -2134,7 +3144,7 @@
             lastInHouseCount = keys.length;
             inHouseMap = cloudMap;
             localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(inHouseMap));
-            renderScoreboard();
+            renderArenaTelemetry();
           }
         });
       }
@@ -2149,7 +3159,7 @@
       if (searchInput) {
         searchInput.addEventListener('input', function (e) {
           currentSearch = e.target.value.trim();
-          renderScoreboard();
+          renderArenaTelemetry();
         });
       }
 
@@ -2158,7 +3168,7 @@
           segmentButtons.forEach(function (b) { b.classList.remove('active'); });
           btn.classList.add('active');
           currentFilter = btn.getAttribute('data-filter');
-          renderScoreboard();
+          renderArenaTelemetry();
         });
       });
 

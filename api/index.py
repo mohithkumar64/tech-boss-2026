@@ -5,6 +5,8 @@ Handles /api/register, /api/registrations, /api/leaderboard, /api/event-state
 
 import os
 import json
+import time
+import datetime
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -98,8 +100,32 @@ class handler(BaseHTTPRequestHandler):
             status, data = supabase_request("tournament_rounds?select=*&order=round_number.asc")
             if status < 400 and isinstance(data, list) and len(data) > 0:
                 self._send_json(200, {"success": True, "rounds": data})
-            else:
-                self._send_json(200, {"success": True, "rounds": []})
+                return
+
+            st, es_data = supabase_request("event_state?id=eq.tournament_rounds&select=*")
+            if st < 400 and isinstance(es_data, list) and len(es_data) > 0:
+                msg = es_data[0].get("broadcast_msg")
+                if msg:
+                    try:
+                        parsed_r = json.loads(msg)
+                        if isinstance(parsed_r, list) and len(parsed_r) > 0:
+                            self._send_json(200, {"success": True, "rounds": parsed_r})
+                            return
+                    except Exception:
+                        pass
+
+            def_rounds = [
+                {"round_number": 1, "title": "The Awakening", "format": "Individual", "type": "INDIVIDUAL", "status": "OPEN", "total_players": None},
+                {"round_number": 2, "title": "Quad Synergy", "format": "Teams of 4", "type": "TEAM", "status": "NOT_STARTED", "total_players": None},
+                {"round_number": 3, "title": "Dual Clash", "format": "Teams of 4", "type": "TEAM", "status": "NOT_STARTED", "total_players": None},
+                {"round_number": 4, "title": "Hex Havoc", "format": "Teams of 4", "type": "TEAM", "status": "NOT_STARTED", "total_players": None},
+                {"round_number": 5, "title": "Solo Gauntlet", "format": "Individual", "type": "INDIVIDUAL", "status": "NOT_STARTED", "total_players": None},
+                {"round_number": 6, "title": "Trinity Strife", "format": "Teams of 3", "type": "TEAM", "status": "NOT_STARTED", "total_players": None},
+                {"round_number": 7, "title": "Squad Blitz", "format": "Teams of 4", "type": "TEAM", "status": "NOT_STARTED", "total_players": None},
+                {"round_number": 8, "title": "Elimination Trial", "format": "Individual", "type": "INDIVIDUAL", "status": "NOT_STARTED", "total_players": None},
+                {"round_number": 9, "title": "Grand Finale (Boss Battle)", "format": "Individual", "type": "INDIVIDUAL", "status": "NOT_STARTED", "total_players": None}
+            ]
+            self._send_json(200, {"success": True, "rounds": def_rounds})
             return
 
         elif "teams" in path:
@@ -109,8 +135,8 @@ class handler(BaseHTTPRequestHandler):
             if scope:
                 url += f"&round_scope=eq.{urllib.parse.quote(scope)}"
             status, data = supabase_request(url)
-            if status < 400 and isinstance(data, list):
-                teams = []
+            teams = []
+            if status < 400 and isinstance(data, list) and len(data) > 0:
                 for t in data:
                     teams.append({
                         "id": t.get("id"),
@@ -125,33 +151,60 @@ class handler(BaseHTTPRequestHandler):
                             for m in t.get("tournament_team_members", [])
                         ]
                     })
-                self._send_json(200, {"success": True, "teams": teams})
             else:
-                self._send_json(200, {"success": True, "teams": []})
+                st, es_data = supabase_request("event_state?id=eq.tournament_teams&select=*")
+                if st < 400 and isinstance(es_data, list) and len(es_data) > 0:
+                    msg = es_data[0].get("broadcast_msg")
+                    if msg:
+                        try:
+                            parsed_t = json.loads(msg)
+                            if isinstance(parsed_t, dict):
+                                if scope:
+                                    teams = parsed_t.get(scope, [])
+                                else:
+                                    teams = [t for sub in parsed_t.values() for t in sub]
+                        except Exception:
+                            pass
+            self._send_json(200, {"success": True, "teams": teams})
             return
 
         elif "scores" in path:
             query = urllib.parse.parse_qs(parsed.query)
             r_num = query.get("round", [None])[0]
-            url = "tournament_scores?select=*&order=player_handle.asc"
-            if r_num:
-                url += f"&round_number=eq.{urllib.parse.quote(r_num)}"
-            status, data = supabase_request(url)
-            if status < 400 and isinstance(data, list):
-                mapped = {}
-                for row in data:
-                    raw_h = (row.get("player_handle") or "").lower()
-                    mapped[raw_h] = {
-                        "player_handle": row.get("player_handle"),
-                        "player_name": row.get("player_name") or "",
-                        "individual_score": int(row.get("individual_score") or 0),
-                        "team_id": row.get("team_id"),
-                        "team_score": int(row.get("team_score") or 0),
-                        "round_total": int(row.get("round_total") or (int(row.get("individual_score") or 0) + int(row.get("team_score") or 0)))
-                    }
-                self._send_json(200, {"success": True, "scores": mapped})
-            else:
-                self._send_json(200, {"success": True, "scores": {}})
+            mapped = {}
+
+            # 1. Try Supabase event_state: id=tournament_scores
+            st, es_data = supabase_request("event_state?id=eq.tournament_scores&select=*")
+            if st < 400 and isinstance(es_data, list) and len(es_data) > 0:
+                msg = es_data[0].get("broadcast_msg")
+                if msg:
+                    try:
+                        cloud_scores = json.loads(msg)
+                        if r_num:
+                            mapped = cloud_scores.get(str(r_num), {})
+                        else:
+                            mapped = cloud_scores
+                    except Exception:
+                        pass
+
+            if not mapped:
+                url = "tournament_scores?select=*&order=player_handle.asc"
+                if r_num:
+                    url += f"&round_number=eq.{urllib.parse.quote(r_num)}"
+                status, data = supabase_request(url)
+                if status < 400 and isinstance(data, list):
+                    for row in data:
+                        raw_h = (row.get("player_handle") or "").lower()
+                        mapped[raw_h] = {
+                            "player_handle": row.get("player_handle"),
+                            "player_name": row.get("player_name") or "",
+                            "individual_score": int(row.get("individual_score") or 0),
+                            "team_id": row.get("team_id"),
+                            "team_score": int(row.get("team_score") or 0),
+                            "round_total": int(row.get("round_total") or (int(row.get("individual_score") or 0) + int(row.get("team_score") or 0)))
+                        }
+
+            self._send_json(200, {"success": True, "scores": mapped})
             return
 
         self._send_json(200, {"status": "ok", "service": "tech-boss-api"})
@@ -340,10 +393,12 @@ class handler(BaseHTTPRequestHandler):
 
             r_num = body.get("round_number")
             scores = body.get("scores", [])
-            if not r_num or not isinstance(scores, list):
-                self._send_json(400, {"error": "round_number and scores list are required"})
+            scores_map = body.get("scoresMap") or {}
+            if not r_num:
+                self._send_json(400, {"error": "round_number is required"})
                 return
 
+            r_key = str(r_num)
             if scores:
                 supabase_request(
                     "tournament_scores",
@@ -351,7 +406,34 @@ class handler(BaseHTTPRequestHandler):
                     data=scores,
                     headers={"Prefer": "resolution=merge-duplicates"}
                 )
-            self._send_json(200, {"success": True, "count": len(scores)})
+
+            # Persist to Supabase event_state: id=tournament_scores
+            try:
+                st, es_data = supabase_request("event_state?id=eq.tournament_scores&select=*")
+                cloud_scores = {}
+                if st < 400 and isinstance(es_data, list) and len(es_data) > 0:
+                    msg = es_data[0].get("broadcast_msg")
+                    if msg:
+                        try:
+                            cloud_scores = json.loads(msg)
+                        except Exception:
+                            cloud_scores = {}
+                if scores_map:
+                    cloud_scores[r_key] = scores_map
+                elif scores:
+                    cloud_scores[r_key] = {
+                        (sc.get("player_handle") or "").lower(): sc for sc in scores if sc.get("player_handle")
+                    }
+                supabase_request("event_state", method="POST", data=[{
+                    "id": "tournament_scores",
+                    "boss_hp": "0",
+                    "broadcast_msg": json.dumps(cloud_scores),
+                    "updated_at": datetime.datetime.utcnow().isoformat()
+                }], headers={"Prefer": "resolution=merge-duplicates"})
+            except Exception:
+                pass
+
+            self._send_json(200, {"success": True, "count": len(scores) if scores else len(scores_map)})
             return
 
         self._send_json(404, {"error": "Not Found"})

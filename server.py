@@ -8,6 +8,8 @@ and serves frontend static files.
 import os
 import json
 import socket
+import time
+import datetime
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -55,7 +57,13 @@ TOURNAMENT_CACHE = {
 
 class TechBossHandler(SimpleHTTPRequestHandler):
     def guess_type(self, path):
-        if "WhatsApp Image 2026-09-10 at 12.48.46" in str(path):
+        path_str = str(path)
+        if "WhatsApp Image 2026-09-10 at 12.48.46" in path_str:
+            return "audio/mpeg"
+        if "Times" in path_str or "/Times/" in path_str:
+            if path_str.endswith(".mp3") or path_str.endswith(".jpeg") or path_str.endswith(".jpg"):
+                return "audio/mpeg"
+        if path_str.endswith(".mp3"):
             return "audio/mpeg"
         return super().guess_type(path)
 
@@ -112,9 +120,35 @@ class TechBossHandler(SimpleHTTPRequestHandler):
         elif path == "/api/rounds":
             status, data = supabase_request("tournament_rounds?select=*&order=round_number.asc")
             if status < 400 and isinstance(data, list) and len(data) > 0:
+                TOURNAMENT_CACHE["rounds"] = data
                 self._send_json(200, {"success": True, "rounds": data})
-            else:
-                self._send_json(200, {"success": True, "rounds": []})
+                return
+
+            if not TOURNAMENT_CACHE["rounds"]:
+                st, es_data = supabase_request("event_state?id=eq.tournament_rounds&select=*")
+                if st < 400 and isinstance(es_data, list) and len(es_data) > 0:
+                    msg = es_data[0].get("broadcast_msg")
+                    if msg:
+                        try:
+                            parsed_r = json.loads(msg)
+                            if isinstance(parsed_r, list) and len(parsed_r) > 0:
+                                TOURNAMENT_CACHE["rounds"] = parsed_r
+                        except Exception:
+                            pass
+
+            if not TOURNAMENT_CACHE["rounds"]:
+                TOURNAMENT_CACHE["rounds"] = [
+                    {"round_number": 1, "title": "The Awakening", "format": "Individual", "type": "INDIVIDUAL", "status": "OPEN", "total_players": None},
+                    {"round_number": 2, "title": "Quad Synergy", "format": "Teams of 4", "type": "TEAM", "status": "NOT_STARTED", "total_players": None},
+                    {"round_number": 3, "title": "Dual Clash", "format": "Teams of 4", "type": "TEAM", "status": "NOT_STARTED", "total_players": None},
+                    {"round_number": 4, "title": "Hex Havoc", "format": "Teams of 4", "type": "TEAM", "status": "NOT_STARTED", "total_players": None},
+                    {"round_number": 5, "title": "Solo Gauntlet", "format": "Individual", "type": "INDIVIDUAL", "status": "NOT_STARTED", "total_players": None},
+                    {"round_number": 6, "title": "Trinity Strife", "format": "Teams of 3", "type": "TEAM", "status": "NOT_STARTED", "total_players": None},
+                    {"round_number": 7, "title": "Squad Blitz", "format": "Teams of 4", "type": "TEAM", "status": "NOT_STARTED", "total_players": None},
+                    {"round_number": 8, "title": "Elimination Trial", "format": "Individual", "type": "INDIVIDUAL", "status": "NOT_STARTED", "total_players": None},
+                    {"round_number": 9, "title": "Grand Finale (Boss Battle)", "format": "Individual", "type": "INDIVIDUAL", "status": "NOT_STARTED", "total_players": None}
+                ]
+            self._send_json(200, {"success": True, "rounds": TOURNAMENT_CACHE["rounds"]})
             return
 
         elif path == "/api/teams":
@@ -140,34 +174,71 @@ class TechBossHandler(SimpleHTTPRequestHandler):
                             for m in t.get("tournament_team_members", [])
                         ]
                     })
-            elif scope:
+            elif scope and scope in TOURNAMENT_CACHE["teams"]:
                 teams = TOURNAMENT_CACHE["teams"].get(scope, [])
-            else:
+            elif not scope and any(TOURNAMENT_CACHE["teams"].values()):
                 teams = [t for sub in TOURNAMENT_CACHE["teams"].values() for t in sub]
+            else:
+                st, es_data = supabase_request("event_state?id=eq.tournament_teams&select=*")
+                if st < 400 and isinstance(es_data, list) and len(es_data) > 0:
+                    msg = es_data[0].get("broadcast_msg")
+                    if msg:
+                        try:
+                            parsed_t = json.loads(msg)
+                            if isinstance(parsed_t, dict):
+                                TOURNAMENT_CACHE["teams"] = parsed_t
+                                if scope:
+                                    teams = parsed_t.get(scope, [])
+                                else:
+                                    teams = [t for sub in parsed_t.values() for t in sub]
+                        except Exception:
+                            pass
             self._send_json(200, {"success": True, "teams": teams})
             return
 
         elif path == "/api/scores":
             query = urllib.parse.parse_qs(parsed.query)
             r_num = query.get("round", [None])[0]
-            url = "tournament_scores?select=*&order=player_handle.asc"
-            if r_num:
-                url += f"&round_number=eq.{urllib.parse.quote(r_num)}"
-            status, data = supabase_request(url)
             mapped = {}
-            if status < 400 and isinstance(data, list) and len(data) > 0:
-                for row in data:
-                    raw_h = (row.get("player_handle") or "").lower()
-                    mapped[raw_h] = {
-                        "player_handle": row.get("player_handle"),
-                        "player_name": row.get("player_name") or "",
-                        "individual_score": int(row.get("individual_score") or 0),
-                        "team_id": row.get("team_id"),
-                        "team_score": int(row.get("team_score") or 0),
-                        "round_total": int(row.get("round_total") or (int(row.get("individual_score") or 0) + int(row.get("team_score") or 0)))
-                    }
-            elif r_num and str(r_num) in TOURNAMENT_CACHE["scores"]:
+
+            # 1. Check in-memory cache
+            if r_num and str(r_num) in TOURNAMENT_CACHE["scores"] and len(TOURNAMENT_CACHE["scores"][str(r_num)]) > 0:
                 mapped = TOURNAMENT_CACHE["scores"][str(r_num)]
+            else:
+                # 2. Check event_state?id=eq.tournament_scores in Supabase
+                st, es_data = supabase_request("event_state?id=eq.tournament_scores&select=*")
+                if st < 400 and isinstance(es_data, list) and len(es_data) > 0:
+                    msg = es_data[0].get("broadcast_msg")
+                    if msg:
+                        try:
+                            cloud_scores = json.loads(msg)
+                            for k, v in cloud_scores.items():
+                                TOURNAMENT_CACHE["scores"][str(k)] = v
+                            if r_num:
+                                mapped = cloud_scores.get(str(r_num), {})
+                            else:
+                                mapped = cloud_scores
+                        except Exception:
+                            pass
+
+                # 3. Fallback to tournament_scores table if available
+                if not mapped:
+                    url = "tournament_scores?select=*&order=player_handle.asc"
+                    if r_num:
+                        url += f"&round_number=eq.{urllib.parse.quote(r_num)}"
+                    status, data = supabase_request(url)
+                    if status < 400 and isinstance(data, list) and len(data) > 0:
+                        for row in data:
+                            raw_h = (row.get("player_handle") or "").lower()
+                            mapped[raw_h] = {
+                                "player_handle": row.get("player_handle"),
+                                "player_name": row.get("player_name") or "",
+                                "individual_score": int(row.get("individual_score") or 0),
+                                "team_id": row.get("team_id"),
+                                "team_score": int(row.get("team_score") or 0),
+                                "round_total": int(row.get("round_total") or (int(row.get("individual_score") or 0) + int(row.get("team_score") or 0)))
+                            }
+
             self._send_json(200, {"success": True, "scores": mapped})
             return
 
@@ -367,6 +438,17 @@ class TechBossHandler(SimpleHTTPRequestHandler):
             TOURNAMENT_CACHE["teams"][scope] = [t for t in TOURNAMENT_CACHE["teams"][scope] if str(t.get("id")) != str(actual_tid)]
             TOURNAMENT_CACHE["teams"][scope].append(created_team)
 
+            # Persist teams into Supabase event_state: id=tournament_teams
+            try:
+                supabase_request("event_state", method="POST", data=[{
+                    "id": "tournament_teams",
+                    "boss_hp": "0",
+                    "broadcast_msg": json.dumps(TOURNAMENT_CACHE["teams"]),
+                    "updated_at": datetime.datetime.utcnow().isoformat()
+                }], headers={"Prefer": "resolution=merge-duplicates"})
+            except Exception:
+                pass
+
             self._send_json(200, {"success": True, "team": created_team})
             return
 
@@ -374,10 +456,22 @@ class TechBossHandler(SimpleHTTPRequestHandler):
             body = self._get_body_json()
             r_num = body.get("round_number")
             scores = body.get("scores", [])
-            if not r_num or not isinstance(scores, list):
-                self._send_json(400, {"error": "round_number and scores list are required"})
+            scores_map = body.get("scoresMap") or {}
+            if not r_num:
+                self._send_json(400, {"error": "round_number is required"})
                 return
 
+            r_key = str(r_num)
+            if r_key not in TOURNAMENT_CACHE["scores"]:
+                TOURNAMENT_CACHE["scores"][r_key] = {}
+            if isinstance(scores_map, dict) and len(scores_map) > 0:
+                TOURNAMENT_CACHE["scores"][r_key].update(scores_map)
+            for sc in scores:
+                raw_h = (sc.get("player_handle") or "").lower()
+                if raw_h:
+                    TOURNAMENT_CACHE["scores"][r_key][raw_h] = sc
+
+            # 1. Direct table fallback (if exists)
             if scores:
                 supabase_request(
                     "tournament_scores",
@@ -385,15 +479,29 @@ class TechBossHandler(SimpleHTTPRequestHandler):
                     data=scores,
                     headers={"Prefer": "resolution=merge-duplicates"}
                 )
-                r_key = str(r_num)
-                if r_key not in TOURNAMENT_CACHE["scores"]:
-                    TOURNAMENT_CACHE["scores"][r_key] = {}
-                for sc in scores:
-                    raw_h = (sc.get("player_handle") or "").lower()
-                    if raw_h:
-                        TOURNAMENT_CACHE["scores"][r_key][raw_h] = sc
 
-            self._send_json(200, {"success": True, "count": len(scores)})
+            # 2. Permanent Supabase cloud storage in event_state (id: tournament_scores)
+            try:
+                st, es_data = supabase_request("event_state?id=eq.tournament_scores&select=*")
+                cloud_scores = {}
+                if st < 400 and isinstance(es_data, list) and len(es_data) > 0:
+                    msg = es_data[0].get("broadcast_msg")
+                    if msg:
+                        try:
+                            cloud_scores = json.loads(msg)
+                        except Exception:
+                            cloud_scores = {}
+                cloud_scores[r_key] = TOURNAMENT_CACHE["scores"][r_key]
+                supabase_request("event_state", method="POST", data=[{
+                    "id": "tournament_scores",
+                    "boss_hp": "0",
+                    "broadcast_msg": json.dumps(cloud_scores),
+                    "updated_at": datetime.datetime.utcnow().isoformat()
+                }], headers={"Prefer": "resolution=merge-duplicates"})
+            except Exception:
+                pass
+
+            self._send_json(200, {"success": True, "count": len(TOURNAMENT_CACHE["scores"][r_key])})
             return
 
         self._send_json(404, {"error": "Not Found"})
@@ -427,7 +535,21 @@ class TechBossHandler(SimpleHTTPRequestHandler):
                 method="PATCH",
                 data={"status": status_val}
             )
-            self._send_json(200, {"success": True, "updated": res})
+            # Update in-memory cache and event_state
+            for r in TOURNAMENT_CACHE["rounds"]:
+                if str(r.get("round_number")) == str(r_num):
+                    r["status"] = status_val
+            try:
+                state_data = {
+                    "id": "tournament_rounds",
+                    "broadcast_msg": json.dumps(TOURNAMENT_CACHE["rounds"]),
+                    "boss_hp": "0",
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+                supabase_request("event_state", method="POST", data=state_data, headers={"Prefer": "resolution=merge-duplicates"})
+            except Exception:
+                pass
+            self._send_json(200, {"success": True, "updated": res, "rounds": TOURNAMENT_CACHE["rounds"]})
             return
 
         self._send_json(404, {"error": "Not Found"})
@@ -463,6 +585,18 @@ class TechBossHandler(SimpleHTTPRequestHandler):
 
             supabase_request(f"tournament_team_members?team_id=eq.{team_id}", method="DELETE")
             status, res = supabase_request(f"tournament_teams?id=eq.{team_id}", method="DELETE")
+            for scope in TOURNAMENT_CACHE["teams"]:
+                TOURNAMENT_CACHE["teams"][scope] = [t for t in TOURNAMENT_CACHE["teams"][scope] if str(t.get("id")) != str(team_id)]
+            try:
+                state_data = {
+                    "id": "tournament_teams",
+                    "broadcast_msg": json.dumps(TOURNAMENT_CACHE["teams"]),
+                    "boss_hp": "0",
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+                supabase_request("event_state", method="POST", data=state_data, headers={"Prefer": "resolution=merge-duplicates"})
+            except Exception:
+                pass
             self._send_json(200, {"success": True, "deleted_id": team_id})
             return
 

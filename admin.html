@@ -687,6 +687,15 @@
         <button class="btn btn-cyan btn-sm" id="openCreateTeamBtn" style="display:none;" onclick="openCreateTeamModal()">➕ Create Manual Team</button>
         <!-- Round 4 Info Badge -->
         <span class="badge-status status-verified" id="r4LinkNotice" style="display:none;">⚡ Linked to Round 3 Teams (Separate Scores)</span>
+        
+        <!-- Sort Control by Regd Number (ASC / DESC / Rank) -->
+        <div class="scoreboard-sort-wrap" style="display:inline-flex; align-items:center; gap:4px; background:rgba(0,0,0,0.55); border:1px solid var(--panel-border); border-radius:6px; padding:3px 8px;">
+          <span style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Sort Reg:</span>
+          <button type="button" class="btn btn-ghost btn-sm" id="sortRegAscBtn" onclick="setScoreboardSort('REG_ASC')" title="Sort by Register Number Ascending (e.g. 25B91A6201...)" style="padding:2px 7px; font-size:11px;">🔼 ASC</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="sortRegDescBtn" onclick="setScoreboardSort('REG_DESC')" title="Sort by Register Number Descending (e.g. 25B91A6265...)" style="padding:2px 7px; font-size:11px;">🔽 DESC</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="sortDefaultBtn" onclick="setScoreboardSort('DEFAULT')" title="Reset to Default Scoreboard Rank" style="padding:2px 7px; font-size:11px; color:var(--gold);">🏆 Rank</button>
+        </div>
+
         <!-- Save Scores -->
         <button class="btn btn-primary btn-sm" id="saveRoundScoresBtn">💾 Save Round Scores</button>
         <!-- Recalculate -->
@@ -694,13 +703,12 @@
       </div>
     </div>
 
-    <!-- Round 2 Divisibility Warning Alert -->
-    <div id="r2DivisibilityAlert" style="display:none; background:rgba(255,42,133,0.12); border:1px solid rgba(255,42,133,0.35); border-radius:6px; padding:12px 16px; margin-bottom:18px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-      <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
-        <span style="font-size:18px;">⚠️</span>
-        <span id="r2DivisibilityAlertText">Warning: Total eligible contenders cannot be divided into teams of 4.</span>
+    <!-- Round 2 Divisibility Information Alert -->
+    <div id="r2DivisibilityAlert" style="display:none; background:rgba(0,240,255,0.08); border:1px solid rgba(0,240,255,0.25); border-radius:6px; padding:12px 16px; margin-bottom:18px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+      <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-main);">
+        <span style="font-size:18px;">ℹ️</span>
+        <span id="r2DivisibilityAlertText">Contender Allocation: Squads of 4 with extra players formed into a squad.</span>
       </div>
-      <button class="btn btn-pink btn-sm" id="showR2WarningDetailsBtn">Inspect Mismatch Details</button>
     </div>
 
     <!-- MAIN ACTIVE ROUND CONTENT CONTAINER -->
@@ -814,14 +822,14 @@
           <div class="form-group" style="margin-bottom:0;">
             <label for="scheduledAudioTrackSelect">Audio Track / Sound Effect</label>
             <select id="scheduledAudioTrackSelect">
-              <option value="times-9am">🌅 9:00 AM Audio (Times/9-00 AM.jpeg)</option>
-              <option value="times-10am">🕙 10:00 AM Audio (Times/10-00 AM.jpeg)</option>
-              <option value="times-11am">🕚 11:00 AM Audio (Times/11-00 AM.jpeg)</option>
-              <option value="times-12pm">🕛 12:00 PM Audio (Times/12-00 PM.jpeg)</option>
-              <option value="times-1pm">🕐 1:00 PM Audio (Times/1-00 PM.jpeg)</option>
-              <option value="times-2pm">🕑 2:00 PM Audio (Times/2-00 PM.jpeg)</option>
-              <option value="times-3pm">🕒 3:00 PM Audio (Times/3-00 PM.jpeg)</option>
-              <option value="times-4pm">🕓 4:00 PM Audio (Times/4-00 PM.jpeg)</option>
+              <option value="times-9am">🌅 9:00 AM Audio (Times/9-00 AM.mp3)</option>
+              <option value="times-10am">🕙 10:00 AM Audio (Times/10-00 AM.mp3)</option>
+              <option value="times-11am">🕚 11:00 AM Audio (Times/11-00 AM.mp3)</option>
+              <option value="times-12pm">🕛 12:00 PM Audio (Times/12-00 PM.mp3)</option>
+              <option value="times-1pm">🕐 1:00 PM Audio (Times/1-00 PM.mp3)</option>
+              <option value="times-2pm">🕑 2:00 PM Audio (Times/2-00 PM.mp3)</option>
+              <option value="times-3pm">🕒 3:00 PM Audio (Times/3-00 PM.mp3)</option>
+              <option value="times-4pm">🕓 4:00 PM Audio (Times/4-00 PM.mp3)</option>
               <option value="fanfare">🎺 Championship Synth Fanfare</option>
               <option value="success">🔔 Victory Celebration Chime (success-sound.mp3)</option>
               <option value="custom">📁 Upload Custom Audio File</option>
@@ -835,15 +843,16 @@
           <small style="color:var(--text-muted); font-size:11px; display:block; margin-top:4px;" id="customAudioFileName">No custom file chosen (default fanfare will be used)</small>
         </div>
 
-        <div class="form-group" style="margin-bottom: 16px;">
+        <!-- Text announcement field hidden per user request; arena runs purely audible sound notes -->
+        <div class="form-group" style="margin-bottom: 16px; display: none;">
           <label for="scheduledAnnouncementMsg">Scheduled Keynote Announcement</label>
-          <input type="text" id="scheduledAnnouncementMsg" value="👑 THE ARENA IS LIVE — THE CHAMPIONSHIP HAS BEGUN!" placeholder="Announcement message when timer fires">
+          <input type="text" id="scheduledAnnouncementMsg" value="" placeholder="Announcement message when timer fires">
         </div>
 
         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
           <button class="btn btn-green btn-sm" id="saveAudioScheduleBtn">💾 Save & Sync Schedule</button>
           <button class="btn btn-ghost btn-sm" id="testAudioPlayBtn">🔊 Test Audio Now</button>
-          <button class="btn btn-primary btn-sm" id="triggerAudioNowBtn">⚡ Fire Arena Audio & Keynote Now</button>
+          <button class="btn btn-primary btn-sm" id="triggerAudioNowBtn">⚡ Fire Arena Audio Now</button>
         </div>
 
         <div style="font-size:12px; color:var(--text-muted); background:rgba(0,0,0,0.35); padding:10px 14px; border-radius:6px; border:1px solid var(--panel-border);">
@@ -1671,6 +1680,30 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
   var isCumulativeViewActive = false;
   var selectedTeamPlayerHandles = new Set();
   var editingTeamId = null;
+  var scoreboardSortMode = 'DEFAULT'; // 'DEFAULT', 'REG_ASC', 'REG_DESC'
+
+  function setScoreboardSort(mode) {
+    scoreboardSortMode = mode || 'DEFAULT';
+    var ascBtn = document.getElementById('sortRegAscBtn');
+    var descBtn = document.getElementById('sortRegDescBtn');
+    var defBtn = document.getElementById('sortDefaultBtn');
+    if (ascBtn) ascBtn.style.color = (scoreboardSortMode === 'REG_ASC' ? 'var(--cyan)' : '');
+    if (descBtn) descBtn.style.color = (scoreboardSortMode === 'REG_DESC' ? 'var(--cyan)' : '');
+    if (defBtn) defBtn.style.color = (scoreboardSortMode === 'DEFAULT' ? 'var(--gold)' : '');
+
+    renderActiveRoundScoreboard();
+    renderCumulativeBoardTable();
+    var label = scoreboardSortMode === 'REG_ASC' ? 'Register Number (Ascending 🔼)' : (scoreboardSortMode === 'REG_DESC' ? 'Register Number (Descending 🔽)' : 'Default Scoreboard Rank 🏆');
+    showToast('Scoreboard sorted by ' + label);
+  }
+  window.setScoreboardSort = setScoreboardSort;
+
+  function toggleScoreboardSort() {
+    if (scoreboardSortMode === 'DEFAULT') setScoreboardSort('REG_ASC');
+    else if (scoreboardSortMode === 'REG_ASC') setScoreboardSort('REG_DESC');
+    else setScoreboardSort('DEFAULT');
+  }
+  window.toggleScoreboardSort = toggleScoreboardSort;
 
   function initRoundNavigator() {
     var navWrap = document.getElementById('roundNavWrap');
@@ -1756,6 +1789,31 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
       roundScoresMap = {};
     }
 
+    // Seed prior round maintained score for eligible contenders who don't have a saved score yet in this round!
+    if (rNum > 1) {
+      var eligibleList = getEligiblePlayerPool();
+      eligibleList.forEach(function(item) {
+        var normH = item.handle.toLowerCase();
+        var prior = getPriorRoundScore(item.handle, rNum);
+        if (prior > 0) {
+          if (!roundScoresMap[normH]) {
+            roundScoresMap[normH] = {
+              player_handle: item.handle,
+              player_name: item.name || '',
+              individual_score: prior,
+              team_id: null,
+              team_score: 0,
+              round_total: prior
+            };
+          } else if ((roundScoresMap[normH].individual_score === 0 || roundScoresMap[normH].individual_score === undefined) &&
+                     (roundScoresMap[normH].round_total === 0 || roundScoresMap[normH].round_total === undefined)) {
+            roundScoresMap[normH].individual_score = prior;
+            roundScoresMap[normH].round_total = prior;
+          }
+        }
+      });
+    }
+
     checkRound2DivisibilityWarning();
   }
 
@@ -1776,7 +1834,9 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
     if (remainder !== 0 && count > 0) {
       alertEl.style.display = 'flex';
       if (alertText) {
-        alertText.innerHTML = '<b>Team Size Warning:</b> ' + count + ' eligible contenders cannot be divided into teams of 4 (' + remainder + ' extra player' + (remainder > 1 ? 's' : '') + ').';
+        var numFull = Math.floor(count / 4);
+        var partText = numFull > 0 ? (numFull + ' squad' + (numFull > 1 ? 's' : '') + ' of 4 + ') : '';
+        alertText.innerHTML = '<b>Contender Allocation Notice:</b> ' + count + ' eligible contenders will form ' + partText + '1 squad of ' + remainder + '.';
       }
     } else {
       alertEl.style.display = 'none';
@@ -1790,6 +1850,12 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
     // In-house checkins are the ONLY tournament PLAYERS!
     // Remaining registrations are organizers and must NOT appear in the player pool or scoreboard.
     var inHouse = getInHouseCheckins();
+    var regData = [];
+    try {
+      var rawReg = localStorage.getItem('techboss_registrations');
+      if (rawReg) regData = JSON.parse(rawReg) || [];
+    } catch (e) {}
+
     for (var k in inHouse) {
       var rec = inHouse[k];
       var rawH = (rec.handle || k || '').trim();
@@ -1797,11 +1863,25 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
       var norm = rawH.toLowerCase();
       if (!seen.has(norm)) {
         seen.add(norm);
+        var name = (rec.name || '').trim();
+        var regNo = rec.regNo || rec.reg_no || '';
+        var branch = rec.branch || '';
+        if (!name || !regNo || regNo === '--' || !branch) {
+          var matched = regData.find(function(r) {
+            return (r.handle || '').toLowerCase().trim() === norm ||
+                   (r.name && name && r.name.toLowerCase().trim() === name.toLowerCase().trim());
+          });
+          if (matched) {
+            if (!name) name = matched.name || '';
+            if (!regNo || regNo === '--') regNo = matched.regNo || matched.reg_no || '';
+            if (!branch) branch = matched.branch || '';
+          }
+        }
         pool.push({
           handle: rawH,
-          name: rec.name || 'Gladiator',
-          regNo: rec.regNo || rec.reg_no || '--',
-          branch: rec.branch || '',
+          name: name || 'Gladiator',
+          regNo: regNo || '--',
+          branch: branch,
           inHouse: true
         });
       }
@@ -1810,20 +1890,76 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
     return pool;
   }
 
-  // Get cumulative score for a player from boardData
+  // Get prior maintained score for a player from earlier rounds (1 to rNum - 1)
+  function getPriorRoundScore(handle, rNum) {
+    if (!handle || rNum <= 1) return 0;
+    var norm = handle.toLowerCase().trim();
+    if (!norm.startsWith('@')) norm = '@' + norm;
+    var cleanNorm = norm.replace(/[^a-z0-9_]/g, '');
+
+    try {
+      var allScores = window.TechBossSupabase ? window.TechBossSupabase.getLocalTournamentScores() : {};
+      for (var r = rNum - 1; r >= 1; r--) {
+        var rMap = allScores[String(r)] || {};
+        for (var k in rMap) {
+          if (k.toLowerCase().replace(/[^a-z0-9_]/g, '') === cleanNorm) {
+            var entry = rMap[k];
+            var sc = parseInt(entry.round_total !== undefined ? entry.round_total : entry.individual_score, 10) || 0;
+            if (sc > 0) return sc;
+          }
+        }
+      }
+    } catch (e) {}
+
+    // Fallback to boardData
+    var found = boardData.find(function(b) {
+      return (b.handle || '').toLowerCase().replace(/[^a-z0-9_]/g, '') === cleanNorm;
+    });
+    return found ? (found.score || 0) : 0;
+  }
+
+  // Get cumulative score for a player from boardData or latest maintained round score
   function getPlayerCumulativeScore(handle) {
     if (!handle) return 0;
     var norm = handle.toLowerCase().replace(/[^a-z0-9_]/g, '');
+    var maxScore = 0;
+
     var found = boardData.find(function(b) {
       return (b.handle || '').toLowerCase().replace(/[^a-z0-9_]/g, '') === norm;
     });
-    return found ? (found.score || 0) : 0;
+    if (found && found.score) maxScore = Math.max(maxScore, found.score);
+
+    try {
+      var allScores = window.TechBossSupabase ? window.TechBossSupabase.getLocalTournamentScores() : {};
+      for (var r = 1; r <= 9; r++) {
+        var rMap = allScores[String(r)] || {};
+        for (var k in rMap) {
+          if (k.toLowerCase().replace(/[^a-z0-9_]/g, '') === norm) {
+            var entry = rMap[k];
+            var sc = parseInt(entry.round_total !== undefined ? entry.round_total : entry.individual_score, 10) || 0;
+            if (sc > maxScore) maxScore = sc;
+          }
+        }
+      }
+    } catch (e) {}
+
+    return maxScore;
   }
 
   // RENDER ACTIVE ROUND SCOREBOARD
   function renderActiveRoundScoreboard() {
     var container = document.getElementById('activeRoundViewContainer');
     if (!container) return;
+
+    // Preserve active focus and selection
+    var activeEl = document.activeElement;
+    var activeTeamId = activeEl ? activeEl.getAttribute('data-team-id') : null;
+    var activeHandle = activeEl ? activeEl.getAttribute('data-handle') : null;
+    var isTeamInp = activeEl ? activeEl.classList.contains('team-score-input') : false;
+    var isMemberInp = activeEl ? activeEl.classList.contains('member-score-input') : false;
+    var isSoloInp = activeEl ? (activeEl.classList.contains('score-input-field') && !isTeamInp && !isMemberInp) : false;
+    var selStart = (activeEl && typeof activeEl.selectionStart === 'number') ? activeEl.selectionStart : null;
+    var selEnd = (activeEl && typeof activeEl.selectionEnd === 'number') ? activeEl.selectionEnd : null;
 
     var rMeta = tournamentRounds.find(function(r) { return r.round_number === currentRoundNum; });
     var isLocked = rMeta && rMeta.status === 'LOCKED';
@@ -1855,21 +1991,44 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
         return;
       }
 
+      // Sort pool based on scoreboardSortMode
+      if (scoreboardSortMode === 'REG_ASC') {
+        pool.sort(function(a, b) {
+          var rA = (a.regNo || '').trim().toUpperCase();
+          var rB = (b.regNo || '').trim().toUpperCase();
+          if (!rA || rA === '--') return 1;
+          if (!rB || rB === '--') return -1;
+          return rA.localeCompare(rB, undefined, { numeric: true, sensitivity: 'base' });
+        });
+      } else if (scoreboardSortMode === 'REG_DESC') {
+        pool.sort(function(a, b) {
+          var rA = (a.regNo || '').trim().toUpperCase();
+          var rB = (b.regNo || '').trim().toUpperCase();
+          if (!rA || rA === '--') return 1;
+          if (!rB || rB === '--') return -1;
+          return rB.localeCompare(rA, undefined, { numeric: true, sensitivity: 'base' });
+        });
+      }
+
+      var sortIndicator = scoreboardSortMode === 'REG_ASC' ? '🔼 (Roll ASC)' : (scoreboardSortMode === 'REG_DESC' ? '🔽 (Roll DESC)' : '⇅ Roll');
+
       var rowsHtml = pool.map(function(item, idx) {
         var normH = item.handle.toLowerCase();
-        var scoreObj = roundScoresMap[normH] || { individual_score: 0, round_total: 0 };
-        var roundScoreVal = scoreObj.individual_score || 0;
-        var cumScore = getPlayerCumulativeScore(item.handle);
-        var tier = tierFor(cumScore || roundScoreVal);
+        var prior = getPriorRoundScore(item.handle, currentRoundNum);
+        var scoreObj = roundScoresMap[normH];
+        var roundScoreVal = (scoreObj && scoreObj.individual_score !== undefined) ? scoreObj.individual_score : prior;
+        var cumScore = Math.max(getPlayerCumulativeScore(item.handle), roundScoreVal);
+        var tier = tierFor(cumScore);
 
         return '<tr>' +
           '<td><b class="mono">#' + (idx + 1) + '</b></td>' +
           '<td>' +
-            '<div style="font-weight:700; color:var(--text-main);">' + escapeHtml(item.handle) + '</div>' +
-            '<div style="font-size:12px; color:var(--text-dim);">' + escapeHtml(item.name) + (item.regNo && item.regNo !== '--' ? (' · ' + escapeHtml(item.regNo)) : '') + '</div>' +
+            '<div style="font-weight:700; color:var(--text-main); font-size:13.5px;">' + escapeHtml(item.name || 'Gladiator') + '</div>' +
+            '<div style="font-size:12px; color:var(--text-dim);"><span class="mono" style="color:var(--cyan); font-weight:700;">' + escapeHtml(item.regNo && item.regNo !== '--' ? item.regNo : 'NO ROLL') + '</span>' + (item.branch ? (' · ' + escapeHtml(item.branch)) : '') + ' <span style="color:var(--gold); font-size:11px;">(' + escapeHtml(item.handle) + ')</span></div>' +
           '</td>' +
           '<td>' +
-            '<input type="number" class="score-input-field" value="' + roundScoreVal + '" min="0" ' + disabledAttr + ' ' +
+            '<input type="number" class="score-input-field solo-score-input" data-handle="' + escapeHtml(normH) + '" data-name="' + escapeHtml(item.name) + '" value="' + roundScoreVal + '" min="0" ' + disabledAttr + ' ' +
+              'oninput="onIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(item.name) + '\', this.value)" ' +
               'onchange="onIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(item.name) + '\', this.value)" ' +
               'onblur="onIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(item.name) + '\', this.value)"> ' +
             '<span style="font-size:11px; color:var(--text-dim);">DMG</span>' +
@@ -1877,8 +2036,8 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
           '<td><span class="mono" style="font-weight:800; color:var(--gold); font-size:15px;">' + cumScore.toLocaleString() + '</span> <span style="font-size:11px; color:var(--text-dim);">DMG</span></td>' +
           '<td><span class="badge-status status-verified">' + tier + ' RANK</span></td>' +
           '<td style="text-align:right;">' +
-            '<button class="btn btn-ghost btn-sm" onclick="quickAdjustScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(item.name) + '\', 50)" ' + disabledAttr + ' title="Add 50 DMG">+50</button> ' +
-            '<button class="btn btn-ghost btn-sm" onclick="quickAdjustScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(item.name) + '\', 100)" ' + disabledAttr + ' title="Add 100 DMG">+100</button>' +
+            '<button class="btn btn-ghost btn-sm" onclick="quickAdjustScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(item.name) + '\', 25)" ' + disabledAttr + ' title="Add 25 DMG">+25</button> ' +
+            '<button class="btn btn-ghost btn-sm" onclick="quickAdjustScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(item.name) + '\', 50)" ' + disabledAttr + ' title="Add 50 DMG">+50</button>' +
           '</td>' +
           '</tr>';
       }).join('');
@@ -1888,7 +2047,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
           '<thead>' +
             '<tr>' +
               '<th style="width:60px;">Rank</th>' +
-              '<th>Handle & Name</th>' +
+              '<th style="cursor:pointer;" onclick="toggleScoreboardSort()" title="Click to cycle Regd Number sort">Player Name & Roll No <span style="font-size:11px; color:var(--cyan);">' + sortIndicator + '</span></th>' +
               '<th style="width:170px;">Round ' + currentRoundNum + ' Score</th>' +
               '<th style="width:150px;">Cumulative Score</th>' +
               '<th style="width:110px;">Tier Rank</th>' +
@@ -1898,122 +2057,177 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
           '<tbody>' + rowsHtml + '</tbody>' +
         '</table>' +
       '</div>';
-      return;
-    }
+    } else {
+      // B. TEAM ROUND UI (Rounds 2, 3, 4, 6, 7)
+      if (!roundTeamsList || !roundTeamsList.length) {
+        var emptyMsg = '';
+        var emptyActionBtn = '';
+        if (currentRoundNum === 2) {
+          emptyMsg = 'Round 2 requires auto-generated teams of 4. Click the button below to generate squads from eligible contenders.';
+          emptyActionBtn = '<button class="btn btn-gold" onclick="triggerGenerateRound2Teams()">⚡ Generate Round 2 Teams (4P)</button>';
+        } else if (currentRoundNum === 4) {
+          emptyMsg = 'Round 4 reuses the exact same teams created in Round 3. Please create and save teams in Round 3 first.';
+          emptyActionBtn = '<button class="btn btn-cyan" onclick="selectTournamentRound(3)">👉 Go to Round 3 to Setup Teams</button>';
+        } else {
+          emptyMsg = 'No teams created yet for Round ' + currentRoundNum + '. Click the button below to manually assemble teams.';
+          emptyActionBtn = '<button class="btn btn-cyan" onclick="openCreateTeamModal()">➕ Create Manual Team</button>';
+        }
 
-    // B. TEAM ROUND UI (Rounds 2, 3, 4, 6, 7)
-    if (!roundTeamsList || !roundTeamsList.length) {
-      var emptyMsg = '';
-      var emptyActionBtn = '';
-      if (currentRoundNum === 2) {
-        emptyMsg = 'Round 2 requires auto-generated teams of 4. Click the button below to generate squads from eligible contenders.';
-        emptyActionBtn = '<button class="btn btn-gold" onclick="triggerGenerateRound2Teams()">⚡ Generate Round 2 Teams (4P)</button>';
-      } else if (currentRoundNum === 4) {
-        emptyMsg = 'Round 4 reuses the exact same teams created in Round 3. Please create and save teams in Round 3 first.';
-        emptyActionBtn = '<button class="btn btn-cyan" onclick="selectTournamentRound(3)">👉 Go to Round 3 to Setup Teams</button>';
-      } else {
-        emptyMsg = 'No teams created yet for Round ' + currentRoundNum + '. Click the button below to manually assemble teams.';
-        emptyActionBtn = '<button class="btn btn-cyan" onclick="openCreateTeamModal()">➕ Create Manual Team</button>';
+        container.innerHTML += '<div class="cyber-card" style="text-align:center; padding:40px 20px;">' +
+          '<div style="font-size:32px; margin-bottom:10px;">🛡️</div>' +
+          '<h4 style="font-size:16px; font-weight:800; color:#ffffff; margin-bottom:6px;">No Teams Formed for Round ' + currentRoundNum + '</h4>' +
+          '<p style="font-size:13px; color:var(--text-muted); max-width:480px; margin:0 auto 18px; line-height:1.5;">' + emptyMsg + '</p>' +
+          emptyActionBtn +
+          '</div>';
+        return;
       }
 
-      container.innerHTML += '<div class="cyber-card" style="text-align:center; padding:40px 20px;">' +
-        '<div style="font-size:32px; margin-bottom:10px;">🛡️</div>' +
-        '<h4 style="font-size:16px; font-weight:800; color:#ffffff; margin-bottom:6px;">No Teams Formed for Round ' + currentRoundNum + '</h4>' +
-        '<p style="font-size:13px; color:var(--text-muted); max-width:480px; margin:0 auto 18px; line-height:1.5;">' + emptyMsg + '</p>' +
-        emptyActionBtn +
+      // Render each team group
+      var teamsHtml = roundTeamsList.map(function(team, tIdx) {
+        var teamId = team.id || ('team_' + tIdx);
+        var teamName = team.team_name || ('TEAM ' + (tIdx + 1));
+        var members = (team.members || []).slice();
+
+        // Sort members by regNo if sort mode active
+        if (scoreboardSortMode === 'REG_ASC') {
+          members.sort(function(a, b) {
+            var rA = (a.reg_no || a.regNo || '').trim().toUpperCase();
+            var rB = (b.reg_no || b.regNo || '').trim().toUpperCase();
+            if (!rA || rA === '--') return 1;
+            if (!rB || rB === '--') return -1;
+            return rA.localeCompare(rB, undefined, { numeric: true, sensitivity: 'base' });
+          });
+        } else if (scoreboardSortMode === 'REG_DESC') {
+          members.sort(function(a, b) {
+            var rA = (a.reg_no || a.regNo || '').trim().toUpperCase();
+            var rB = (b.reg_no || b.regNo || '').trim().toUpperCase();
+            if (!rA || rA === '--') return 1;
+            if (!rB || rB === '--') return -1;
+            return rB.localeCompare(rA, undefined, { numeric: true, sensitivity: 'base' });
+          });
+        }
+
+        // Find team score from first member or map
+        var currentTeamScore = 0;
+        members.forEach(function(m) {
+          var normH = (m.player_handle || '').toLowerCase();
+          if (roundScoresMap[normH] && roundScoresMap[normH].team_score !== undefined && roundScoresMap[normH].team_score > 0) {
+            currentTeamScore = roundScoresMap[normH].team_score;
+          }
+        });
+
+        // Edit / Delete buttons for manual rounds (3, 6, 7)
+        var canEditTeam = (currentRoundNum === 3 || currentRoundNum === 6 || currentRoundNum === 7);
+        var teamActionsHtml = canEditTeam ? (
+          '<div style="display:flex; gap:6px;">' +
+            '<button class="btn btn-ghost btn-sm" onclick="openCreateTeamModal(\'' + escapeHtml(teamId) + '\')" ' + disabledAttr + ' title="Edit Team">✏️ Edit Team</button>' +
+            '<button class="btn btn-pink btn-sm" onclick="handleDeleteTeamAction(\'' + escapeHtml(teamId) + '\')" ' + disabledAttr + ' title="Delete Team">🗑️</button>' +
+          '</div>'
+        ) : (
+          '<span class="badge-status status-verified" style="font-size:11px;">' + (currentRoundNum === 2 ? 'Auto Squad (4P)' : 'Linked to Round 3') + '</span>'
+        );
+
+        var memberRows = members.map(function(m) {
+          var normH = (m.player_handle || '').toLowerCase();
+          var prior = getPriorRoundScore(m.player_handle, currentRoundNum);
+          var scoreObj = roundScoresMap[normH];
+          
+          var indScore;
+          var roundTotal;
+          if (scoreObj && scoreObj.individual_score !== undefined) {
+            indScore = scoreObj.individual_score;
+            roundTotal = scoreObj.round_total !== undefined ? scoreObj.round_total : indScore;
+          } else {
+            indScore = prior + currentTeamScore;
+            roundTotal = indScore;
+          }
+          var cumScore = Math.max(getPlayerCumulativeScore(m.player_handle), roundTotal);
+          var tier = tierFor(cumScore);
+
+          return '<tr>' +
+            '<td>' +
+              '<div style="font-weight:700; color:var(--text-main); font-size:13.5px;">' + escapeHtml(m.player_name || 'Gladiator') + '</div>' +
+              '<div style="font-size:11.5px; color:var(--text-dim);"><span class="mono" style="color:var(--cyan); font-weight:700;">' + escapeHtml(m.reg_no || m.regNo || 'NO ROLL') + '</span> <span style="color:var(--gold); font-size:11px;">(' + escapeHtml(m.player_handle) + ')</span></div>' +
+            '</td>' +
+            '<td>' +
+              '<input type="number" class="score-input-field member-score-input" data-handle="' + escapeHtml(normH) + '" data-name="' + escapeHtml(m.player_name) + '" data-team-id="' + escapeHtml(teamId) + '" value="' + indScore + '" min="0" ' + disabledAttr + ' ' +
+                'oninput="onMemberIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', this.value)" ' +
+                'onchange="onMemberIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', this.value)" ' +
+                'onblur="onMemberIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', this.value)"> ' +
+              '<span style="font-size:11px; color:var(--text-dim);">DMG</span>' +
+            '</td>' +
+            '<td>' +
+              '<span class="round-total-badge">' + roundTotal.toLocaleString() + ' DMG</span> ' +
+              '<span style="font-size:11px; color:var(--text-dim);">(' + prior + ' base + ' + currentTeamScore + ' team)</span>' +
+            '</td>' +
+            '<td><span class="mono" style="font-weight:800; color:var(--gold); font-size:14px;">' + cumScore.toLocaleString() + '</span> <span style="font-size:11px; color:var(--text-dim);">DMG</span></td>' +
+            '<td><span class="badge-status status-verified">' + tier + ' RANK</span></td>' +
+            '<td style="text-align:right;">' +
+              '<button class="btn btn-ghost btn-sm" onclick="quickAdjustMemberScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', 25)" ' + disabledAttr + ' title="Add 25 DMG">+25</button> ' +
+              '<button class="btn btn-ghost btn-sm" onclick="quickAdjustMemberScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', 50)" ' + disabledAttr + ' title="Add 50 DMG">+50</button>' +
+            '</td>' +
+            '</tr>';
+        }).join('');
+
+        return '<div class="team-card-group">' +
+          '<div class="team-card-header">' +
+            '<div style="display:flex; align-items:center; gap:12px;">' +
+              '<div style="font-weight:800; font-size:15px; color:var(--cyan); letter-spacing:0.5px;">🛡️ ' + escapeHtml(teamName) + '</div>' +
+              '<span style="font-size:12px; color:var(--text-dim);">' + members.length + ' Members</span>' +
+            '</div>' +
+            '<div style="display:flex; align-items:center; gap:14px;">' +
+              '<div class="team-score-input-box">' +
+                '<span style="font-size:11.5px; font-weight:700; color:var(--gold);">TEAM SCORE:</span>' +
+                '<input type="number" class="score-input-field team-score-input" data-team-id="' + escapeHtml(teamId) + '" style="color:var(--gold); width:95px;" value="' + currentTeamScore + '" min="0" ' + disabledAttr + ' ' +
+                  'oninput="onTeamScoreChange(\'' + escapeHtml(teamId) + '\', this.value)" ' +
+                  'onchange="onTeamScoreChange(\'' + escapeHtml(teamId) + '\', this.value)" ' +
+                  'onblur="onTeamScoreChange(\'' + escapeHtml(teamId) + '\', this.value)">' +
+                '<span style="font-size:11px; color:var(--text-dim);">DMG</span>' +
+              '</div>' +
+              teamActionsHtml +
+            '</div>' +
+          '</div>' +
+          '<div class="table-wrap" style="margin:0; border:none; border-radius:0;">' +
+            '<table class="admin-table">' +
+              '<thead>' +
+                '<tr>' +
+                  '<th style="cursor:pointer;" onclick="toggleScoreboardSort()" title="Click to cycle Regd Number sort">Player Name & Roll No <span style="font-size:11px; color:var(--cyan);">' + sortIndicator + '</span></th>' +
+                  '<th style="width:160px;">Individual Score</th>' +
+                  '<th style="width:170px;">Round Total (Ind + Team)</th>' +
+                  '<th style="width:150px;">Cumulative Score</th>' +
+                  '<th style="width:100px;">Tier Rank</th>' +
+                  '<th style="width:130px; text-align:right;">Quick Actions</th>' +
+                '</tr>' +
+              '</thead>' +
+              '<tbody>' + memberRows + '</tbody>' +
+            '</table>' +
+          '</div>' +
         '</div>';
-      return;
-    }
-
-    // Render each team group
-    var teamsHtml = roundTeamsList.map(function(team, tIdx) {
-      var teamId = team.id || ('team_' + tIdx);
-      var teamName = team.team_name || ('TEAM ' + (tIdx + 1));
-      var members = team.members || [];
-
-      // Find team score from first member or map
-      var sampleH = members[0] ? (members[0].player_handle || '').toLowerCase() : '';
-      var currentTeamScore = (roundScoresMap[sampleH] && roundScoresMap[sampleH].team_score) ? roundScoresMap[sampleH].team_score : 0;
-
-      // Edit / Delete buttons for manual rounds (3, 6, 7)
-      var canEditTeam = (currentRoundNum === 3 || currentRoundNum === 6 || currentRoundNum === 7);
-      var teamActionsHtml = canEditTeam ? (
-        '<div style="display:flex; gap:6px;">' +
-          '<button class="btn btn-ghost btn-sm" onclick="openCreateTeamModal(\'' + escapeHtml(teamId) + '\')" ' + disabledAttr + ' title="Edit Team">✏️ Edit Team</button>' +
-          '<button class="btn btn-pink btn-sm" onclick="handleDeleteTeamAction(\'' + escapeHtml(teamId) + '\')" ' + disabledAttr + ' title="Delete Team">🗑️</button>' +
-        '</div>'
-      ) : (
-        '<span class="badge-status status-verified" style="font-size:11px;">' + (currentRoundNum === 2 ? 'Auto Squad (4P)' : 'Linked to Round 3') + '</span>'
-      );
-
-      var memberRows = members.map(function(m) {
-        var normH = (m.player_handle || '').toLowerCase();
-        var scoreObj = roundScoresMap[normH] || { individual_score: 0, team_score: currentTeamScore, round_total: currentTeamScore };
-        var indScore = scoreObj.individual_score || 0;
-        var roundTotal = indScore + currentTeamScore; // Team score added automatically!
-        var cumScore = getPlayerCumulativeScore(m.player_handle);
-        var tier = tierFor(cumScore || roundTotal);
-
-        return '<tr>' +
-          '<td>' +
-            '<div style="font-weight:700; color:var(--text-main);">' + escapeHtml(m.player_handle) + '</div>' +
-            '<div style="font-size:11.5px; color:var(--text-dim);">' + escapeHtml(m.player_name || 'Gladiator') + (m.reg_no ? (' · ' + escapeHtml(m.reg_no)) : '') + '</div>' +
-          '</td>' +
-          '<td>' +
-            '<input type="number" class="score-input-field" value="' + indScore + '" min="0" ' + disabledAttr + ' ' +
-              'onchange="onMemberIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', this.value)" ' +
-              'onblur="onMemberIndividualScoreChange(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', this.value)"> ' +
-            '<span style="font-size:11px; color:var(--text-dim);">DMG</span>' +
-          '</td>' +
-          '<td>' +
-            '<span class="round-total-badge">' + roundTotal.toLocaleString() + ' DMG</span> ' +
-            '<span style="font-size:11px; color:var(--text-dim);">(' + indScore + ' + ' + currentTeamScore + ')</span>' +
-          '</td>' +
-          '<td><span class="mono" style="font-weight:800; color:var(--gold); font-size:14px;">' + cumScore.toLocaleString() + '</span> <span style="font-size:11px; color:var(--text-dim);">DMG</span></td>' +
-          '<td><span class="badge-status status-verified">' + tier + ' RANK</span></td>' +
-          '<td style="text-align:right;">' +
-            '<button class="btn btn-ghost btn-sm" onclick="quickAdjustMemberScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', 25)" ' + disabledAttr + ' title="Add 25 DMG">+25</button> ' +
-            '<button class="btn btn-ghost btn-sm" onclick="quickAdjustMemberScore(\'' + escapeHtml(normH) + '\', \'' + escapeHtml(m.player_name) + '\', \'' + escapeHtml(teamId) + '\', 50)" ' + disabledAttr + ' title="Add 50 DMG">+50</button>' +
-          '</td>' +
-          '</tr>';
       }).join('');
 
-      return '<div class="team-card-group">' +
-        '<div class="team-card-header">' +
-          '<div style="display:flex; align-items:center; gap:12px;">' +
-            '<div style="font-weight:800; font-size:15px; color:var(--cyan); letter-spacing:0.5px;">🛡️ ' + escapeHtml(teamName) + '</div>' +
-            '<span style="font-size:12px; color:var(--text-dim);">' + members.length + ' Members</span>' +
-          '</div>' +
-          '<div style="display:flex; align-items:center; gap:14px;">' +
-            '<div class="team-score-input-box">' +
-              '<span style="font-size:11.5px; font-weight:700; color:var(--gold);">TEAM SCORE:</span>' +
-              '<input type="number" class="score-input-field" style="color:var(--gold); width:95px;" value="' + currentTeamScore + '" min="0" ' + disabledAttr + ' ' +
-                'onchange="onTeamScoreChange(\'' + escapeHtml(teamId) + '\', this.value)" ' +
-                'onblur="onTeamScoreChange(\'' + escapeHtml(teamId) + '\', this.value)">' +
-              '<span style="font-size:11px; color:var(--text-dim);">DMG</span>' +
-            '</div>' +
-            teamActionsHtml +
-          '</div>' +
-        '</div>' +
-        '<div class="table-wrap" style="margin:0; border:none; border-radius:0;">' +
-          '<table class="admin-table">' +
-            '<thead>' +
-              '<tr>' +
-                '<th>Player Handle & Name</th>' +
-                '<th style="width:160px;">Individual Score</th>' +
-                '<th style="width:170px;">Round Total (Ind + Team)</th>' +
-                '<th style="width:150px;">Cumulative Score</th>' +
-                '<th style="width:100px;">Tier Rank</th>' +
-                '<th style="width:130px; text-align:right;">Quick Actions</th>' +
-              '</tr>' +
-            '</thead>' +
-            '<tbody>' + memberRows + '</tbody>' +
-          '</table>' +
-        '</div>' +
-      '</div>';
-    }).join('');
+      container.innerHTML += teamsHtml;
+    }
 
-    container.innerHTML += teamsHtml;
+    // Restore focus and selection seamlessly!
+    if (activeTeamId && isTeamInp) {
+      var newTeamInp = container.querySelector('input.team-score-input[data-team-id="' + activeTeamId + '"]');
+      if (newTeamInp) {
+        newTeamInp.focus();
+        if (selStart !== null) newTeamInp.setSelectionRange(selStart, selEnd);
+      }
+    } else if (activeHandle && isMemberInp) {
+      var newMemInp = container.querySelector('input.member-score-input[data-handle="' + activeHandle + '"]');
+      if (newMemInp) {
+        newMemInp.focus();
+        if (selStart !== null) newMemInp.setSelectionRange(selStart, selEnd);
+      }
+    } else if (activeHandle && isSoloInp) {
+      var newSoloInp = container.querySelector('input.solo-score-input[data-handle="' + activeHandle + '"]');
+      if (newSoloInp) {
+        newSoloInp.focus();
+        if (selStart !== null) newSoloInp.setSelectionRange(selStart, selEnd);
+      }
+    }
   }
 
   // RENDER CUMULATIVE BOARD TABLE
@@ -2021,7 +2235,39 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
     var tbody = document.getElementById('cumulativeBoardBody');
     if (!tbody) return;
 
-    boardData.sort(function(a, b) { return b.score - a.score; });
+    var inHouseMap = getInHouseCheckins();
+    boardData.forEach(function(item) {
+      if (!item.regNo) {
+        var rawH = (item.handle || '').toLowerCase().trim();
+        if (!rawH.startsWith('@')) rawH = '@' + rawH;
+        if (inHouseMap[rawH] && (inHouseMap[rawH].regNo || inHouseMap[rawH].reg_no)) {
+          item.regNo = inHouseMap[rawH].regNo || inHouseMap[rawH].reg_no;
+        } else if (Array.isArray(regData)) {
+          var reg = regData.find(function(r) { return (r.handle || '').toLowerCase().trim() === rawH; });
+          if (reg && (reg.regNo || reg.reg_no)) item.regNo = reg.regNo || reg.reg_no;
+        }
+      }
+    });
+
+    if (scoreboardSortMode === 'REG_ASC') {
+      boardData.sort(function(a, b) {
+        var rA = (a.regNo || '').trim().toUpperCase();
+        var rB = (b.regNo || '').trim().toUpperCase();
+        if (!rA || rA === '--') return 1;
+        if (!rB || rB === '--') return -1;
+        return rA.localeCompare(rB, undefined, { numeric: true, sensitivity: 'base' });
+      });
+    } else if (scoreboardSortMode === 'REG_DESC') {
+      boardData.sort(function(a, b) {
+        var rA = (a.regNo || '').trim().toUpperCase();
+        var rB = (b.regNo || '').trim().toUpperCase();
+        if (!rA || rA === '--') return 1;
+        if (!rB || rB === '--') return -1;
+        return rB.localeCompare(rA, undefined, { numeric: true, sensitivity: 'base' });
+      });
+    } else {
+      boardData.sort(function(a, b) { return b.score - a.score; });
+    }
 
     if (!boardData.length) {
       tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--text-dim);">No cumulative standings computed yet. Enter round scores above and click "Save Round Scores".</td></tr>';
@@ -2032,7 +2278,10 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
       var tier = tierFor(item.score);
       return '<tr>' +
         '<td><b class="mono">#' + (idx + 1) + '</b></td>' +
-        '<td><div style="font-weight:700; color:var(--text-main);">' + escapeHtml(item.handle) + '</div><div style="font-size:12px; color:var(--text-dim);">' + escapeHtml(item.name || 'Solo Gladiator') + '</div></td>' +
+        '<td>' +
+          '<div style="font-weight:700; color:var(--text-main); font-size:13.5px;">' + escapeHtml(item.name || 'Solo Gladiator') + '</div>' +
+          '<div style="font-size:12px; color:var(--text-dim);"><span class="mono" style="color:var(--cyan); font-weight:700;">' + escapeHtml(item.regNo || '--') + '</span> <span style="color:var(--gold); font-size:11px;">(' + escapeHtml(item.handle) + ')</span></div>' +
+        '</td>' +
         '<td><span class="mono" style="font-weight:800; color:var(--gold); font-size:15px;">' + (item.score || 0).toLocaleString() + '</span> <span style="font-size:11px; color:var(--text-dim);">DMG</span></td>' +
         '<td><span class="badge-status status-verified">' + tier + ' RANK</span></td>' +
         '<td><span class="mono" style="font-size:12px; color:var(--cyan);">' + (item.boss_dmg || (item.score + ' DMG')) + '</span></td>' +
@@ -2249,25 +2498,23 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
     var normH = handle.toLowerCase();
     var sc = Math.max(0, parseInt(val, 10) || 0);
 
-    if (!roundScoresMap[normH]) {
-      roundScoresMap[normH] = {
-        player_handle: handle,
-        player_name: name || '',
-        individual_score: sc,
-        team_id: null,
-        team_score: 0,
-        round_total: sc
-      };
-    } else {
-      roundScoresMap[normH].individual_score = sc;
-      roundScoresMap[normH].round_total = sc;
-      if (name && !roundScoresMap[normH].player_name) roundScoresMap[normH].player_name = name;
+    roundScoresMap[normH] = {
+      player_handle: handle,
+      player_name: name || (roundScoresMap[normH] ? roundScoresMap[normH].player_name : ''),
+      individual_score: sc,
+      team_id: null,
+      team_score: 0,
+      round_total: sc
+    };
+
+    if (window.TechBossSupabase) {
+      window.TechBossSupabase.saveLocalTournamentScores(currentRoundNum, roundScoresMap);
     }
   };
 
   window.quickAdjustScore = function(handle, name, delta) {
     var normH = handle.toLowerCase();
-    var currentSc = (roundScoresMap[normH] && roundScoresMap[normH].individual_score) ? roundScoresMap[normH].individual_score : 0;
+    var currentSc = (roundScoresMap[normH] && roundScoresMap[normH].individual_score !== undefined) ? roundScoresMap[normH].individual_score : getPriorRoundScore(handle, currentRoundNum);
     var newSc = Math.max(0, currentSc + delta);
     window.onIndividualScoreChange(handle, name, newSc);
     renderActiveRoundScoreboard();
@@ -2279,58 +2526,68 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
     var team = roundTeamsList.find(function(t) { return String(t.id) === String(teamId); });
     if (!team) return;
 
-    // Update team score for all members of this team and auto-sum to player round total!
+    // Update team score and automatically update all members' individual scores!
     (team.members || []).forEach(function(m) {
       var normH = (m.player_handle || '').toLowerCase();
-      if (!roundScoresMap[normH]) {
-        roundScoresMap[normH] = {
-          player_handle: m.player_handle,
-          player_name: m.player_name || '',
-          individual_score: 0,
-          team_id: teamId,
-          team_score: sc,
-          round_total: sc
-        };
-      } else {
-        roundScoresMap[normH].team_id = teamId;
-        roundScoresMap[normH].team_score = sc;
-        roundScoresMap[normH].round_total = (roundScoresMap[normH].individual_score || 0) + sc;
-      }
+      var prior = getPriorRoundScore(m.player_handle, currentRoundNum);
+      var prevEntry = roundScoresMap[normH];
+
+      // Any individual custom bonus already added above prior score + previous team score
+      var prevTeamScore = prevEntry ? (prevEntry.team_score || 0) : 0;
+      var prevInd = prevEntry ? (prevEntry.individual_score !== undefined ? prevEntry.individual_score : prior) : prior;
+      var indBonus = prevEntry && prevEntry.individual_bonus !== undefined ? prevEntry.individual_bonus : Math.max(0, prevInd - prior - prevTeamScore);
+
+      // New individual score = prior round maintained score + team score + individual bonus
+      var updatedIndScore = prior + sc + indBonus;
+
+      roundScoresMap[normH] = {
+        player_handle: m.player_handle,
+        player_name: m.player_name || (prevEntry ? prevEntry.player_name : ''),
+        individual_score: updatedIndScore,
+        individual_bonus: indBonus,
+        team_id: teamId,
+        team_score: sc,
+        round_total: updatedIndScore
+      };
     });
 
+    // Save immediately so state is never lost
+    if (window.TechBossSupabase) {
+      window.TechBossSupabase.saveLocalTournamentScores(currentRoundNum, roundScoresMap);
+    }
+
     renderActiveRoundScoreboard();
-    showToast('Team ' + team.team_name + ' score updated to ' + sc + ' DMG');
   };
 
   window.onMemberIndividualScoreChange = function(handle, name, teamId, val) {
     if (!handle) return;
     var normH = handle.toLowerCase();
-    var sc = Math.max(0, parseInt(val, 10) || 0);
+    var newInd = Math.max(0, parseInt(val, 10) || 0);
 
-    // Find current team score
     var team = roundTeamsList.find(function(t) { return String(t.id) === String(teamId); });
     var tScore = 0;
     if (team && team.members && team.members.length) {
       var firstH = (team.members[0].player_handle || '').toLowerCase();
-      if (roundScoresMap[firstH] && roundScoresMap[firstH].team_score) {
+      if (roundScoresMap[firstH] && roundScoresMap[firstH].team_score !== undefined) {
         tScore = roundScoresMap[firstH].team_score;
       }
     }
 
-    if (!roundScoresMap[normH]) {
-      roundScoresMap[normH] = {
-        player_handle: handle,
-        player_name: name || '',
-        individual_score: sc,
-        team_id: teamId,
-        team_score: tScore,
-        round_total: sc + tScore
-      };
-    } else {
-      roundScoresMap[normH].individual_score = sc;
-      roundScoresMap[normH].team_id = teamId;
-      roundScoresMap[normH].team_score = tScore;
-      roundScoresMap[normH].round_total = sc + tScore;
+    var prior = getPriorRoundScore(handle, currentRoundNum);
+    var indBonus = Math.max(0, newInd - prior - tScore);
+
+    roundScoresMap[normH] = {
+      player_handle: handle,
+      player_name: name || (roundScoresMap[normH] ? roundScoresMap[normH].player_name : ''),
+      individual_score: newInd,
+      individual_bonus: indBonus,
+      team_id: teamId,
+      team_score: tScore,
+      round_total: newInd
+    };
+
+    if (window.TechBossSupabase) {
+      window.TechBossSupabase.saveLocalTournamentScores(currentRoundNum, roundScoresMap);
     }
 
     renderActiveRoundScoreboard();
@@ -2338,7 +2595,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
 
   window.quickAdjustMemberScore = function(handle, name, teamId, delta) {
     var normH = handle.toLowerCase();
-    var cur = (roundScoresMap[normH] && roundScoresMap[normH].individual_score) ? roundScoresMap[normH].individual_score : 0;
+    var cur = (roundScoresMap[normH] && roundScoresMap[normH].individual_score !== undefined) ? roundScoresMap[normH].individual_score : getPriorRoundScore(handle, currentRoundNum);
     var newSc = Math.max(0, cur + delta);
     window.onMemberIndividualScoreChange(handle, name, teamId, newSc);
     showToast('Adjusted ' + handle + ' individual score: ' + newSc + ' DMG');
@@ -2348,6 +2605,24 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
   var saveRoundScoresBtn = document.getElementById('saveRoundScoresBtn');
   if (saveRoundScoresBtn) {
     saveRoundScoresBtn.addEventListener('click', async function() {
+      // 1. Flush any unblurred inputs in the DOM into roundScoresMap
+      document.querySelectorAll('#activeRoundViewContainer input.score-input-field').forEach(function(inp) {
+        var val = parseInt(inp.value, 10) || 0;
+        var handle = inp.getAttribute('data-handle');
+        var name = inp.getAttribute('data-name');
+        var teamId = inp.getAttribute('data-team-id');
+        var isTeamHeader = inp.classList.contains('team-score-input');
+        if (isTeamHeader && teamId) {
+          window.onTeamScoreChange(teamId, val);
+        } else if (handle) {
+          if (teamId) {
+            window.onMemberIndividualScoreChange(handle, name, teamId, val);
+          } else {
+            window.onIndividualScoreChange(handle, name, val);
+          }
+        }
+      });
+
       saveRoundScoresBtn.disabled = true;
       saveRoundScoresBtn.innerHTML = '💾 Saving...';
       try {
@@ -2437,33 +2712,24 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
       return;
     }
 
-    var remainder = pool.length % 4;
-    if (remainder !== 0) {
-      var warningModal = document.getElementById('round2WarningModal');
-      var modalText = document.getElementById('r2WarningModalText');
-      if (modalText) {
-        modalText.innerHTML = 'Total eligible players: <b>' + pool.length + '</b>.<br>' +
-          'Teams of 4 require an exact multiple of 4. There are currently <b>' + remainder + ' unassigned player' + (remainder > 1 ? 's' : '') + '</b>.<br><br>' +
-          'Please verify registrations in Tab 2 to make the pool a multiple of 4.';
-      }
-      if (warningModal) warningModal.classList.add('show');
-      return;
-    }
-
     if (localStorage.getItem('techboss_round2_teams_generated') === 'true') {
-      if (!confirm('Round 2 teams have already been generated. Re-generating will create new random 4-player teams. Continue?')) {
+      if (!confirm('Round 2 teams have already been generated. Re-generating will create new random teams for all contenders (with leftovers forming an extra squad). Continue?')) {
         return;
       }
     }
 
     if (window.TechBossSupabase) {
-      showToast('⚡ Generating Round 2 teams of 4...');
+      showToast('⚡ Generating Round 2 teams...');
       var res = await window.TechBossSupabase.generateRound2Teams(pool);
       if (res.success) {
         roundTeamsList = res.teams;
+        localStorage.setItem('techboss_active_round', '2');
+        try {
+          await window.TechBossSupabase.updateRoundStatus(2, 'OPEN');
+        } catch (e) {}
         renderActiveRoundScoreboard();
-        showToast('✅ Created ' + res.count + ' Round 2 teams (4 players each)!');
-        if (genR2TeamsBtn) genR2TeamsBtn.textContent = '🔄 Re-Generate Round 2 Teams (4P)';
+        showToast('✅ Created ' + res.count + ' Round 2 teams for all ' + (res.totalPlayers || pool.length) + ' contenders!');
+        if (genR2TeamsBtn) genR2TeamsBtn.textContent = '🔄 Re-Generate Round 2 Teams';
       } else {
         alert(res.error || 'Failed to generate teams.');
       }
@@ -3005,14 +3271,15 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
   }
 
   var TRACK_PRESETS = {
-    'times-9am': ['Times/9-00 AM.jpeg', 'Times/9-00 AM.mp3'],
-    'times-10am': ['Times/10-00 AM.jpeg', 'Times/10-00 AM.mp3'],
-    'times-11am': ['Times/11-00 AM.jpeg', 'Times/11-00 AM.mp3'],
-    'times-12pm': ['Times/12-00 PM.jpeg', 'Times/12-00 PM.mp3'],
-    'times-1pm': ['Times/1-00 PM.jpeg', 'Times/1-00 PM.mp3'],
-    'times-2pm': ['Times/2-00 PM.jpeg', 'Times/2-00 PM.mp3'],
-    'times-3pm': ['Times/3-00 PM.jpeg', 'Times/3-00 PM.mp3'],
-    'times-4pm': ['Times/4-00 PM.jpeg', 'Times/4-00 PM.mp3'],
+    'times-9am': ['Times/9-00 AM.mp3', 'Times/9-00 AM.jpeg'],
+    'times-10am': ['Times/10-00 AM.mp3', 'Times/10-00 AM.jpeg'],
+    'times-11am': ['Times/11-00 AM.mp3', 'Times/11-00 AM.jpeg'],
+    'times-12pm': ['Times/12-00 PM.mp3', 'Times/12-00 PM.jpeg'],
+    'times-1pm': ['Times/1-00 PM.mp3', 'Times/1-00 PM.jpeg'],
+    'times-2pm': ['Times/2-00 PM.mp3', 'Times/2-00 PM.jpeg'],
+    'times-3pm': ['Times/3-00 PM.mp3', 'Times/3-00 PM.jpeg'],
+    'times-4pm': ['Times/4-00 PM.mp3', 'Times/4-00 PM.jpeg'],
+    'fanfare': ['success-sound.mp3'],
     'success': ['success-sound.mp3']
   };
 
@@ -3071,8 +3338,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
   if (saveSchedBtn) {
     saveSchedBtn.addEventListener('click', function () {
       var timeVal = schedTimeInput ? schedTimeInput.value.trim() : '09:00';
-      var trackVal = schedTrackSelect ? schedTrackSelect.value : 'fanfare';
-      var msgVal = schedMsgInput ? schedMsgInput.value.trim() : '👑 THE ARENA IS LIVE!';
+      var trackVal = schedTrackSelect ? schedTrackSelect.value : 'times-9am';
 
       if (!timeVal) {
         alert('Please enter a target trigger time (e.g. 09:00)');
@@ -3081,34 +3347,42 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
 
       localStorage.setItem('techboss_scheduled_audio_time', timeVal);
       localStorage.setItem('techboss_scheduled_audio_track', trackVal);
-      localStorage.setItem('techboss_scheduled_audio_msg', msgVal);
 
-      if (schedStatusBadge) schedStatusBadge.textContent = '🟢 Active · ' + timeVal + ' IST';
+      if (schedStatusBadge) schedStatusBadge.textContent = '🟢 Active · Hourly Audio & ' + timeVal + ' IST';
 
+      // 1. Play locally in admin preview
+      playSoundTrack(trackVal);
+
+      // 2. Broadcast via BroadcastChannel so open Live Arena tabs play immediately!
       if (syncChannel) {
         try {
           syncChannel.postMessage({
             type: 'SCHEDULE_AUDIO_CONFIG',
             time: timeVal,
             track: trackVal,
-            message: msgVal,
+            timestamp: Date.now()
+          });
+          syncChannel.postMessage({
+            type: 'FIRE_SCHEDULED_AUDIO',
+            track: trackVal,
+            time: timeVal,
             timestamp: Date.now()
           });
         } catch (e) {}
       }
 
-      if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
-        var hp = localStorage.getItem('techboss_boss_hp') || '78';
-        window.TechBossSupabase.saveEventState(hp, msgVal);
+      // 3. Sync to Supabase/API so external screens/projectors trigger immediately
+      if (window.TechBossSupabase && window.TechBossSupabase.triggerArenaAudio) {
+        window.TechBossSupabase.triggerArenaAudio(trackVal);
       }
 
-      showToast('⏰ Trigger time set to ' + timeVal + ' IST. Audio will auto-play on schedule!');
+      showToast('⏰ Hourly audio schedule synced & sound note fired in Live Arena!');
     });
   }
 
   if (testAudioBtn) {
     testAudioBtn.addEventListener('click', function () {
-      var trackVal = schedTrackSelect ? schedTrackSelect.value : 'fanfare';
+      var trackVal = schedTrackSelect ? schedTrackSelect.value : 'times-9am';
       playSoundTrack(trackVal);
       showToast('🔊 Playing audio track preview...');
     });
@@ -3116,8 +3390,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
 
   if (triggerAudioNowBtn) {
     triggerAudioNowBtn.addEventListener('click', function () {
-      var trackVal = schedTrackSelect ? schedTrackSelect.value : 'fanfare';
-      var msgVal = schedMsgInput ? schedMsgInput.value.trim() : '👑 THE ARENA IS LIVE!';
+      var trackVal = schedTrackSelect ? schedTrackSelect.value : 'times-9am';
 
       playSoundTrack(trackVal);
 
@@ -3126,19 +3399,16 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
           syncChannel.postMessage({
             type: 'FIRE_SCHEDULED_AUDIO',
             track: trackVal,
-            message: msgVal,
             timestamp: Date.now()
           });
         } catch (e) {}
       }
 
-      localStorage.setItem('techboss_custom_broadcast', msgVal);
-      if (window.TechBossSupabase && window.TechBossSupabase.isConfigured()) {
-        var hp = localStorage.getItem('techboss_boss_hp') || '78';
-        window.TechBossSupabase.saveEventState(hp, msgVal);
+      if (window.TechBossSupabase && window.TechBossSupabase.triggerArenaAudio) {
+        window.TechBossSupabase.triggerArenaAudio(trackVal);
       }
 
-      showToast('⚡ Fired live Arena audio fanfare & keynote across all screens!');
+      showToast('⚡ Fired live Arena sound note across all screens!');
     });
   }
 

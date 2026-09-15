@@ -247,6 +247,76 @@
       border-color: var(--border-hover);
     }
 
+    /* TOURNAMENT SQUADS GRID & CARDS */
+    .gz-squads-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 18px;
+    }
+    .gz-squad-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+    .gz-squad-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-hover);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+    .gz-squad-card.my-squad {
+      border: 1.5px solid var(--accent-gold);
+      background: linear-gradient(180deg, rgba(38, 30, 16, 0.88) 0%, rgba(18, 16, 24, 0.94) 100%);
+      box-shadow: 0 0 35px rgba(229, 179, 88, 0.25), 0 16px 36px rgba(0, 0, 0, 0.6);
+    }
+    .gz-squad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .gz-squad-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .gz-member-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .gz-member-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      font-size: 13.5px;
+      gap: 10px;
+    }
+    .gz-member-row.is-me {
+      background: rgba(229, 179, 88, 0.15);
+      border-color: rgba(229, 179, 88, 0.4);
+    }
+
     /* MINI GAME BOSS CLICKER */
     .boss-avatar-box {
       width: 140px;
@@ -963,6 +1033,7 @@
     <div class="drawer-section-title">🕹️ GAME ZONE MODES</div>
     <ul class="drawer-nav-list">
       <li><button class="drawer-nav-item active" data-drawer-tab="leaderboard">🏆 Championship Leaderboard</button></li>
+      <li><button class="drawer-nav-item" data-drawer-tab="teams">👥 Tournament Squads</button></li>
       <li><button class="drawer-nav-item" data-drawer-tab="boss-clicker">⚔️ Boss Rush Duel</button></li>
       <li><button class="drawer-nav-item" data-drawer-tab="code-trial">⚡ Code Speed Reflex</button></li>
       <li><button class="drawer-nav-item" data-drawer-tab="telemetry">📊 Live Arena Dashboard</button></li>
@@ -1005,6 +1076,7 @@
             <span class="apple-badge green" style="margin-bottom:0; font-size:10.5px; padding:2px 8px;">🟢 IN-HOUSE CHECKED IN</span>
             <span class="apple-badge gold" id="gzPlayerRegBadge" style="margin-bottom:0; font-size:10.5px; padding:2px 8px;">ROLL: --</span>
             <span class="apple-badge blue" id="gzPlayerBranchBadge" style="margin-bottom:0; font-size:10.5px; padding:2px 8px; display:none;">CSE</span>
+            <span class="apple-badge gold" id="gzPlayerSquadBadge" style="margin-bottom:0; font-size:10.5px; padding:2px 8px; display:none; cursor:pointer;" onclick="switchGzTab('teams')">👥 SQUAD: --</span>
           </div>
           <div class="gz-player-name-row">
             <h2 id="gzPlayerFullName" class="gz-player-full-name">Contender</h2>
@@ -1021,6 +1093,7 @@
     <!-- Navigation Tabs -->
     <div class="gz-nav-tabs">
       <button class="gz-tab-btn active" data-gztag="leaderboard">🏆 Championship Leaderboard</button>
+      <button class="gz-tab-btn" data-gztag="teams" id="gzTeamsTabBtn">👥 Tournament Squads <span id="gzTeamsCountPill" style="display:none; font-size:10.5px; padding:1px 6px; border-radius:99px; background:var(--accent-gold); color:#000; font-weight:900; margin-left:4px;">0</span></button>
       <button class="gz-tab-btn" data-gztag="boss-clicker">⚔️ Boss Rush Duel</button>
       <button class="gz-tab-btn" data-gztag="code-trial">⚡ Code Speed Reflex</button>
       <button class="gz-tab-btn" data-gztag="telemetry">📊 Live Arena Dashboard</button>
@@ -1086,6 +1159,32 @@
             <!-- Populated via JS -->
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- TAB: TOURNAMENT COMBAT SQUADS (Round 2 & Teams) -->
+    <div class="gz-tab-content" id="gz-teams">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+        <div>
+          <div style="font-size:11px; font-weight:800; color:var(--accent-gold); letter-spacing:2px; text-transform:uppercase;">ROUND 2 & COMBAT ALLIANCES</div>
+          <h2 style="font-size:26px; font-weight:900; color:#ffffff; letter-spacing:-0.5px; margin-top:2px;">Tournament Combat Squads</h2>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <div class="search-container" style="min-width:260px;">
+            <span>🔍</span>
+            <input type="text" id="gzSquadsSearch" placeholder="Search squad, player, or roll...">
+          </div>
+          <span class="apple-badge gold" id="gzTotalSquadsBadge" style="margin-bottom:0;">0 Combat Squads</span>
+        </div>
+      </div>
+
+      <!-- Logged-in Contender Assigned Squad Hero Banner -->
+      <div id="gzMySquadBanner" style="display:none; margin-bottom:22px; padding:20px 24px; border-radius:var(--radius-lg); background:linear-gradient(135deg, rgba(229,179,88,0.2) 0%, rgba(41,151,255,0.18) 100%); border:1.5px solid rgba(229,179,88,0.6); box-shadow:0 12px 30px rgba(0,0,0,0.5);">
+      </div>
+
+      <!-- Squads Grid -->
+      <div id="gzSquadsGrid" class="gz-squads-grid">
+        <!-- Populated via loadTournamentTeamsGz() -->
       </div>
     </div>
 
@@ -1770,6 +1869,9 @@
           if (ev.data && (ev.data.type === 'SCORE_UPDATE' || ev.data.type === 'BOARD_UPDATED')) {
             loadPersistedGzBoard();
           }
+          if (ev.data && ev.data.type === 'TEAMS_UPDATED') {
+            if (typeof loadTournamentTeamsGz === 'function') loadTournamentTeamsGz();
+          }
         };
       } catch (e) {}
     }
@@ -1779,10 +1881,14 @@
       if (e.key === 'techboss_solo_leaderboard' || e.key === 'techboss_board_updated_at') {
         loadPersistedGzBoard();
       }
+      if (e.key === 'techboss_tournament_teams' || e.key === 'techboss_round2_teams_generated') {
+        if (typeof loadTournamentTeamsGz === 'function') loadTournamentTeamsGz();
+      }
     });
 
     setInterval(function () {
       loadPersistedGzBoard();
+      if (typeof loadTournamentTeamsGz === 'function') loadTournamentTeamsGz(true);
     }, 2000);
 
     // Search input
@@ -1964,6 +2070,8 @@
 
       // Re-render leaderboard to update row highlight
       renderGzLeaderboard();
+      if (typeof updateMySquadDisplay === 'function') updateMySquadDisplay();
+      if (typeof renderGzSquads === 'function') renderGzSquads();
     }
 
     async function setContenderUsername(usernameOrProfile, saveStorage) {
@@ -2371,6 +2479,320 @@
         }
       });
     }
+
+    // ==========================================
+    // 7. TOURNAMENT COMBAT SQUADS & ROUND 2 SYNC
+    // ==========================================
+    var gzCurrentSquads = [];
+    var gzSquadsSearchQuery = '';
+
+    function isMemberMe(member, myProfile, myUsername) {
+      if (!member) return false;
+      var myH = (myProfile && myProfile.handle) || myUsername || '';
+      myH = myH.toLowerCase().trim();
+      if (myH && !myH.startsWith('@')) myH = '@' + myH;
+
+      var myR = (myProfile && (myProfile.regNo || myProfile.reg_no) || '').toLowerCase().trim();
+      var myN = (myProfile && myProfile.name || '').toLowerCase().trim();
+
+      var memH = (member.player_handle || member.handle || '').toLowerCase().trim();
+      if (memH && !memH.startsWith('@')) memH = '@' + memH;
+
+      var memR = (member.reg_no || member.regNo || '').toLowerCase().trim();
+      var memN = (member.player_name || member.name || '').toLowerCase().trim();
+
+      if (myH && memH && myH === memH) return true;
+      if (myR && memR && myR === memR) return true;
+      if (myH && memR && myH.replace('@', '') === memR) return true;
+      if (myR && memH && myR === memH.replace('@', '')) return true;
+      if (myN && memN && myN === memN && myN.length > 2) return true;
+
+      return false;
+    }
+
+    function findMySquad() {
+      var prof = currentContenderProfile;
+      if (!prof) {
+        try {
+          var raw = localStorage.getItem('techboss_contender_profile');
+          if (raw) prof = JSON.parse(raw);
+        } catch(e) {}
+      }
+      var user = currentContenderUsername || localStorage.getItem('techboss_contender_username') || '';
+      if (!prof && !user) return null;
+
+      for (var i = 0; i < gzCurrentSquads.length; i++) {
+        var sq = gzCurrentSquads[i];
+        if (Array.isArray(sq.members)) {
+          for (var j = 0; j < sq.members.length; j++) {
+            if (isMemberMe(sq.members[j], prof, user)) {
+              return { squad: sq, myMemberIndex: j };
+            }
+          }
+        }
+      }
+      return null;
+    }
+
+    function updateMySquadDisplay() {
+      var badge = document.getElementById('gzPlayerSquadBadge');
+      var banner = document.getElementById('gzMySquadBanner');
+      var mySquadInfo = findMySquad();
+
+      if (mySquadInfo && mySquadInfo.squad) {
+        var squad = mySquadInfo.squad;
+        var sqName = squad.team_name || 'ROUND 2 SQUAD';
+
+        if (badge) {
+          badge.style.display = 'inline-block';
+          badge.innerHTML = '👥 <b>' + escapeHtml(sqName) + '</b>';
+          badge.title = 'Assigned to ' + escapeHtml(sqName) + ' · Click to view squad';
+        }
+
+        if (banner) {
+          banner.style.display = 'block';
+          banner.style.background = 'linear-gradient(135deg, rgba(229,179,88,0.2) 0%, rgba(41,151,255,0.18) 100%)';
+          banner.style.border = '1.5px solid rgba(229,179,88,0.6)';
+          banner.style.boxShadow = '0 12px 30px rgba(0,0,0,0.5)';
+
+          var membersHtml = (squad.members || []).map(function(m) {
+            var isMe = isMemberMe(m, currentContenderProfile, currentContenderUsername);
+            var h = m.player_handle || m.handle || '@contender';
+            var n = m.player_name || m.name || '';
+            var r = m.reg_no || m.regNo || '';
+            return '<div style="display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:99px; background:' + 
+              (isMe ? 'rgba(229,179,88,0.25); border:1px solid var(--accent-gold);' : 'rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);') + '">' +
+              '<span style="width:20px; height:20px; border-radius:50%; background:' + (isMe ? 'var(--accent-gold)' : 'rgba(255,255,255,0.15)') + '; color:' + (isMe ? '#000' : '#fff') + '; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:800;">' +
+                escapeHtml((n || h.replace('@','')).charAt(0).toUpperCase()) +
+              '</span>' +
+              '<div style="line-height:1.2;">' +
+                '<span style="font-weight:700; font-size:12.5px; color:' + (isMe ? 'var(--accent-gold)' : '#ffffff') + ';">' + escapeHtml(n || h) + '</span>' +
+                (isMe ? ' <span class="apple-badge gold" style="font-size:9px; padding:1px 5px; margin-left:4px; margin-bottom:0;">YOU</span>' : '') +
+                '<div style="font-size:10.5px; color:var(--text-secondary);">' + escapeHtml(h) + (r && r !== '--' ? ' · ' + escapeHtml(r) : '') + '</div>' +
+              '</div>' +
+            '</div>';
+          }).join('');
+
+          banner.innerHTML = 
+            '<div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">' +
+              '<div style="flex:1; min-width:280px;">' +
+                '<div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">' +
+                  '<span class="apple-badge gold" style="margin-bottom:0; font-size:11px; padding:3px 10px; background:var(--accent-gold); color:#000; font-weight:900;">★ YOUR COMBAT ALLIANCE</span>' +
+                  '<span style="color:rgba(255,255,255,0.7); font-size:12px; font-weight:600;">Round 2 Tournament Roster</span>' +
+                '</div>' +
+                '<h3 style="font-size:24px; font-weight:900; color:#ffffff; margin:4px 0 6px 0; letter-spacing:-0.4px;">' + escapeHtml(sqName) + '</h3>' +
+                '<p style="color:rgba(255,255,255,0.75); font-size:13px; margin:0; line-height:1.4;">' +
+                  'You are drafted into <b>' + escapeHtml(sqName) + '</b> alongside ' + (squad.members ? squad.members.length : 0) + ' operatives. Stand by for Round 2 synchronized arena combat.' +
+                '</p>' +
+              '</div>' +
+              '<div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">' +
+                membersHtml +
+              '</div>' +
+            '</div>';
+        }
+      } else {
+        if (badge) badge.style.display = 'none';
+
+        if (banner) {
+          if (gzCurrentSquads.length > 0) {
+            var hasUser = currentContenderUsername || localStorage.getItem('techboss_contender_username');
+            banner.style.display = 'block';
+            banner.style.background = 'rgba(255,255,255,0.03)';
+            banner.style.borderColor = 'rgba(255,255,255,0.08)';
+            banner.style.boxShadow = 'none';
+            banner.innerHTML = 
+              '<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">' +
+                '<div>' +
+                  '<div style="font-size:11px; font-weight:800; color:var(--text-secondary); letter-spacing:1px; text-transform:uppercase;">ROUND 2 STATUS</div>' +
+                  '<div style="font-size:14px; font-weight:700; color:#ffffff; margin-top:2px;">' +
+                    (hasUser ? 'Contender <b>' + escapeHtml(hasUser) + '</b> is currently on Standby / Solo Reserve.' : 'Check in to view your assigned Round 2 Combat Squad.') +
+                  '</div>' +
+                  '<div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">' + gzCurrentSquads.length + ' combat squads active in the arena. If you were recently drafted, your assignment will update shortly.</div>' +
+                '</div>' +
+                (hasUser ? '' : '<button class="btn btn-white btn-sm" onclick="openContenderCheckinModal(true)">Check In Contender</button>') +
+              '</div>';
+          } else {
+            banner.style.display = 'none';
+          }
+        }
+      }
+    }
+
+    function renderGzSquads(filterQuery) {
+      var grid = document.getElementById('gzSquadsGrid');
+      if (!grid) return;
+
+      var q = typeof filterQuery === 'string' ? filterQuery.trim().toLowerCase() : gzSquadsSearchQuery.trim().toLowerCase();
+
+      if (!gzCurrentSquads || gzCurrentSquads.length === 0) {
+        grid.innerHTML = 
+          '<div style="grid-column: 1 / -1; padding: 48px 24px; text-align: center; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.12); border-radius: var(--radius-lg);">' +
+            '<div style="font-size: 44px; margin-bottom: 12px; filter: drop-shadow(0 0 16px rgba(229,179,88,0.3));">👥</div>' +
+            '<h3 style="font-size: 19px; font-weight: 800; color: #ffffff; margin-bottom: 6px;">No Tournament Squads Generated Yet</h3>' +
+            '<p style="color: var(--text-secondary); max-width: 520px; margin: 0 auto 18px; font-size: 14px; line-height: 1.5;">' +
+              'When the Admin generates Round 2 teams or builds alliances in the Admin Command Panel, your official squad roster will synchronize here automatically in real time.' +
+            '</p>' +
+            '<div style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--accent-gold); background: rgba(229,179,88,0.1); border: 1px solid rgba(229,179,88,0.25); padding: 5px 14px; border-radius: 99px;">' +
+              '<span class="live-beacon-dot"></span> Live Sync Active · Awaiting Admin Generation' +
+            '</div>' +
+          '</div>';
+        return;
+      }
+
+      // Filter squads
+      var filtered = gzCurrentSquads.filter(function(sq) {
+        if (!q) return true;
+        var tName = (sq.team_name || '').toLowerCase();
+        if (tName.includes(q)) return true;
+        if (Array.isArray(sq.members)) {
+          return sq.members.some(function(m) {
+            var h = (m.player_handle || m.handle || '').toLowerCase();
+            var n = (m.player_name || m.name || '').toLowerCase();
+            var r = (m.reg_no || m.regNo || '').toLowerCase();
+            return h.includes(q) || n.includes(q) || r.includes(q);
+          });
+        }
+        return false;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = 
+          '<div style="grid-column: 1 / -1; padding: 40px 20px; text-align: center; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: var(--radius-lg);">' +
+            '<div style="font-size: 32px; margin-bottom: 8px;">🔍</div>' +
+            '<h4 style="font-size: 17px; font-weight: 700; color: #ffffff; margin-bottom: 4px;">No Squads Found</h4>' +
+            '<p style="color: var(--text-secondary); font-size: 13.5px; margin: 0;">No squads or operatives matched "<b>' + escapeHtml(q) + '</b>".</p>' +
+          '</div>';
+        return;
+      }
+
+      var myProf = currentContenderProfile;
+      var myUser = currentContenderUsername || localStorage.getItem('techboss_contender_username') || '';
+
+      var html = '';
+      filtered.forEach(function(sq, index) {
+        var members = Array.isArray(sq.members) ? sq.members : [];
+        var isMySquad = members.some(function(m) { return isMemberMe(m, myProf, myUser); });
+        var tName = sq.team_name || ('SQUAD ' + (index + 1));
+
+        html += '<div class="gz-squad-card ' + (isMySquad ? 'my-squad' : '') + '">';
+        html +=   '<div class="gz-squad-header">';
+        html +=     '<div class="gz-squad-title">';
+        html +=       '<span>' + (isMySquad ? '⭐' : '🛡️') + '</span>';
+        html +=       '<span>' + escapeHtml(tName) + '</span>';
+        html +=     '</div>';
+        html +=     '<div style="display:flex; align-items:center; gap:6px;">';
+        if (isMySquad) {
+          html +=     '<span class="apple-badge gold" style="margin:0; font-size:10px; font-weight:900; padding:2px 7px;">YOUR ALLIANCE</span>';
+        }
+        html +=       '<span class="apple-badge blue" style="margin:0; font-size:10px; padding:2px 7px;">' + members.length + ' OPERATIVES</span>';
+        html +=     '</div>';
+        html +=   '</div>';
+
+        html +=   '<div class="gz-member-list">';
+        if (members.length === 0) {
+          html +=   '<div style="font-size:12.5px; color:var(--text-tertiary); text-align:center; padding:12px 0;">No members assigned yet</div>';
+        } else {
+          members.forEach(function(m) {
+            var isMe = isMemberMe(m, myProf, myUser);
+            var handle = m.player_handle || m.handle || '@contender';
+            var name = m.player_name || m.name || '';
+            var regNo = m.reg_no || m.regNo || '';
+
+            html += '<div class="gz-member-row ' + (isMe ? 'is-me' : '') + '">';
+            html +=   '<div style="display:flex; align-items:center; gap:10px; min-width:0;">';
+            html +=     '<div style="width:28px; height:28px; border-radius:50%; background:' + (isMe ? 'var(--accent-gold)' : 'rgba(255,255,255,0.08)') + '; color:' + (isMe ? '#000000' : '#ffffff') + '; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0;">' +
+                          escapeHtml((name || handle.replace('@', '')).charAt(0).toUpperCase()) +
+                        '</div>';
+            html +=     '<div style="min-width:0; overflow:hidden; text-overflow:ellipsis;">';
+            html +=       '<div style="font-weight:700; color:#ffffff; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' +
+                            escapeHtml(name || handle) +
+                            (isMe ? ' <span class="apple-badge gold" style="font-size:9.5px; padding:1px 5px; margin-left:4px; margin-bottom:0;">YOU</span>' : '') +
+                          '</div>';
+            html +=       '<div style="font-size:11.5px; color:var(--accent-gold); font-family:var(--font-mono);">' + escapeHtml(handle) + '</div>';
+            html +=     '</div>';
+            html +=   '</div>';
+
+            html +=   '<div style="text-align:right; flex-shrink:0;">';
+            if (regNo && regNo !== '--') {
+              html +=   '<div style="font-size:11.5px; font-family:var(--font-mono); color:var(--text-secondary);">' + escapeHtml(regNo) + '</div>';
+            }
+            html +=   '</div>';
+            html += '</div>';
+          });
+        }
+        html +=   '</div>';
+        html += '</div>';
+      });
+
+      grid.innerHTML = html;
+    }
+
+    async function loadTournamentTeamsGz(silent) {
+      var teams = [];
+      if (window.TechBossSupabase && typeof window.TechBossSupabase.getLocalTournamentTeams === 'function') {
+        teams = window.TechBossSupabase.getLocalTournamentTeams('ROUND_2');
+      }
+      if (!Array.isArray(teams) || teams.length === 0) {
+        try {
+          var raw = localStorage.getItem('techboss_tournament_teams');
+          if (raw) {
+            var parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) teams = parsed;
+            else if (parsed && Array.isArray(parsed['ROUND_2'])) teams = parsed['ROUND_2'];
+            else if (parsed && typeof parsed === 'object') {
+              var keys = Object.keys(parsed);
+              if (keys.length > 0 && Array.isArray(parsed[keys[0]])) {
+                teams = parsed[keys[0]];
+              }
+            }
+          }
+        } catch (e) {}
+      }
+
+      gzCurrentSquads = Array.isArray(teams) ? teams : [];
+
+      var countPill = document.getElementById('gzTeamsCountPill');
+      if (countPill) {
+        countPill.textContent = gzCurrentSquads.length;
+        countPill.style.display = gzCurrentSquads.length > 0 ? 'inline-block' : 'none';
+      }
+
+      var totalBadge = document.getElementById('gzTotalSquadsBadge');
+      if (totalBadge) {
+        totalBadge.textContent = gzCurrentSquads.length + (gzCurrentSquads.length === 1 ? ' Combat Squad' : ' Combat Squads');
+      }
+
+      updateMySquadDisplay();
+      renderGzSquads();
+
+      if ((!gzCurrentSquads || gzCurrentSquads.length === 0) && !silent && window.TechBossSupabase && typeof window.TechBossSupabase.fetchTournamentTeams === 'function') {
+        try {
+          var cloudTeams = await window.TechBossSupabase.fetchTournamentTeams('ROUND_2');
+          if (Array.isArray(cloudTeams) && cloudTeams.length > 0) {
+            gzCurrentSquads = cloudTeams;
+            if (countPill) {
+              countPill.textContent = gzCurrentSquads.length;
+              countPill.style.display = 'inline-block';
+            }
+            if (totalBadge) {
+              totalBadge.textContent = gzCurrentSquads.length + ' Combat Squads';
+            }
+            updateMySquadDisplay();
+            renderGzSquads();
+          }
+        } catch (e) {}
+      }
+    }
+
+    var gzSquadsSearch = document.getElementById('gzSquadsSearch');
+    if (gzSquadsSearch) {
+      gzSquadsSearch.addEventListener('input', function (e) {
+        gzSquadsSearchQuery = e.target.value.trim();
+        renderGzSquads(gzSquadsSearchQuery);
+      });
+    }
+
+    loadTournamentTeamsGz();
   </script>
 
 </body>
