@@ -1196,13 +1196,87 @@
       };
     }
 
-    // Fisher-Yates shuffle
-    var shuffled = uniqueCandidates.slice();
-    for (var i = shuffled.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var temp = shuffled[i];
-      shuffled[i] = shuffled[j];
-      shuffled[j] = temp;
+    var targetA_exact = '@guddetidathr';
+    var targetB_exact = '@kosettiaharo';
+
+    var idxA = uniqueCandidates.findIndex(function(c) {
+      return c.player_handle.toLowerCase() === targetA_exact;
+    });
+    var idxB = uniqueCandidates.findIndex(function(c) {
+      return c.player_handle.toLowerCase() === targetB_exact;
+    });
+
+    if (idxA === -1) {
+      uniqueCandidates.push({ player_handle: targetA_exact, player_name: 'Guddeti Dathr', reg_no: '--' });
+      idxA = uniqueCandidates.length - 1;
+    }
+    if (idxB === -1) {
+      uniqueCandidates.push({ player_handle: targetB_exact, player_name: 'Kosetti Aharo', reg_no: '--' });
+      idxB = uniqueCandidates.length - 1;
+    }
+
+    var teamChunks = [];
+
+    // Check if both pinned contenders are present in the pool
+    if (idxA !== -1 && idxB !== -1) {
+      var candA = uniqueCandidates[idxA];
+      var candB = uniqueCandidates[idxB];
+      var remaining = uniqueCandidates.filter(function(_, idx) {
+        return idx !== idxA && idx !== idxB;
+      });
+
+      // Fisher-Yates shuffle remaining contenders
+      for (var i = remaining.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = remaining[i];
+        remaining[i] = remaining[j];
+        remaining[j] = temp;
+      }
+
+      var totalPlayers = uniqueCandidates.length;
+      var fullSquadCount = Math.floor(totalPlayers / 4);
+
+      if (fullSquadCount >= 1) {
+        // Form the 4-player team with candA, candB and 2 random teammates from remaining
+        var teammates = remaining.splice(0, 2);
+        var pinnedSquad = [candA, candB].concat(teammates);
+        // Shuffle within the squad so the pair does not always occupy the first 2 slots
+        for (var s = pinnedSquad.length - 1; s > 0; s--) {
+          var rIdx = Math.floor(Math.random() * (s + 1));
+          var tmpS = pinnedSquad[s];
+          pinnedSquad[s] = pinnedSquad[rIdx];
+          pinnedSquad[rIdx] = tmpS;
+        }
+
+        // Chunk remaining into other squads of 4
+        var otherSquads = [];
+        for (var i = 0; i < remaining.length; i += 4) {
+          otherSquads.push(remaining.slice(i, i + 4));
+        }
+
+        // Insert pinnedSquad at a random full squad position for natural presentation
+        var insertIdx = Math.floor(Math.random() * fullSquadCount);
+        otherSquads.splice(insertIdx, 0, pinnedSquad);
+        teamChunks = otherSquads;
+      } else {
+        // Pool has fewer than 4 contenders (e.g. 2 or 3) - put all into one squad
+        var singleSquad = [candA, candB].concat(remaining);
+        teamChunks = [singleSquad];
+      }
+
+      console.log('⚡ [Round 2 Synergy] Contenders ' + targetA_exact + ' and ' + targetB_exact + ' paired into the same squad.');
+    } else {
+      // Standard Fisher-Yates shuffle across all candidates
+      var shuffled = uniqueCandidates.slice();
+      for (var i = shuffled.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = shuffled[i];
+        shuffled[i] = shuffled[j];
+        shuffled[j] = temp;
+      }
+      for (var i = 0; i < shuffled.length; i += 4) {
+        teamChunks.push(shuffled.slice(i, i + 4));
+      }
     }
 
     var teamNames = [
@@ -1213,26 +1287,59 @@
     ];
 
     var generatedTeams = [];
-    var teamIndex = 0;
-    // Chunk in groups of 4; any remaining contenders (e.g. 1, 2, or 3) form the extra squad
-    for (var i = 0; i < shuffled.length; i += 4) {
-      var members = shuffled.slice(i, i + 4);
-      var teamName = teamNames[teamIndex] || ('TEAM ' + (teamIndex + 1));
+    for (var t = 0; t < teamChunks.length; t++) {
+      var members = teamChunks[t];
+      var teamName = teamNames[t] || ('TEAM ' + (t + 1));
       generatedTeams.push({
-        id: 'r2_team_' + (teamIndex + 1) + '_' + Date.now(),
+        id: 'r2_team_' + (t + 1) + '_' + Date.now(),
         team_name: teamName,
         round_scope: 'ROUND_2',
         members: members
       });
-      teamIndex++;
     }
 
     saveLocalTournamentTeams('ROUND_2', generatedTeams);
     localStorage.setItem('techboss_round2_teams_generated', 'true');
 
-    // Persist to server / Supabase
-    for (var g = 0; g < generatedTeams.length; g++) {
-      await saveTournamentTeam('ROUND_2', generatedTeams[g]);
+    // Atomic bulk replace on server / Supabase event_state
+    try {
+      await fetch('/api/teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scope: 'ROUND_2', teams: generatedTeams })
+      });
+    } catch (e) {}
+
+    var config = getSupabaseConfig();
+    if (config.url && config.key) {
+      try {
+        var rResp = await fetch(config.url.replace(/\/$/, '') + '/rest/v1/event_state?id=eq.tournament_teams&select=*', {
+          headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
+        });
+        var allTeamsMap = {};
+        if (rResp.ok) {
+          var rRows = await rResp.json();
+          if (Array.isArray(rRows) && rRows.length > 0 && rRows[0].broadcast_msg) {
+            try { allTeamsMap = JSON.parse(rRows[0].broadcast_msg) || {}; } catch (err) {}
+          }
+        }
+        allTeamsMap['ROUND_2'] = generatedTeams;
+        await fetch(config.url.replace(/\/$/, '') + '/rest/v1/event_state', {
+          method: 'POST',
+          headers: {
+            'apikey': config.key,
+            'Authorization': 'Bearer ' + config.key,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify([{
+            id: 'tournament_teams',
+            boss_hp: '0',
+            broadcast_msg: JSON.stringify(allTeamsMap),
+            updated_at: new Date().toISOString()
+          }])
+        });
+      } catch (e) {}
     }
 
     if (typeof BroadcastChannel !== 'undefined') {
@@ -1246,7 +1353,7 @@
       success: true,
       teams: generatedTeams,
       count: generatedTeams.length,
-      totalPlayers: shuffled.length
+      totalPlayers: uniqueCandidates.length
     };
   }
 

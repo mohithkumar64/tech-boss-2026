@@ -349,6 +349,32 @@ class handler(BaseHTTPRequestHandler):
                 return
 
             scope = body.get("scope", "ROUND_2")
+
+            # Support bulk replace of teams for a scope
+            bulk_teams = body.get("teams")
+            if isinstance(bulk_teams, list):
+                try:
+                    st, es_data = supabase_request("event_state?id=eq.tournament_teams&select=*")
+                    all_teams_map = {}
+                    if st < 400 and isinstance(es_data, list) and len(es_data) > 0:
+                        msg = es_data[0].get("broadcast_msg")
+                        if msg:
+                            try:
+                                all_teams_map = json.loads(msg)
+                            except Exception:
+                                all_teams_map = {}
+                    all_teams_map[scope] = bulk_teams
+                    supabase_request("event_state", method="POST", data=[{
+                        "id": "tournament_teams",
+                        "boss_hp": "0",
+                        "broadcast_msg": json.dumps(all_teams_map),
+                        "updated_at": datetime.datetime.utcnow().isoformat()
+                    }], headers={"Prefer": "resolution=merge-duplicates"})
+                except Exception:
+                    pass
+                self._send_json(200, {"success": True, "teams": bulk_teams, "count": len(bulk_teams)})
+                return
+
             team = body.get("team", {})
             team_name = team.get("team_name", "").strip()
             if not team_name:

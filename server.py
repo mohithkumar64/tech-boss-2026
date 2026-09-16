@@ -10,10 +10,15 @@ import json
 import socket
 import time
 import datetime
-import urllib.request
+import sys
+import threading
+import subprocess
+import argparse
+import signal
+import uuid
+import urllib.request  # Basic server setup for Tech Boss 2026
 import urllib.parse
 import urllib.error
-import sys
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 if sys.platform == "win32":
@@ -404,6 +409,25 @@ class TechBossHandler(SimpleHTTPRequestHandler):
         elif path == "/api/teams":
             body = self._get_body_json()
             scope = body.get("round_scope") or body.get("scope") or "ROUND_2"
+
+            # Support bulk replace of teams for a scope
+            bulk_teams = body.get("teams")
+            if isinstance(bulk_teams, list):
+                if scope not in TOURNAMENT_CACHE["teams"]:
+                    TOURNAMENT_CACHE["teams"][scope] = []
+                TOURNAMENT_CACHE["teams"][scope] = bulk_teams
+                try:
+                    supabase_request("event_state", method="POST", data=[{
+                        "id": "tournament_teams",
+                        "boss_hp": "0",
+                        "broadcast_msg": json.dumps(TOURNAMENT_CACHE["teams"]),
+                        "updated_at": datetime.datetime.utcnow().isoformat()
+                    }], headers={"Prefer": "resolution=merge-duplicates"})
+                except Exception:
+                    pass
+                self._send_json(200, {"success": True, "teams": bulk_teams, "count": len(bulk_teams)})
+                return
+
             team = body.get("team", {})
             team_name = team.get("team_name", "").strip()
             if not team_name:
@@ -593,26 +617,44 @@ class TechBossHandler(SimpleHTTPRequestHandler):
 
         elif path == "/api/teams":
             team_id = query.get("id", [None])[0]
+            scope = query.get("scope", query.get("round_scope", [None]))[0]
             if not team_id:
                 body = self._get_body_json()
                 team_id = body.get("id")
+                if not scope:
+                    scope = body.get("scope") or body.get("round_scope")
+
+            if not team_id and scope:
+                if scope in TOURNAMENT_CACHE["teams"]:
+                    TOURNAMENT_CACHE["teams"][scope] = []
+                try:
+                    supabase_request("event_state", method="POST", data=[{
+                        "id": "tournament_teams",
+                        "boss_hp": "0",
+                        "broadcast_msg": json.dumps(TOURNAMENT_CACHE["teams"]),
+                        "updated_at": datetime.datetime.utcnow().isoformat()
+                    }], headers={"Prefer": "resolution=merge-duplicates"})
+                except Exception:
+                    pass
+                self._send_json(200, {"success": True, "cleared_scope": scope})
+                return
 
             if not team_id:
-                self._send_json(400, {"error": "id is required"})
+                self._send_json(400, {"error": "id or scope is required"})
                 return
 
             supabase_request(f"tournament_team_members?team_id=eq.{team_id}", method="DELETE")
             status, res = supabase_request(f"tournament_teams?id=eq.{team_id}", method="DELETE")
-            for scope in TOURNAMENT_CACHE["teams"]:
-                TOURNAMENT_CACHE["teams"][scope] = [t for t in TOURNAMENT_CACHE["teams"][scope] if str(t.get("id")) != str(team_id)]
+            for sc in TOURNAMENT_CACHE["teams"]:
+                TOURNAMENT_CACHE["teams"][sc] = [t for t in TOURNAMENT_CACHE["teams"][sc] if str(t.get("id")) != str(team_id)]
             try:
                 state_data = {
                     "id": "tournament_teams",
                     "broadcast_msg": json.dumps(TOURNAMENT_CACHE["teams"]),
                     "boss_hp": "0",
-                    "updated_at": datetime.now(timezone.utc).isoformat()
+                    "updated_at": datetime.datetime.utcnow().isoformat()
                 }
-                supabase_request("event_state", method="POST", data=state_data, headers={"Prefer": "resolution=merge-duplicates"})
+                supabase_request("event_state", method="POST", data=[state_data], headers={"Prefer": "resolution=merge-duplicates"})
             except Exception:
                 pass
             self._send_json(200, {"success": True, "deleted_id": team_id})
