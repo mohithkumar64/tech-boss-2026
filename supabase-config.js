@@ -470,16 +470,197 @@
 
   async function triggerArenaAudio(trackName) {
     try {
-      var payload = JSON.stringify({
-        type: 'AUDIO_TRIGGER',
+      var actionId = 'act_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+      var payload = {
+        action: 'FIRE_IMMEDIATE',
+        action_id: actionId,
         track: trackName || 'times-9am',
         timestamp: Date.now()
-      });
-      var hp = localStorage.getItem('techboss_boss_hp') || '78';
-      return await saveEventState(hp, payload);
+      };
+
+      // 1. Sync to local backend API first (for cross-device LAN deployment)
+      try {
+        await fetch('/api/event-state', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: 'audio_trigger',
+            boss_hp: '0',
+            broadcast_msg: JSON.stringify(payload),
+            updated_at: new Date().toISOString()
+          })
+        });
+      } catch (localErr) {}
+
+      // 2. Sync to Supabase cloud if configured
+      var config = getSupabaseConfig();
+      if (config.url && config.key) {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state';
+        await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'apikey': config.key,
+            'Authorization': 'Bearer ' + config.key,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify({
+            id: 'audio_trigger',
+            boss_hp: '0',
+            broadcast_msg: JSON.stringify(payload),
+            updated_at: new Date().toISOString()
+          })
+        });
+      }
+      return true;
     } catch (e) {
       return false;
     }
+  }
+
+  async function saveAudioSchedule(scheduleObj) {
+    var config = getSupabaseConfig();
+    var payloadStr = JSON.stringify(scheduleObj);
+    localStorage.setItem('techboss_scheduled_audio_config', payloadStr);
+    localStorage.setItem('techboss_scheduled_audio_time', scheduleObj.target_time || '09:00:00');
+    localStorage.setItem('techboss_scheduled_audio_track', scheduleObj.track || 'times-9am');
+
+    // 1. Always sync to local server API for cross-device LAN support
+    try {
+      await fetch('/api/event-state', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: 'audio_schedule',
+          boss_hp: '0',
+          broadcast_msg: payloadStr,
+          updated_at: new Date().toISOString()
+        })
+      });
+    } catch (localErr) {}
+
+    // 2. Sync to Supabase cloud if configured
+    if (config.url && config.key) {
+      try {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state';
+        var resp = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'apikey': config.key,
+            'Authorization': 'Bearer ' + config.key,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify({
+            id: 'audio_schedule',
+            boss_hp: '0',
+            broadcast_msg: payloadStr,
+            updated_at: new Date().toISOString()
+          })
+        });
+        return resp.ok;
+      } catch (e) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  async function fetchAudioSchedule() {
+    var config = getSupabaseConfig();
+
+    // 1. Try Supabase cloud first
+    if (config.url && config.key) {
+      try {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state?id=eq.audio_schedule';
+        var resp = await fetch(apiUrl, {
+          headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
+        });
+        if (resp.ok) {
+          var rows = await resp.json();
+          if (rows.length > 0 && rows[0].broadcast_msg) {
+            try {
+              var parsed = JSON.parse(rows[0].broadcast_msg);
+              if (parsed && typeof parsed === 'object') {
+                parsed._source = 'SUPABASE';
+                return parsed;
+              }
+            } catch (e) {}
+          }
+        }
+      } catch (e) {}
+    }
+
+    // 2. Try Local Server Backend API (critical for local LAN & cross-device without Supabase)
+    try {
+      var localApiResp = await fetch('/api/event-state?id=audio_schedule');
+      if (localApiResp.ok) {
+        var localRow = await localApiResp.json();
+        if (localRow && localRow.broadcast_msg) {
+          var parsedLocal = JSON.parse(localRow.broadcast_msg);
+          if (parsedLocal && typeof parsedLocal === 'object') {
+            parsedLocal._source = 'LOCAL API';
+            return parsedLocal;
+          }
+        }
+      }
+    } catch (e) {}
+
+    // 3. Fallback to browser Local Cache
+    try {
+      var localStr = localStorage.getItem('techboss_scheduled_audio_config');
+      if (localStr) {
+        var parsedCache = JSON.parse(localStr);
+        if (parsedCache && typeof parsedCache === 'object') {
+          parsedCache._source = 'LOCAL CACHE';
+          return parsedCache;
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  async function fetchAudioTrigger() {
+    var config = getSupabaseConfig();
+
+    // 1. Try Supabase cloud
+    if (config.url && config.key) {
+      try {
+        var apiUrl = config.url.replace(/\/$/, '') + '/rest/v1/event_state?id=eq.audio_trigger';
+        var resp = await fetch(apiUrl, {
+          headers: { 'apikey': config.key, 'Authorization': 'Bearer ' + config.key }
+        });
+        if (resp.ok) {
+          var rows = await resp.json();
+          if (rows.length > 0 && rows[0].broadcast_msg) {
+            try {
+              var trig = JSON.parse(rows[0].broadcast_msg);
+              if (trig) {
+                trig._source = 'SUPABASE';
+                return trig;
+              }
+            } catch (e) {}
+          }
+        }
+      } catch (e) {}
+    }
+
+    // 2. Try Local Server Backend API
+    try {
+      var localResp = await fetch('/api/event-state?id=audio_trigger');
+      if (localResp.ok) {
+        var localTrigRow = await localResp.json();
+        if (localTrigRow && localTrigRow.broadcast_msg) {
+          var parsedLocalTrig = JSON.parse(localTrigRow.broadcast_msg);
+          if (parsedLocalTrig) {
+            parsedLocalTrig._source = 'LOCAL API';
+            return parsedLocalTrig;
+          }
+        }
+      }
+    } catch (e) {}
+
+    return null;
   }
 
   // ==========================================
@@ -658,14 +839,14 @@
 
   var DEFAULT_ROUNDS = [
     { round_number: 1, title: 'Round 1: Solo Inception', type: 'INDIVIDUAL', status: 'OPEN', team_scope: null },
-    { round_number: 2, title: 'Round 2: Quad Synergy (Auto 4-Player)', type: 'TEAM', status: 'OPEN', team_scope: 'ROUND_2' },
-    { round_number: 3, title: 'Round 3: Alliance Forge (Manual Teams)', type: 'TEAM', status: 'OPEN', team_scope: 'ROUND_3_4' },
-    { round_number: 4, title: 'Round 4: Alliance Climax (Same as Round 3)', type: 'TEAM', status: 'OPEN', team_scope: 'ROUND_3_4' },
-    { round_number: 5, title: 'Round 5: Solo Cyber Duel', type: 'INDIVIDUAL', status: 'OPEN', team_scope: null },
-    { round_number: 6, title: 'Round 6: Tactical Strike (Manual Teams)', type: 'TEAM', status: 'OPEN', team_scope: 'ROUND_6' },
-    { round_number: 7, title: 'Round 7: Apex Legion (Manual Teams)', type: 'TEAM', status: 'OPEN', team_scope: 'ROUND_7' },
-    { round_number: 8, title: 'Round 8: Solo Survival', type: 'INDIVIDUAL', status: 'OPEN', team_scope: null },
-    { round_number: 9, title: 'Round 9: Championship Boss Battle', type: 'INDIVIDUAL', status: 'OPEN', team_scope: null }
+    { round_number: 2, title: 'Round 2: Quad Synergy (Auto 4-Player)', type: 'TEAM', status: 'NOT_STARTED', team_scope: 'ROUND_2' },
+    { round_number: 3, title: 'Round 3: Alliance Forge (Manual Teams)', type: 'TEAM', status: 'NOT_STARTED', team_scope: 'ROUND_3_4' },
+    { round_number: 4, title: 'Round 4: Alliance Climax (Same as Round 3)', type: 'TEAM', status: 'NOT_STARTED', team_scope: 'ROUND_3_4' },
+    { round_number: 5, title: 'Round 5: Solo Cyber Duel', type: 'INDIVIDUAL', status: 'NOT_STARTED', team_scope: null },
+    { round_number: 6, title: 'Round 6: Tactical Strike (Manual Teams)', type: 'TEAM', status: 'NOT_STARTED', team_scope: 'ROUND_6' },
+    { round_number: 7, title: 'Round 7: Apex Legion (Manual Teams)', type: 'TEAM', status: 'NOT_STARTED', team_scope: 'ROUND_7' },
+    { round_number: 8, title: 'Round 8: Solo Survival', type: 'INDIVIDUAL', status: 'NOT_STARTED', team_scope: null },
+    { round_number: 9, title: 'Round 9: Championship Boss Battle', type: 'INDIVIDUAL', status: 'NOT_STARTED', team_scope: null }
   ];
 
   function getLocalTournamentRounds() {
@@ -740,12 +921,18 @@
 
   async function updateRoundStatus(roundNumber, status) {
     var validStatus = ['NOT_STARTED', 'OPEN', 'LOCKED'].includes(status) ? status : 'OPEN';
+    var rNumInt = parseInt(roundNumber, 10);
     var rounds = getLocalTournamentRounds();
-    var target = rounds.find(function(r) { return r.round_number === parseInt(roundNumber, 10); });
-    if (target) {
-      target.status = validStatus;
-      saveLocalTournamentRounds(rounds);
-    }
+    
+    rounds.forEach(function(r) {
+      if (r.round_number === rNumInt) {
+        r.status = validStatus;
+      } else if (validStatus === 'OPEN') {
+        // When one round is OPEN, all other rounds become NOT_STARTED
+        r.status = 'NOT_STARTED';
+      }
+    });
+    saveLocalTournamentRounds(rounds);
 
     // Broadcast live round update to scoreboard across browser tabs
     if (typeof BroadcastChannel !== 'undefined') {
@@ -1331,6 +1518,9 @@
     fetchEventState: fetchEventState,
     saveEventState: saveEventState,
     triggerArenaAudio: triggerArenaAudio,
+    saveAudioSchedule: saveAudioSchedule,
+    fetchAudioSchedule: fetchAudioSchedule,
+    fetchAudioTrigger: fetchAudioTrigger,
     fetchInHouseCheckins: fetchInHouseCheckins,
     saveInHouseCheckinsCloud: saveInHouseCheckinsCloud,
     checkinContenderCloud: checkinContenderCloud,

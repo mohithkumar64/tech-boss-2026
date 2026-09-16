@@ -282,8 +282,7 @@
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Text announcements removed per user request: pure audible sound notes */
-    .broadcast-banner, #broadcastCard, #appleKeynoteOverlay {
+    #appleKeynoteOverlay {
       display: none !important;
     }
 
@@ -1626,35 +1625,974 @@
       background: rgba(255, 255, 255, 0.2);
       color: #ffffff;
     }
+
+    /* ========================================================
+       TECH BOSS 2026 — PROJECTOR-GRADE LIVE ARENA STYLES
+       ======================================================== */
+
+    /* Top Bar Projector Enhancements */
+    .apple-nav {
+      padding: 10px 28px;
+      gap: 16px;
+    }
+
+    .brand-title {
+      font-size: clamp(20px, 1.6vw, 24px);
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      text-transform: uppercase;
+    }
+
+    .brand-title span {
+      background: linear-gradient(135deg, #ffd700 0%, #ffae00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
+    }
+
+    .dynamic-capsule {
+      font-size: 13px;
+      font-weight: 800;
+      padding: 6px 16px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .nav-clock {
+      font-size: clamp(13px, 1.1vw, 15px);
+      font-weight: 800;
+      padding: 6px 16px;
+    }
+
+    .arena-audio-arm-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 11.5px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      background: rgba(255, 42, 133, 0.14);
+      border: 1.5px solid rgba(255, 42, 133, 0.4);
+      color: #ff2a85;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .arena-audio-arm-banner.armed {
+      background: rgba(48, 209, 88, 0.15);
+      border-color: rgba(48, 209, 88, 0.5);
+      color: var(--apple-green);
+      box-shadow: 0 0 14px rgba(48, 209, 88, 0.22);
+    }
+
+    .arena-audio-arm-banner.blocked {
+      background: rgba(255, 69, 58, 0.22);
+      border-color: rgba(255, 69, 58, 0.7);
+      color: #ff453a;
+      animation: apple-pulse 1.2s infinite;
+    }
+
+    /* Arena Stage Eyebrow & Round Header */
+    .podium-header-wrap {
+      text-align: center;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .podium-eyebrow {
+      font-size: clamp(12px, 1.1vw, 15px);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: clamp(3px, 0.35vw, 6px);
+      background: linear-gradient(135deg, #ffd700 0%, #ffae00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 2px;
+      display: inline-block;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.35);
+    }
+
+    .podium-main-title {
+      font-size: clamp(28px, 3.2vw, 46px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 70%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.15;
+    }
+
+    /* ========================================================
+       PREMIUM CHAMPIONSHIP PODIUM — TOP 3 CARDS COMPOSITION
+       ======================================================== */
+    .podium-grid {
+      display: grid;
+      grid-template-columns: 28fr 36fr 28fr;
+      align-items: flex-end; /* Real Olympic/stadium stepped podium groundline */
+      justify-content: center;
+      gap: clamp(14px, 1.8vw, 24px);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Card Base with Internal Grid for Consistent Vertical Rhythm */
+    .podium-pedestal {
+      display: grid;
+      grid-template-rows: auto auto auto 1fr auto auto;
+      align-items: center;
+      justify-items: center;
+      row-gap: clamp(6px, 0.75vw, 10px);
+      text-align: center;
+      position: relative;
+      backdrop-filter: blur(36px) saturate(180%);
+      -webkit-backdrop-filter: blur(36px) saturate(180%);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+
+    /* ----------------------------------------------------
+       SIDE CARDS (#2 SECOND & #3 THIRD) — ~88% HEIGHT
+       ---------------------------------------------------- */
+    .podium-pedestal.rank-2,
+    .podium-pedestal.rank-3 {
+      min-height: 290px;
+      padding: 16px 18px 12px;
+    }
+
+    /* 2ND PLACE PLATINUM SILVER (LEFT) */
+    .podium-pedestal.rank-2 {
+      order: 1;
+      border-radius: 24px;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 22%, rgba(226, 232, 240, 0.08) 0%, transparent 70%),
+        linear-gradient(180deg, rgba(20, 23, 32, 0.94) 0%, rgba(10, 11, 16, 0.98) 100%);
+      border: 1px solid rgba(226, 232, 240, 0.32);
+      box-shadow:
+        0 0 20px rgba(226, 232, 240, 0.08),
+        0 18px 42px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      z-index: 2;
+    }
+
+    /* 3RD PLACE WARM BRONZE (RIGHT) */
+    .podium-pedestal.rank-3 {
+      order: 3;
+      border-radius: 24px;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 22%, rgba(217, 119, 6, 0.09) 0%, transparent 70%),
+        linear-gradient(180deg, rgba(26, 18, 15, 0.94) 0%, rgba(11, 10, 14, 0.98) 100%);
+      border: 1px solid rgba(217, 119, 6, 0.35);
+      box-shadow:
+        0 0 20px rgba(217, 119, 6, 0.08),
+        0 18px 42px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      z-index: 2;
+    }
+
+    /* ----------------------------------------------------
+       CHAMPION #1 HERO CARD (CENTER) — 100% HEIGHT & ELEVATED
+       ---------------------------------------------------- */
+    .podium-pedestal.rank-1 {
+      order: 2;
+      min-height: 335px;
+      padding: 18px 20px 14px;
+      border-radius: 26px;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 20%, rgba(255, 215, 0, 0.14) 0%, transparent 70%),
+        linear-gradient(180deg, rgba(26, 23, 18, 0.95) 0%, rgba(12, 13, 18, 0.98) 100%);
+      border: 1.5px solid rgba(255, 215, 0, 0.75);
+      box-shadow:
+        0 0 32px rgba(255, 215, 0, 0.22),
+        0 24px 54px rgba(0, 0, 0, 0.82),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        inset 0 0 24px rgba(255, 215, 0, 0.05);
+      z-index: 3;
+      transform: translateY(-12px);
+      animation: championGlowPulse 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes championGlowPulse {
+      0% {
+        box-shadow:
+          0 0 26px rgba(255, 215, 0, 0.18),
+          0 22px 50px rgba(0, 0, 0, 0.8),
+          inset 0 1px 0 rgba(255, 255, 255, 0.28);
+      }
+      100% {
+        box-shadow:
+          0 0 40px rgba(255, 215, 0, 0.3),
+          0 28px 60px rgba(0, 0, 0, 0.88),
+          inset 0 1px 0 rgba(255, 255, 255, 0.38);
+      }
+    }
+
+    /* 1. COMPACT METALLIC RANK BADGES */
+    .podium-rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 4px 14px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      margin-bottom: 2px;
+      width: fit-content;
+    }
+
+    .rank-badge-icon {
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .podium-rank-pill {
+      font-family: var(--font-system);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      line-height: 1;
+      color: #e2e8f0;
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .rank-1-badge {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.22) 0%, rgba(255, 174, 0, 0.12) 100%);
+      border: 1px solid rgba(255, 215, 0, 0.55);
+      box-shadow: 0 2px 12px rgba(255, 215, 0, 0.22);
+    }
+
+    .rank-1-badge .podium-rank-pill {
+      color: #ffd700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    .rank-1-badge .rank-badge-icon {
+      font-size: 16px;
+      filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
+    }
+
+    .rank-2-badge {
+      background: linear-gradient(135deg, rgba(241, 245, 249, 0.14) 0%, rgba(203, 213, 225, 0.08) 100%);
+      border: 1px solid rgba(241, 245, 249, 0.35);
+    }
+
+    .rank-2-badge .podium-rank-pill {
+      color: #f1f5f9;
+    }
+
+    .rank-3-badge {
+      background: linear-gradient(135deg, rgba(255, 157, 92, 0.14) 0%, rgba(217, 119, 6, 0.08) 100%);
+      border: 1px solid rgba(255, 157, 92, 0.35);
+    }
+
+    .rank-3-badge .podium-rank-pill {
+      color: #ffb07c;
+    }
+
+    /* 2. PLAYER NAME (LARGEST TEXT, CLAMP SCALING, RESPONSIVE WORD WRAP) */
+    .podium-title-main {
+      font-family: var(--font-system);
+      font-size: clamp(16px, 1.5vw, 22px);
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+      text-transform: uppercase;
+      line-height: 1.18;
+      max-width: 100%;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      text-wrap: balance;
+      text-align: center;
+      margin: 0;
+      min-height: 2.36em; /* Reserve 2 lines so card internal rhythm stays steady */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rank-1 .podium-title-main {
+      font-size: clamp(20px, 2vw, 28px);
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.35);
+    }
+
+    .rank-2 .podium-title-main,
+    .rank-3 .podium-title-main {
+      color: #f8fafc;
+    }
+
+    /* 3. ROLL / BRANCH SECONDARY METADATA */
+    .podium-submeta {
+      font-family: var(--font-mono);
+      font-size: clamp(11px, 0.95vw, 13px);
+      font-weight: 600;
+      color: #94a3b8;
+      line-height: 1.2;
+      letter-spacing: 0.3px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin: 0;
+    }
+
+    .rank-1 .podium-submeta {
+      color: rgba(255, 215, 0, 0.85);
+    }
+
+    /* 4. COMPACT STATS BLOCK (DAMAGE) */
+    .podium-score {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      font-family: var(--font-mono);
+      font-size: clamp(26px, 2.5vw, 36px);
+      font-weight: 900;
+      line-height: 1;
+      color: #f1f5f9;
+      padding: 6px 18px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      min-width: 125px;
+      margin: 2px 0;
+    }
+
+    .rank-1 .podium-score {
+      font-size: clamp(30px, 3vw, 42px);
+      color: #ffd700;
+      text-shadow: 0 0 16px rgba(255, 215, 0, 0.35);
+      background: rgba(255, 215, 0, 0.06);
+      border-color: rgba(255, 215, 0, 0.28);
+    }
+
+    .rank-3 .podium-score {
+      color: #ffb07c;
+      border-color: rgba(255, 157, 92, 0.18);
+    }
+
+    .podium-score span {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      opacity: 0.85;
+    }
+
+    .rank-1 .podium-score span {
+      color: rgba(255, 215, 0, 0.8);
+    }
+
+    /* 5. TIER BADGE */
+    .podium-tier-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #cbd5e1;
+      line-height: 1;
+      margin: 0;
+    }
+
+    .rank-1 .podium-tier-tag {
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      color: #ffd700;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+    }
+
+    .rank-2 .podium-tier-tag {
+      background: rgba(241, 245, 249, 0.08);
+      border: 1px solid rgba(241, 245, 249, 0.25);
+      color: #f1f5f9;
+    }
+
+    .rank-3 .podium-tier-tag {
+      background: rgba(255, 157, 92, 0.08);
+      border: 1px solid rgba(255, 157, 92, 0.25);
+      color: #ffb07c;
+    }
+
+    /* 6. SLIM INTEGRATED BOTTOM RESULT BAR */
+    .podium-3d-step {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: all 0.25s ease;
+      margin-top: 2px;
+    }
+
+    .step-rank-digit {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.3px;
+    }
+
+    .step-rank-title {
+      font-family: var(--font-system);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .podium-3d-step.step-1 {
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 174, 0, 0.22) 50%, rgba(255, 215, 0, 0.15) 100%);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      color: #ffd700;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .podium-3d-step.step-2 {
+      background: linear-gradient(90deg, rgba(241, 245, 249, 0.1) 0%, rgba(203, 213, 225, 0.16) 50%, rgba(241, 245, 249, 0.1) 100%);
+      border: 1px solid rgba(241, 245, 249, 0.25);
+      color: #f1f5f9;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .podium-3d-step.step-3 {
+      background: linear-gradient(90deg, rgba(255, 157, 92, 0.1) 0%, rgba(217, 119, 6, 0.16) 50%, rgba(255, 157, 92, 0.1) 100%);
+      border: 1px solid rgba(255, 157, 92, 0.25);
+      color: #ffb07c;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    /* 10. INTENTIONAL EMPTY PODIUM STATE (NO DASHED BOX OR GLITCH) */
+    .empty-await-hud {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      opacity: 0.45;
+      user-select: none;
+    }
+
+    .empty-hud-target {
+      font-size: 16px;
+      line-height: 1;
+      color: #94a3b8;
+      opacity: 0.8;
+    }
+
+    .empty-hud-label {
+      font-family: var(--font-mono);
+      font-size: clamp(12px, 1.05vw, 14px);
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    .rank-1 .empty-hud-target {
+      color: #ffd700;
+      opacity: 0.9;
+    }
+
+    .rank-1 .empty-hud-label {
+      color: #eab308;
+    }
+
+    /* Standings Table Broadcast Presentation */
+    .table-section {
+      padding: 20px 24px 24px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(14, 17, 24, 0.85) 0%, rgba(8, 10, 15, 0.94) 100%);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    }
+
+    .table-heading {
+      font-size: clamp(20px, 1.8vw, 26px);
+      font-weight: 900;
+      letter-spacing: -0.6px;
+      text-transform: uppercase;
+    }
+
+    .apple-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: clamp(14px, 1.1vw, 16px);
+    }
+
+    .apple-table th {
+      background: rgba(255, 255, 255, 0.05);
+      color: #a1a1aa;
+      font-size: clamp(11.5px, 0.9vw, 13px);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .apple-table td {
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      color: #f8fafc;
+      vertical-align: middle;
+    }
+
+    /* Stronger visual emphasis for Top 3 broadcast rows */
+    .apple-table tbody tr.row-rank-1 {
+      background: rgba(255, 215, 0, 0.08);
+      border-left: 3px solid var(--apple-gold);
+    }
+    .apple-table tbody tr.row-rank-2 {
+      background: rgba(241, 245, 249, 0.06);
+      border-left: 3px solid var(--apple-silver);
+    }
+    .apple-table tbody tr.row-rank-3 {
+      background: rgba(255, 157, 92, 0.06);
+      border-left: 3px solid var(--apple-bronze);
+    }
+
+    .contender-fullname-main {
+      font-size: clamp(15px, 1.15vw, 17.5px);
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+      text-transform: uppercase;
+    }
+
+    .damage-num {
+      font-family: var(--font-mono);
+      font-weight: 900;
+      font-size: clamp(15.5px, 1.2vw, 18px);
+      color: #ffffff;
+    }
+
+    /* BOSS TELEMETRY HUD BAR */
+    .arena-boss-telemetry-card {
+      width: 100%;
+      background: rgba(18, 18, 24, 0.88);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1.5px solid rgba(255, 69, 58, 0.35);
+      border-radius: var(--radius-lg);
+      padding: 14px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      margin-bottom: 4px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .arena-boss-telemetry-card.pulse {
+      animation: bossHpGlow 1.2s ease;
+    }
+
+    @keyframes bossHpGlow {
+      0%, 100% {
+        border-color: rgba(255, 69, 58, 0.35);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+      }
+      50% {
+        border-color: rgba(255, 69, 58, 0.85);
+        box-shadow: 0 0 35px rgba(255, 69, 58, 0.6);
+      }
+    }
+
+    .boss-hud-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .boss-hud-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: clamp(13px, 1.1vw, 15px);
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #ff6b6b;
+    }
+
+    .boss-hud-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 69, 58, 0.18);
+      border: 1px solid rgba(255, 69, 58, 0.4);
+      color: #ff8585;
+      letter-spacing: 0.8px;
+    }
+
+    .boss-hud-hp-text {
+      font-family: var(--font-mono);
+      font-size: clamp(18px, 1.5vw, 24px);
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 0 14px rgba(255, 69, 58, 0.5);
+    }
+
+    .boss-bar-track {
+      width: 100%;
+      height: clamp(14px, 1.3vw, 18px);
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .boss-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, #ff453a 0%, #ff7b00 50%, #ffd60a 100%);
+      box-shadow: 0 0 20px rgba(255, 69, 58, 0.65);
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* TV-STYLE LIVE BROADCAST TICKER */
+    .arena-broadcast-ticker {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(10, 12, 18, 0.92);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(41, 151, 255, 0.35);
+      border-radius: var(--radius-pill);
+      padding: 8px 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .ticker-lead-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(41, 151, 255, 0.22);
+      border: 1px solid rgba(41, 151, 255, 0.5);
+      color: #60a5fa;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 14px;
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: 0 0 14px rgba(41, 151, 255, 0.3);
+    }
+
+    .ticker-body {
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: clamp(13px, 1.05vw, 15px);
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.2px;
+      text-overflow: ellipsis;
+    }
+
+    .ticker-time-pill {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #94a3b8;
+      white-space: nowrap;
+      flex-shrink: 0;
+      letter-spacing: 0.5px;
+    }
+
+    /* ========================================================
+       PROJECTOR MODE (STAGE FULLSCREEN: 1920x1080 ZERO SCROLL)
+       ======================================================== */
+    body.stage-fullscreen-active {
+      height: 100vh;
+      height: 100dvh;
+      min-height: 100dvh;
+      max-height: 100dvh;
+      overflow: hidden !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    body.stage-fullscreen-active .ambient-grid {
+      display: block;
+    }
+
+    body.stage-fullscreen-active .apple-nav {
+      flex-shrink: 0;
+      padding: 6px 24px;
+      background: rgba(6, 7, 10, 0.96);
+      border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+      box-shadow: 0 4px 28px rgba(0, 0, 0, 0.95);
+      z-index: 100;
+    }
+
+    body.stage-fullscreen-active .nav-controls a[href="index.html"] {
+      display: none !important;
+    }
+
+    body.stage-fullscreen-active .apple-footer {
+      display: none !important;
+    }
+
+    body.stage-fullscreen-active .main-wrap {
+      flex: 1;
+      min-height: 0;
+      height: calc(100dvh - 56px);
+      max-width: 1920px;
+      width: 100%;
+      padding: 10px 24px 14px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    /* Hide desktop controls in Stage Fullscreen for clean broadcast */
+    body.stage-fullscreen-active .table-actions {
+      display: none !important;
+    }
+
+    body.stage-fullscreen-active .podium-section {
+      padding: 10px 20px 8px;
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+
+    body.stage-fullscreen-active .podium-header-wrap {
+      margin-bottom: 6px;
+    }
+
+    body.stage-fullscreen-active .podium-eyebrow {
+      font-size: 12px;
+      letter-spacing: 4px;
+    }
+
+    body.stage-fullscreen-active .podium-main-title {
+      font-size: clamp(24px, 2.2vw, 32px);
+    }
+
+    body.stage-fullscreen-active .podium-grid {
+      max-width: 1200px;
+      gap: clamp(12px, 1.5vw, 20px);
+      padding-top: 0;
+    }
+
+    body.stage-fullscreen-active .podium-pedestal {
+      row-gap: 4px;
+    }
+
+    body.stage-fullscreen-active .podium-pedestal.rank-1 {
+      min-height: 235px;
+      padding: 10px 16px 8px;
+      transform: translateY(-8px);
+    }
+
+    body.stage-fullscreen-active .podium-pedestal.rank-2,
+    body.stage-fullscreen-active .podium-pedestal.rank-3 {
+      min-height: 205px;
+      padding: 8px 14px 8px;
+    }
+
+    body.stage-fullscreen-active .podium-rank-badge {
+      padding: 3px 10px;
+      gap: 5px;
+      margin-bottom: 0;
+    }
+
+    body.stage-fullscreen-active .rank-badge-icon {
+      font-size: 12px;
+    }
+
+    body.stage-fullscreen-active .podium-rank-pill {
+      font-size: 10px;
+    }
+
+    body.stage-fullscreen-active .rank-1 .podium-title-main {
+      font-size: clamp(18px, 1.8vw, 24px);
+    }
+
+    body.stage-fullscreen-active .rank-2 .podium-title-main,
+    body.stage-fullscreen-active .rank-3 .podium-title-main {
+      font-size: clamp(15px, 1.4vw, 19px);
+    }
+
+    body.stage-fullscreen-active .podium-submeta {
+      font-size: 11.5px;
+    }
+
+    body.stage-fullscreen-active .rank-1 .podium-score {
+      font-size: clamp(24px, 2.2vw, 32px);
+      padding: 3px 12px;
+      min-width: 110px;
+    }
+
+    body.stage-fullscreen-active .rank-2 .podium-score,
+    body.stage-fullscreen-active .rank-3 .podium-score {
+      font-size: clamp(20px, 1.8vw, 26px);
+      padding: 2px 10px;
+      min-width: 100px;
+    }
+
+    body.stage-fullscreen-active .podium-tier-tag {
+      font-size: 10px;
+      padding: 2px 8px;
+    }
+
+    body.stage-fullscreen-active .podium-3d-step {
+      padding: 4px 10px;
+    }
+
+    body.stage-fullscreen-active .step-rank-digit {
+      font-size: 12px;
+    }
+
+    body.stage-fullscreen-active .step-rank-title {
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    /* Projector Standings Panel */
+    body.stage-fullscreen-active .table-section {
+      flex: 1;
+      min-height: 0;
+      padding: 12px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      margin-bottom: 0;
+      overflow: hidden;
+    }
+
+    body.stage-fullscreen-active .table-toolbar {
+      margin-bottom: 6px;
+    }
+
+    body.stage-fullscreen-active .table-heading {
+      font-size: clamp(17px, 1.5vw, 22px);
+    }
+
+    body.stage-fullscreen-active .table-container {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    body.stage-fullscreen-active .apple-table th {
+      padding: 8px 16px;
+      font-size: 11.5px;
+    }
+
+    body.stage-fullscreen-active .apple-table td {
+      padding: 7px 16px;
+      font-size: clamp(13.5px, 1.1vw, 16px);
+    }
+
+    body.stage-fullscreen-active .contender-fullname-main {
+      font-size: clamp(14px, 1.15vw, 17px);
+    }
+
+    body.stage-fullscreen-active .contender-sub-meta {
+      font-size: 11.5px;
+    }
+
+    body.stage-fullscreen-active .damage-num {
+      font-size: clamp(14px, 1.15vw, 17px);
+    }
+
+    body.stage-fullscreen-active .tier-pill {
+      font-size: 11px;
+      padding: 2px 9px;
+    }
+
+    body.stage-fullscreen-active .status-pill {
+      font-size: 11px;
+      padding: 3px 10px;
+    }
+
   </style>
 </head>
 
 <body>
   <div class="ambient-grid"></div>
 
-  <!-- APPLE FLOATING GLASS NAVIGATION -->
+  <!-- APPLE FLOATING GLASS NAVIGATION (PROJECTOR COMPACT TOP BAR) -->
   <header class="apple-nav">
     <a href="index.html" class="nav-brand" title="Return to Main Arena">
       <img src="logo.png?v=2" alt="Tech Boss Logo">
       <div>
-        <div class="brand-title">Tech <span>Boss</span></div>
+        <div class="brand-title">TECH <span>BOSS</span></div>
       </div>
     </a>
 
     <div class="nav-center">
       <div class="dynamic-capsule">
         <div class="live-dot"></div>
-        <span>Live Telemetry</span>
+        <span>LIVE TELEMETRY</span>
       </div>
-      <div class="nav-clock" id="hudLiveClock">--:--:--</div>
+      <div class="nav-clock" id="hudLiveClock">--:--:-- IST</div>
     </div>
 
     <div class="nav-controls">
-      <button class="apple-btn" id="soundToggleBtn" title="Toggle Sound FX">
-        <span id="soundIcon">🔊</span> Sound
+      <!-- Direct One-Click Audio Enable / Arm Indicator -->
+      <button class="arena-audio-arm-banner" id="arenaAudioArmBtn" title="Click to arm browser audio for scheduled sound fanfare">
+        <span id="arenaAudioArmDot" style="width:7px; height:7px; border-radius:50%; background:#ff2a85; box-shadow:0 0 8px #ff2a85;"></span>
+        <span id="arenaAudioArmLabel">● ARENA AUDIO ARMED</span>
       </button>
+
       <button class="apple-btn btn-primary" id="fullscreenToggleBtn" title="Toggle Fullscreen Stage (F)">
-        <span>⛶</span> Stage Fullscreen
+        <span>⛶</span> FULLSCREEN
       </button>
       <a href="index.html" class="apple-btn">
         <span>🏠</span> Main
@@ -1665,128 +2603,85 @@
   <!-- MAIN CONTAINER -->
   <main class="main-wrap">
 
-    <!-- LIVE ORGANIZER BROADCAST BANNER (HIDDEN - AUDIO ONLY PER USER SPECIFICATION) -->
-    <div class="broadcast-banner" id="broadcastCard" style="display:none !important;">
-      <div class="broadcast-badge">
-        <span>⚡</span> Announcement
-      </div>
-      <div class="broadcast-text-wrap">
-        <span id="broadcastText"></span>
-        <span class="broadcast-time" id="broadcastTimestamp"></span>
-      </div>
-    </div>
-
-
-    <!-- APPLE PRO ARENA ROUND NAVIGATION DOCK -->
-    <nav class="arena-round-nav" aria-label="Tournament Rounds Navigation">
-      <div class="round-dock-container">
-        <div class="round-dock-scroll">
-          <button type="button" class="round-pill-btn active" id="pillRoundAuto" onclick="selectRoundScope('AUTO')" title="Follow Open Active Round">
-            <span class="pill-dot live"></span>
-            <span>Auto Live</span>
-          </button>
-          <button type="button" class="round-pill-btn" id="pillRound1" onclick="selectRoundScope(1)">
-            <span class="pill-badge solo">R1</span>
-            <span>Solo Inception</span>
-          </button>
-          <button type="button" class="round-pill-btn highlight-gold" id="pillRound2" onclick="selectRoundScope(2)">
-            <span class="pill-badge squad">👥 R2</span>
-            <span>Tournament Squads</span>
-          </button>
-          <button type="button" class="round-pill-btn" id="pillRound3" onclick="selectRoundScope(3)">
-            <span class="pill-badge squad">👥 R3</span>
-            <span>Alliances</span>
-          </button>
-          <button type="button" class="round-pill-btn" id="pillRound4" onclick="selectRoundScope(4)">
-            <span class="pill-badge squad">👥 R4</span>
-            <span>Protocol</span>
-          </button>
-          <button type="button" class="round-pill-btn" id="pillRound5" onclick="selectRoundScope(5)">
-            <span class="pill-badge solo">R5</span>
-            <span>Duel</span>
-          </button>
-          <button type="button" class="round-pill-btn" id="pillRoundCumulative" onclick="selectRoundScope('CUMULATIVE')">
-            <span class="pill-badge crown">🏆</span>
-            <span>Cumulative</span>
-          </button>
-        </div>
-
-        <div class="round-dock-meta">
-          <div class="dock-meta-info">
-            <span class="dock-status-pill" id="arenaLiveIndicator">
-              <span class="live-dot" style="width:6px; height:6px;"></span>
-              <span id="arenaLiveStatusText">OPEN IN ARENA</span>
-            </span>
-            <span class="dock-format-tag" id="arenaRoundFormatTag">ROUND 1 · SOLO</span>
-          </div>
-
-          <!-- Squad View Mode Toggle (Squad Cards vs Individual Operatives) -->
-          <div class="dock-view-switch" id="squadViewToggle" style="display:none;">
-            <button type="button" class="dock-switch-btn active" id="btnViewSquads" onclick="setSquadViewMode('SQUADS')">👥 Squads</button>
-            <button type="button" class="dock-switch-btn" id="btnViewIndividual" onclick="setSquadViewMode('INDIVIDUAL')">👤 Roster</button>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- TOP 3 CHAMPIONSHIP GLORY PODIUM -->
+    <!-- 1. MAIN STAGE HERO: TOP 3 CHAMPIONSHIP GLORY PODIUM -->
     <section class="podium-section">
       <div class="podium-header-wrap">
-        <span class="podium-eyebrow" id="podiumEyebrow">Grand Championship Podium</span>
-        <h2 class="podium-main-title" id="podiumMainTitle">Top 3 Glory Showcase</h2>
+        <span class="podium-eyebrow" id="podiumEyebrow">ROUND 1 · APEX STANDINGS</span>
+        <h2 class="podium-main-title" id="podiumMainTitle">TOP 3 GLADIATORS</h2>
       </div>
 
       <div class="podium-grid">
         <!-- 2nd Place Silver -->
         <div class="podium-pedestal rank-2" id="podiumRank2">
-          <div class="medal-halo-ring">🥈</div>
-          <div class="podium-rank-pill" id="podiumRankPill2">2nd Place</div>
-          <div class="podium-title-main" id="podiumName2">Awaiting Contender</div>
+          <div class="podium-rank-badge rank-2-badge">
+            <span class="rank-badge-icon">🥈</span>
+            <span class="podium-rank-pill" id="podiumRankPill2">2ND PLACE</span>
+          </div>
+          <div class="podium-title-main" id="podiumName2">
+            <span class="empty-await-hud">
+              <span class="empty-hud-target">⌖</span>
+              <span class="empty-hud-label">AWAITING<br>CONTENDER</span>
+            </span>
+          </div>
           <div class="podium-submeta" id="podiumMeta2">Roll: --</div>
           <div class="podium-score" id="podiumScore2">0 <span>DMG</span></div>
-          <div class="podium-tier-tag" id="podiumTier2">Tier A</div>
+          <div class="podium-tier-tag" id="podiumTier2">TIER A</div>
           <div class="podium-3d-step step-2">
-            <span class="step-rank-digit">2</span>
-            <span class="step-rank-title">2ND PLACE</span>
+            <span class="step-rank-digit">#2</span>
+            <span class="step-rank-title">SECOND PLACE</span>
           </div>
         </div>
 
         <!-- 1st Place Champion Apex Gold -->
         <div class="podium-pedestal rank-1" id="podiumRank1">
-          <div class="medal-halo-ring">👑</div>
-          <div class="podium-rank-pill" id="podiumRankPill1">Champion #1</div>
-          <div class="podium-title-main" id="podiumName1">Awaiting Apex Contender</div>
+          <div class="podium-rank-badge rank-1-badge">
+            <span class="rank-badge-icon">👑</span>
+            <span class="podium-rank-pill" id="podiumRankPill1">CHAMPION #1</span>
+          </div>
+          <div class="podium-title-main" id="podiumName1">
+            <span class="empty-await-hud">
+              <span class="empty-hud-target">⌖</span>
+              <span class="empty-hud-label">AWAITING<br>CONTENDER</span>
+            </span>
+          </div>
           <div class="podium-submeta" id="podiumMeta1">Roll: --</div>
           <div class="podium-score" id="podiumScore1">0 <span>DMG</span></div>
-          <div class="podium-tier-tag" id="podiumTier1" style="background: rgba(255,215,0,0.18); color: var(--apple-gold); border: 1px solid var(--apple-gold);">Tier S Apex</div>
+          <div class="podium-tier-tag" id="podiumTier1">TIER S APEX</div>
           <div class="podium-3d-step step-1">
-            <span class="step-rank-digit">1</span>
+            <span class="step-rank-digit">#1</span>
             <span class="step-rank-title">APEX CHAMPION</span>
           </div>
         </div>
 
         <!-- 3rd Place Bronze -->
         <div class="podium-pedestal rank-3" id="podiumRank3">
-          <div class="medal-halo-ring">🥉</div>
-          <div class="podium-rank-pill" id="podiumRankPill3">3rd Place</div>
-          <div class="podium-title-main" id="podiumName3">Awaiting Contender</div>
+          <div class="podium-rank-badge rank-3-badge">
+            <span class="rank-badge-icon">🥉</span>
+            <span class="podium-rank-pill" id="podiumRankPill3">3RD PLACE</span>
+          </div>
+          <div class="podium-title-main" id="podiumName3">
+            <span class="empty-await-hud">
+              <span class="empty-hud-target">⌖</span>
+              <span class="empty-hud-label">AWAITING<br>CONTENDER</span>
+            </span>
+          </div>
           <div class="podium-submeta" id="podiumMeta3">Roll: --</div>
           <div class="podium-score" id="podiumScore3">0 <span>DMG</span></div>
-          <div class="podium-tier-tag" id="podiumTier3">Tier B</div>
+          <div class="podium-tier-tag" id="podiumTier3">TIER B</div>
           <div class="podium-3d-step step-3">
-            <span class="step-rank-digit">3</span>
-            <span class="step-rank-title">3RD PLACE</span>
+            <span class="step-rank-digit">#3</span>
+            <span class="step-rank-title">THIRD PLACE</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- FULL LEADERBOARD TABLE -->
+    <!-- 2. BROADCAST STANDINGS PANEL -->
     <section class="apple-card table-section" id="arenaLeaderboardSection">
       <div class="table-toolbar">
         <div class="table-heading">
-          <span id="arenaSectionTitle">Live Arena Leaderboard</span>
-          <span class="count-capsule" id="contenderCountBadge">0 Warriors</span>
+          <span id="arenaSectionTitle">LIVE ARENA CHAMPIONSHIP STANDINGS</span>
+          <span class="count-capsule" id="contenderCountBadge">0 WARRIORS</span>
         </div>
 
         <div class="table-actions">
@@ -1804,7 +2699,7 @@
       </div>
 
       <!-- SQUAD BATTLE VIEW (For Team Rounds) -->
-      <div id="teamSquadsContainer" style="display:none; margin-bottom: 8px;">
+      <div id="teamSquadsContainer" style="display:none; margin-bottom: 6px;">
         <div class="arena-squad-grid" id="squadsGrid">
           <!-- Populated dynamically -->
         </div>
@@ -1815,11 +2710,11 @@
         <table class="apple-table">
           <thead>
             <tr>
-              <th style="width: 85px; text-align: center;">Rank</th>
-              <th>Contender Name & Roll</th>
-              <th style="min-width: 170px;" id="damageColumnHeader">Damage Telemetry</th>
-              <th style="width: 90px; text-align: center;">Tier</th>
-              <th style="width: 120px; text-align: center;">Status</th>
+              <th style="width: 85px; text-align: center;">RANK</th>
+              <th>CONTENDER</th>
+              <th style="min-width: 170px;" id="damageColumnHeader">DAMAGE / SCORE</th>
+              <th style="width: 90px; text-align: center;">TIER</th>
+              <th style="width: 120px; text-align: center;">STATUS</th>
             </tr>
           </thead>
           <tbody id="scoreboardTableBody">
@@ -1894,6 +2789,14 @@
       var soundToggleBtn = document.getElementById('soundToggleBtn');
       var soundIconEl = document.getElementById('soundIcon');
       var segmentButtons = document.querySelectorAll('.segment-btn');
+
+      // Projector Boss Telemetry & Live Ticker DOM Elements
+      var bossTelemetryCardEl = document.getElementById('bossTelemetryCard');
+      var bossHpPercentLabelEl = document.getElementById('bossHpPercentLabel');
+      var bossHpBarFillEl = document.getElementById('bossHpBarFill');
+      var broadcastTickerTextEl = document.getElementById('broadcastTickerText');
+      var broadcastTickerTimeEl = document.getElementById('broadcastTickerTime');
+      var currentBossHpVal = '78';
 
       // Keynote Fullscreen Overlay Elements
       var keynoteOverlayEl = document.getElementById('appleKeynoteOverlay');
@@ -2417,7 +3320,9 @@
             ? '<span class="status-pill"><span class="live-dot" style="width:7px; height:7px;"></span> In House' + (item.checkinTime ? (' · ' + escapeHtml(item.checkinTime)) : '') + '</span>'
             : '<span class="status-pill" style="color:var(--text-secondary); background:rgba(255,255,255,0.06);">⚪ Awaiting Entry</span>';
 
-          return '<tr>' +
+          var rowRankClass = rank === 1 ? 'row-rank-1' : (rank === 2 ? 'row-rank-2' : (rank === 3 ? 'row-rank-3' : ''));
+
+          return '<tr class="' + rowRankClass + '">' +
             '<td><div class="rank-cell ' + rankClass + '">' + rankDisplay + '</div></td>' +
             '<td>' +
               '<div class="contender-identity">' +
@@ -2459,7 +3364,7 @@
           if (pScore1) pScore1.innerHTML = p1.score.toLocaleString() + ' <span>DMG</span>';
           if (pTier1) pTier1.textContent = 'Tier ' + tierFor(p1.score) + ' Apex';
         } else {
-          if (pName1) pName1.textContent = 'Awaiting In-House Contender';
+          if (pName1) pName1.innerHTML = '<span class="empty-await-hud"><span class="empty-hud-target">⌖</span><span class="empty-hud-label">AWAITING<br>CONTENDER</span></span>';
           if (pMeta1) pMeta1.textContent = 'Roll: --';
           if (pScore1) pScore1.innerHTML = '0 <span>DMG</span>';
           if (pTier1) pTier1.textContent = 'Tier S Apex';
@@ -2479,7 +3384,7 @@
           if (pScore2) pScore2.innerHTML = p2.score.toLocaleString() + ' <span>DMG</span>';
           if (pTier2) pTier2.textContent = 'Tier ' + tierFor(p2.score);
         } else {
-          if (pName2) pName2.textContent = 'Awaiting Contender';
+          if (pName2) pName2.innerHTML = '<span class="empty-await-hud"><span class="empty-hud-target">⌖</span><span class="empty-hud-label">AWAITING<br>CONTENDER</span></span>';
           if (pMeta2) pMeta2.textContent = 'Roll: --';
           if (pScore2) pScore2.innerHTML = '0 <span>DMG</span>';
           if (pTier2) pTier2.textContent = 'Tier A';
@@ -2499,7 +3404,7 @@
           if (pScore3) pScore3.innerHTML = p3.score.toLocaleString() + ' <span>DMG</span>';
           if (pTier3) pTier3.textContent = 'Tier ' + tierFor(p3.score);
         } else {
-          if (pName3) pName3.textContent = 'Awaiting Contender';
+          if (pName3) pName3.innerHTML = '<span class="empty-await-hud"><span class="empty-hud-target">⌖</span><span class="empty-hud-label">AWAITING<br>CONTENDER</span></span>';
           if (pMeta3) pMeta3.textContent = 'Roll: --';
           if (pScore3) pScore3.innerHTML = '0 <span>DMG</span>';
           if (pTier3) pTier3.textContent = 'Tier B';
@@ -2684,7 +3589,9 @@
             var rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
             var barWidth = item.roundTotal > 0 ? Math.min(100, Math.max(8, Math.round((item.roundTotal / maxScore) * 100))) : 0;
 
-            return '<tr>' +
+            var rowRankClass = rank === 1 ? 'row-rank-1' : (rank === 2 ? 'row-rank-2' : (rank === 3 ? 'row-rank-3' : ''));
+
+            return '<tr class="' + rowRankClass + '">' +
               '<td><div class="rank-cell ' + rankClass + '">' + rankDisplay + '</div></td>' +
               '<td>' +
                 '<div class="contender-identity">' +
@@ -2730,7 +3637,7 @@
           if (pScore1) pScore1.innerHTML = s1.score.toLocaleString() + ' <span>DMG</span>';
           if (pTier1) pTier1.textContent = 'Team Score';
         } else {
-          if (pName1) pName1.textContent = 'Awaiting Squad';
+          if (pName1) pName1.innerHTML = '<span class="empty-await-hud"><span class="empty-hud-target">⌖</span><span class="empty-hud-label">AWAITING<br>CONTENDER</span></span>';
           if (pMeta1) pMeta1.textContent = 'Roster: --';
           if (pScore1) pScore1.innerHTML = '0 <span>DMG</span>';
           if (pTier1) pTier1.textContent = 'Squad S';
@@ -2750,7 +3657,7 @@
           if (pScore2) pScore2.innerHTML = s2.score.toLocaleString() + ' <span>DMG</span>';
           if (pTier2) pTier2.textContent = 'Team Score';
         } else {
-          if (pName2) pName2.textContent = 'Awaiting Squad';
+          if (pName2) pName2.innerHTML = '<span class="empty-await-hud"><span class="empty-hud-target">⌖</span><span class="empty-hud-label">AWAITING<br>CONTENDER</span></span>';
           if (pMeta2) pMeta2.textContent = 'Roster: --';
           if (pScore2) pScore2.innerHTML = '0 <span>DMG</span>';
           if (pTier2) pTier2.textContent = 'Squad A';
@@ -2770,16 +3677,130 @@
           if (pScore3) pScore3.innerHTML = s3.score.toLocaleString() + ' <span>DMG</span>';
           if (pTier3) pTier3.textContent = 'Team Score';
         } else {
-          if (pName3) pName3.textContent = 'Awaiting Squad';
+          if (pName3) pName3.innerHTML = '<span class="empty-await-hud"><span class="empty-hud-target">⌖</span><span class="empty-hud-label">AWAITING<br>CONTENDER</span></span>';
           if (pMeta3) pMeta3.textContent = 'Roster: --';
           if (pScore3) pScore3.innerHTML = '0 <span>DMG</span>';
           if (pTier3) pTier3.textContent = 'Squad B';
         }
       }
 
-      // Text announcements disabled per user request
+      // ==========================================
+      // PROJECTOR BOSS TELEMETRY CONTROLLER
+      // ==========================================
+      function updateBossHpUI(hp, shouldPulse) {
+        if (hp === undefined || hp === null || hp === '') {
+          hp = localStorage.getItem('techboss_boss_hp') || '78';
+        }
+        var num = parseInt(hp, 10);
+        if (isNaN(num)) num = 78;
+        num = Math.max(0, Math.min(100, num));
+        var strVal = String(num);
+
+        var changed = (strVal !== currentBossHpVal);
+        currentBossHpVal = strVal;
+        try {
+          localStorage.setItem('techboss_boss_hp', strVal);
+        } catch (e) {}
+
+        if (bossHpPercentLabelEl) {
+          bossHpPercentLabelEl.textContent = 'BOSS HP · ' + num + '%';
+        }
+        if (bossHpBarFillEl) {
+          bossHpBarFillEl.style.width = num + '%';
+          if (num <= 25) {
+            bossHpBarFillEl.style.background = 'linear-gradient(90deg, #ff453a, #ff9f0a)';
+          } else if (num <= 50) {
+            bossHpBarFillEl.style.background = 'linear-gradient(90deg, #ff9f0a, #ffd60a)';
+          } else {
+            bossHpBarFillEl.style.background = 'linear-gradient(90deg, #30d158, #00f0ff, #ffd700)';
+          }
+        }
+
+        if (bossTelemetryCardEl && (shouldPulse || changed)) {
+          bossTelemetryCardEl.classList.remove('hp-pulsing');
+          // Trigger reflow to restart animation
+          void bossTelemetryCardEl.offsetWidth;
+          bossTelemetryCardEl.classList.add('hp-pulsing');
+          setTimeout(function () {
+            if (bossTelemetryCardEl) bossTelemetryCardEl.classList.remove('hp-pulsing');
+          }, 1800);
+        }
+      }
+
+      // ==========================================
+      // LIVE BROADCAST TICKER CONTROLLER
+      // ==========================================
+      var tickerRotatorIdx = 0;
+      var tickerRotatorTimer = null;
+
+      function getTickerFeedItems() {
+        var items = [];
+        var activeRoundName = 'THE AWAKENING';
+        if (typeof tournamentRounds !== 'undefined' && Array.isArray(tournamentRounds)) {
+          var currR = tournamentRounds.find(function (r) { return r.round_number === activeRoundNum; });
+          if (currR && currR.title) activeRoundName = currR.title.toUpperCase();
+        }
+        items.push('⚡ LIVE — ROUND ' + activeRoundNum + ' (' + activeRoundName + ') HAS BEGUN · GLADIATORS DUELING IN ARENA');
+        items.push('⚡ TELEMETRY SYNCHRONIZED — AUDITORIUM MAIN PROJECTOR FEED LIVE');
+        items.push('⚡ TITAN APEX BOSS ACTIVE — DEAL MAXIMUM DAMAGE TO SECURE THE APEX PODIUM');
+        if (activeRoundNum < 9) {
+          items.push('⚡ NEXT ARENA STAGE: ROUND ' + (activeRoundNum + 1) + ' · CONTENDERS ASSEMBLE');
+        } else {
+          items.push('⚡ FINAL CHAMPIONSHIP ROUND · GRAND FINALE BOSS BATTLE CLIMAX');
+        }
+        return items;
+      }
+
+      function updateBroadcastTickerUI(customMsg, timeStr) {
+        if (!broadcastTickerTextEl) return;
+        var msgToDisplay = customMsg || localStorage.getItem('techboss_custom_broadcast');
+        if (msgToDisplay && msgToDisplay.trim().length > 0) {
+          var cleanMsg = msgToDisplay.trim();
+          // If message is a raw JSON payload (such as audio schedule config), extract a clean displayable text
+          if (cleanMsg.startsWith('{') && cleanMsg.endsWith('}')) {
+            try {
+              var parsed = JSON.parse(cleanMsg);
+              if (parsed.message) {
+                cleanMsg = parsed.message;
+              } else if (parsed.target_time) {
+                cleanMsg = 'SCHEDULED AUDIO ARMED FOR ' + parsed.target_time + ' IST';
+              } else {
+                cleanMsg = '';
+              }
+            } catch (e) {
+              cleanMsg = '';
+            }
+          }
+          if (cleanMsg && cleanMsg.length > 0) {
+            broadcastTickerTextEl.textContent = '📢 ' + cleanMsg;
+            if (broadcastTickerTimeEl) {
+              broadcastTickerTimeEl.textContent = timeStr || 'TRANSMISSION LIVE';
+            }
+            return;
+          }
+        }
+        var items = getTickerFeedItems();
+        var item = items[tickerRotatorIdx % items.length];
+        broadcastTickerTextEl.textContent = item;
+        if (broadcastTickerTimeEl) {
+          broadcastTickerTimeEl.textContent = 'LIVE FEED';
+        }
+      }
+
+      function initTickerRotator() {
+        if (tickerRotatorTimer) clearInterval(tickerRotatorTimer);
+        tickerRotatorTimer = setInterval(function () {
+          var customMsg = localStorage.getItem('techboss_custom_broadcast');
+          if (!customMsg || customMsg.trim().length === 0) {
+            tickerRotatorIdx++;
+            updateBroadcastTickerUI();
+          }
+        }, 8000);
+      }
+
       function loadBroadcast(triggerFullscreen) {
-        return;
+        var msg = localStorage.getItem('techboss_custom_broadcast') || '';
+        updateBroadcastTickerUI(msg);
       }
 
       function loadInHouseData() {
@@ -2803,12 +3824,14 @@
           }
         } catch (e) { }
 
+        updateBossHpUI();
         loadBroadcast();
         loadActiveRoundData();
       }
 
-      // Initial Load
+      // Initial Load & Ticker Start
       loadAllData();
+      initTickerRotator();
 
       // Welcome Greeting System for Scoreboard
       function showScoreboardWelcomeGreeting(contenderOrName) {
@@ -2908,126 +3931,514 @@
         }
       })();
 
-      // Scheduled Audio & Keynote Auto-Trigger System
-      var lastFiredAudioStamp = null;
+      // =========================================================================
+      // UNIFIED ARENA AUDIO ENGINE & AUTONOMOUS TIME CROSSING SCHEDULER
+      // =========================================================================
+      var arenaAudioContext = null;
+      var arenaAudioArmed = false;
+      var lastFiredScheduleId = localStorage.getItem('techboss_last_fired_schedule_id') || null;
+      var lastFiredDateKey = localStorage.getItem('techboss_last_fired_date_key') || null;
+      var previousCheckIST = null;
 
-      var TIME_AUDIO_MAP = {
-        '09:00': ['Times/9-00 AM.jpeg', 'Times/9-00 AM.mp3'],
-        '10:00': ['Times/10-00 AM.jpeg', 'Times/10-00 AM.mp3'],
-        '11:00': ['Times/11-00 AM.jpeg', 'Times/11-00 AM.mp3'],
-        '12:00': ['Times/12-00 PM.jpeg', 'Times/12-00 PM.mp3'],
-        '13:00': ['Times/1-00 PM.jpeg', 'Times/1-00 PM.mp3'],
-        '14:00': ['Times/2-00 PM.jpeg', 'Times/2-00 PM.mp3'],
-        '15:00': ['Times/3-00 PM.jpeg', 'Times/3-00 PM.mp3'],
-        '16:00': ['Times/4-00 PM.jpeg', 'Times/4-00 PM.mp3']
-      };
+      var arenaAudioArmBtn = document.getElementById('arenaAudioArmBtn');
+      var arenaAudioArmDot = document.getElementById('arenaAudioArmDot');
+      var arenaAudioArmLabel = document.getElementById('arenaAudioArmLabel');
+
+      // Developer Telemetry DOM Elements (STEP 2 SPECIFICATION)
+      var dbgCurrentIST = document.getElementById('dbgCurrentIST');
+      var dbgScheduleReceived = document.getElementById('dbgScheduleReceived');
+      var dbgScheduledTime = document.getElementById('dbgScheduledTime');
+      var dbgScheduleId = document.getElementById('dbgScheduleId');
+      var dbgSchedulerState = document.getElementById('dbgSchedulerState');
+      var dbgAudioArmed = document.getElementById('dbgAudioArmed');
+      var dbgAudioContext = document.getElementById('dbgAudioContext');
+      var dbgLastSchedulerCheck = document.getElementById('dbgLastSchedulerCheck');
+      var dbgLastCrossingDetected = document.getElementById('dbgLastCrossingDetected');
+      var dbgLastPlayAttempt = document.getElementById('dbgLastPlayAttempt');
+      var dbgLastPlayResult = document.getElementById('dbgLastPlayResult');
+      var dbgLastError = document.getElementById('dbgLastError');
+      var dbgLastReceivedSchedule = document.getElementById('dbgLastReceivedSchedule');
+
+      // Helper to calculate accurate Indian Standard Time (UTC+5:30)
+      function getNowIST() {
+        var d = new Date();
+        var utcMs = d.getTime() + (d.getTimezoneOffset() * 60000);
+        return new Date(utcMs + (3600000 * 5.5));
+      }
+
+      function formatISTTime(d) {
+        if (!d) return '--:--:--';
+        var hrs = String(d.getHours()).padStart(2, '0');
+        var mins = String(d.getMinutes()).padStart(2, '0');
+        var secs = String(d.getSeconds()).padStart(2, '0');
+        return hrs + ':' + mins + ':' + secs;
+      }
+
+      function formatISTDate(d) {
+        if (!d) return '';
+        var yr = d.getFullYear();
+        var mo = String(d.getMonth() + 1).padStart(2, '0');
+        var dy = String(d.getDate()).padStart(2, '0');
+        return yr + '-' + mo + '-' + dy;
+      }
+
+      // Update Audio Arm UI State & Telemetry
+      function setAudioArmUIState(state, errDetail) {
+        // state: 'UNARMED', 'ARMED', 'BLOCKED'
+        if (dbgAudioContext && arenaAudioContext) {
+          dbgAudioContext.textContent = arenaAudioContext.state;
+          dbgAudioContext.className = 'arena-telemetry-val ' + (arenaAudioContext.state === 'running' ? 'highlight' : 'warn');
+        }
+
+        if (!arenaAudioArmBtn) return;
+        if (state === 'ARMED') {
+          arenaAudioArmed = true;
+          arenaAudioArmBtn.className = 'arena-audio-arm-banner armed';
+          if (arenaAudioArmDot) {
+            arenaAudioArmDot.style.background = '#30d158';
+            arenaAudioArmDot.style.boxShadow = '0 0 10px #30d158';
+          }
+          if (arenaAudioArmLabel) arenaAudioArmLabel.textContent = '● ARENA AUDIO ARMED';
+          if (dbgAudioArmed) {
+            dbgAudioArmed.textContent = 'YES';
+            dbgAudioArmed.className = 'arena-telemetry-val highlight';
+          }
+        } else if (state === 'BLOCKED') {
+          arenaAudioArmed = false;
+          arenaAudioArmBtn.className = 'arena-audio-arm-banner blocked';
+          if (arenaAudioArmDot) {
+            arenaAudioArmDot.style.background = '#ff453a';
+            arenaAudioArmDot.style.boxShadow = '0 0 10px #ff453a';
+          }
+          if (arenaAudioArmLabel) arenaAudioArmLabel.textContent = '⚠ AUDIO BLOCKED · CLICK TO ARM';
+          if (dbgAudioArmed) {
+            dbgAudioArmed.textContent = 'NO (BLOCKED)';
+            dbgAudioArmed.className = 'arena-telemetry-val danger';
+          }
+          if (errDetail && dbgLastError) {
+            dbgLastError.textContent = String(errDetail);
+            dbgLastError.className = 'arena-telemetry-val danger';
+          }
+        } else {
+          arenaAudioArmed = false;
+          arenaAudioArmBtn.className = 'arena-audio-arm-banner';
+          if (arenaAudioArmDot) {
+            arenaAudioArmDot.style.background = '#ff2a85';
+            arenaAudioArmDot.style.boxShadow = '0 0 8px #ff2a85';
+          }
+          if (arenaAudioArmLabel) arenaAudioArmLabel.textContent = '🔊 ENABLE ARENA AUDIO';
+          if (dbgAudioArmed) {
+            dbgAudioArmed.textContent = 'NO';
+            dbgAudioArmed.className = 'arena-telemetry-val danger';
+          }
+        }
+      }
+
+      // Interactive Arm Handshake (STEP 4 SPECIFICATION)
+      async function armArenaAudio() {
+        try {
+          var AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!arenaAudioContext) {
+            arenaAudioContext = new AudioCtx();
+          }
+          if (arenaAudioContext.state === 'suspended') {
+            await arenaAudioContext.resume();
+          }
+
+          // Prime silent buffer to unlock web audio on mobile and projector devices
+          var osc = arenaAudioContext.createOscillator();
+          var gain = arenaAudioContext.createGain();
+          gain.gain.setValueAtTime(0.001, arenaAudioContext.currentTime);
+          osc.connect(gain);
+          gain.connect(arenaAudioContext.destination);
+          osc.start();
+          osc.stop(arenaAudioContext.currentTime + 0.05);
+
+          // Prime HTML5 Audio element
+          var primeAudio = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=');
+          try {
+            var p = primeAudio.play();
+            if (p !== undefined) {
+              await p;
+            }
+          } catch (primeErr) {
+            console.warn('Prime audio note:', primeErr);
+          }
+
+          if (arenaAudioContext.state === 'running') {
+            setAudioArmUIState('ARMED');
+            showKeynoteAnnouncement('🔊 ARENA AUDIO SYSTEM ARMED & READY');
+            if (dbgLastError) dbgLastError.textContent = 'None';
+          } else {
+            setAudioArmUIState('BLOCKED', 'AudioContext state: ' + arenaAudioContext.state);
+          }
+        } catch (e) {
+          console.error('Audio arming failure:', e);
+          var errMsg = (e && (e.name ? (e.name + ': ' + e.message) : e.message)) || 'Arm failed';
+          setAudioArmUIState('BLOCKED', errMsg);
+        }
+      }
+
+      if (arenaAudioArmBtn) {
+        arenaAudioArmBtn.addEventListener('click', armArenaAudio);
+      }
 
       var TRACK_PRESETS = {
-        'times-9am': ['Times/9-00 AM.jpeg', 'Times/9-00 AM.mp3'],
-        'times-10am': ['Times/10-00 AM.jpeg', 'Times/10-00 AM.mp3'],
-        'times-11am': ['Times/11-00 AM.jpeg', 'Times/11-00 AM.mp3'],
-        'times-12pm': ['Times/12-00 PM.jpeg', 'Times/12-00 PM.mp3'],
-        'times-1pm': ['Times/1-00 PM.jpeg', 'Times/1-00 PM.mp3'],
-        'times-2pm': ['Times/2-00 PM.jpeg', 'Times/2-00 PM.mp3'],
-        'times-3pm': ['Times/3-00 PM.jpeg', 'Times/3-00 PM.mp3'],
-        'times-4pm': ['Times/4-00 PM.jpeg', 'Times/4-00 PM.mp3'],
+        'times-9am': ['Times/9-00 AM.mp3', 'success-sound.mp3'],
+        'times-10am': ['Times/10-00 AM.mp3', 'success-sound.mp3'],
+        'times-11am': ['Times/11-00 AM.mp3', 'success-sound.mp3'],
+        'times-12pm': ['Times/12-00 PM.mp3', 'success-sound.mp3'],
+        'times-1pm': ['Times/1-00 PM.mp3', 'success-sound.mp3'],
+        'times-2pm': ['Times/2-00 PM.mp3', 'success-sound.mp3'],
+        'times-3pm': ['Times/3-00 PM.mp3', 'success-sound.mp3'],
+        'times-4pm': ['Times/4-00 PM.mp3', 'success-sound.mp3'],
+        'fanfare': ['success-sound.mp3'],
         'success': ['success-sound.mp3']
       };
 
-      function playAudioUrlsWithFallback(urls, fallbackFn) {
-        if (!Array.isArray(urls)) urls = [urls];
-        var idx = 0;
-        function tryNext() {
-          if (idx >= urls.length) {
-            if (fallbackFn) fallbackFn();
-            return;
-          }
-          var url = urls[idx++];
-          var audio = new Audio(url);
-          var p = audio.play();
-          if (p !== undefined) {
-            p.catch(function () {
-              try {
-                var AudioCtx = window.AudioContext || window.webkitAudioContext;
-                var ctx = new AudioCtx();
-                if (ctx.state === 'suspended') ctx.resume();
-                fetch(url)
-                  .then(function (res) { if (!res.ok) throw new Error('Fetch failed'); return res.arrayBuffer(); })
-                  .then(function (buf) { return ctx.decodeAudioData(buf); })
-                  .then(function (dec) {
-                    var src = ctx.createBufferSource();
-                    src.buffer = dec;
-                    src.connect(ctx.destination);
-                    src.start(0);
-                  })
-                  .catch(function () { tryNext(); });
-              } catch (e) {
-                tryNext();
-              }
-            });
-          }
-        }
-        tryNext();
-      }
-
-      function playScheduledArenaAudio(customTrack, timeSlot) {
+      // Single Unified Playback Function (STEP 6 & STEP 7 SPECIFICATION)
+      function playArenaAudio(audioId, onComplete) {
+        var trackKey = audioId || localStorage.getItem('techboss_scheduled_audio_track') || 'times-9am';
         var customAudioData = localStorage.getItem('techboss_custom_audio_data');
-        var trackType = customTrack || localStorage.getItem('techboss_scheduled_audio_track');
-        var timeKey = (timeSlot || localStorage.getItem('techboss_scheduled_audio_time') || '09:00').slice(0, 5);
+        var nowStr = formatISTTime(getNowIST());
 
-        if (trackType === 'custom' && customAudioData) {
+        if (dbgLastPlayAttempt) {
+          dbgLastPlayAttempt.textContent = nowStr + ' (' + trackKey + ')';
+        }
+        if (dbgLastPlayResult) {
+          dbgLastPlayResult.textContent = 'PLAYING...';
+          dbgLastPlayResult.className = 'arena-telemetry-val warn';
+        }
+
+        console.log('[ARENA AUDIO] PLAY ATTEMPT', {
+          trackKey: trackKey,
+          audioContextState: arenaAudioContext ? arenaAudioContext.state : 'null',
+          timestamp: nowStr
+        });
+
+        if (trackKey === 'custom' && customAudioData) {
           try {
             var ca = new Audio(customAudioData);
-            ca.play().catch(function () { playCelebrationFanfare(); });
+            var cp = ca.play();
+            if (cp !== undefined) {
+              cp.then(function() {
+                setAudioArmUIState('ARMED');
+                if (dbgLastPlayResult) {
+                  dbgLastPlayResult.textContent = 'SUCCESS (Custom)';
+                  dbgLastPlayResult.className = 'arena-telemetry-val highlight';
+                }
+                if (onComplete) onComplete();
+              }).catch(function(err) {
+                var errDesc = (err && (err.name ? (err.name + ': ' + err.message) : err.message)) || 'Playback rejected';
+                console.error('[ARENA AUDIO] Custom audio play error:', err);
+                if (dbgLastError) {
+                  dbgLastError.textContent = errDesc;
+                  dbgLastError.className = 'arena-telemetry-val danger';
+                }
+                if (dbgLastPlayResult) {
+                  dbgLastPlayResult.textContent = 'ERROR (Falling back)';
+                  dbgLastPlayResult.className = 'arena-telemetry-val danger';
+                }
+                setAudioArmUIState('BLOCKED', errDesc);
+                playCelebrationFanfare();
+              });
+            }
             return;
+          } catch (e) {
+            var eDesc = (e && e.message) || 'Custom Audio Exception';
+            console.error('[ARENA AUDIO] Custom play failed:', e);
+            if (dbgLastError) {
+              dbgLastError.textContent = eDesc;
+              dbgLastError.className = 'arena-telemetry-val danger';
+            }
+            setAudioArmUIState('BLOCKED', eDesc);
+          }
+        }
+
+        var candidateUrls = TRACK_PRESETS[trackKey] || TRACK_PRESETS['times-9am'];
+        var idx = 0;
+        var lastPlayError = null;
+
+        function attemptPlay() {
+          if (idx >= candidateUrls.length) {
+            // Expose the actual error that failed the attempts
+            var finalErrText = lastPlayError ? (lastPlayError.name + ': ' + lastPlayError.message) : 'All candidate URLs failed';
+            console.warn('[ARENA AUDIO] All audio URLs failed. Falling back to Web Audio synth.', finalErrText);
+            if (dbgLastError) {
+              dbgLastError.textContent = finalErrText;
+              dbgLastError.className = 'arena-telemetry-val danger';
+            }
+            if (dbgLastPlayResult) {
+              dbgLastPlayResult.textContent = 'FALLBACK SYNTH';
+              dbgLastPlayResult.className = 'arena-telemetry-val warn';
+            }
+            // Fallback to Web Audio synthesis fanfare
+            playCelebrationFanfare();
+            if (onComplete) onComplete();
+            return;
+          }
+
+          var url = candidateUrls[idx++];
+          var audio = new Audio(url);
+
+          console.log('[ARENA AUDIO] Testing URL candidate:', {
+            trackKey: trackKey,
+            resolvedUrl: url,
+            readyState: audio.readyState,
+            audioContextState: arenaAudioContext ? arenaAudioContext.state : 'null'
+          });
+
+          var playPromise = audio.play();
+
+          if (playPromise !== undefined) {
+            playPromise.then(function () {
+              setAudioArmUIState('ARMED');
+              if (dbgLastPlayResult) {
+                dbgLastPlayResult.textContent = 'SUCCESS (' + url + ')';
+                dbgLastPlayResult.className = 'arena-telemetry-val highlight';
+              }
+              if (dbgLastError) dbgLastError.textContent = 'None';
+              console.log('[ARENA AUDIO] Playback successful:', url);
+              if (onComplete) onComplete();
+            }).catch(function (err) {
+              lastPlayError = err;
+              var specificErr = (err && (err.name ? (err.name + ': ' + err.message) : err.message)) || 'Audio play rejected';
+              console.warn('[ARENA AUDIO] HTML5 Audio play rejected for ' + url + ':', specificErr);
+              if (dbgLastError) {
+                dbgLastError.textContent = specificErr;
+                dbgLastError.className = 'arena-telemetry-val danger';
+              }
+
+              // Try decoding via AudioContext
+              try {
+                var AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!arenaAudioContext) arenaAudioContext = new AudioCtx();
+                if (arenaAudioContext.state === 'suspended') arenaAudioContext.resume();
+
+                fetch(url)
+                  .then(function (r) {
+                    if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + r.statusText);
+                    return r.arrayBuffer();
+                  })
+                  .then(function (buf) { return arenaAudioContext.decodeAudioData(buf); })
+                  .then(function (dec) {
+                    var src = arenaAudioContext.createBufferSource();
+                    src.buffer = dec;
+                    src.connect(arenaAudioContext.destination);
+                    src.start(0);
+                    setAudioArmUIState('ARMED');
+                    if (dbgLastPlayResult) {
+                      dbgLastPlayResult.textContent = 'SUCCESS (WebAudio ' + url + ')';
+                      dbgLastPlayResult.className = 'arena-telemetry-val highlight';
+                    }
+                    if (dbgLastError) dbgLastError.textContent = 'None';
+                    console.log('[ARENA AUDIO] Web Audio decode playback successful:', url);
+                    if (onComplete) onComplete();
+                  })
+                  .catch(function (fetchErr) {
+                    lastPlayError = fetchErr;
+                    console.warn('[ARENA AUDIO] WebAudio decode failed for ' + url + ':', fetchErr);
+                    attemptPlay();
+                  });
+              } catch (e) {
+                lastPlayError = e;
+                attemptPlay();
+              }
+            });
+          } else {
+            attemptPlay();
+          }
+        }
+
+        attemptPlay();
+      }
+
+      // Authoritative Audio Schedule State in Memory
+      var arenaSchedule = {
+        enabled: true,
+        target_time: '09:00:00',
+        track: 'times-9am',
+        schedule_id: 'default'
+      };
+
+      // Synchronize schedule from shared backend / Supabase / local API / cache (STEP 3 & 10)
+      async function syncArenaAudioSchedule() {
+        var found = null;
+        if (window.TechBossSupabase && window.TechBossSupabase.fetchAudioSchedule) {
+          try {
+            found = await window.TechBossSupabase.fetchAudioSchedule();
+          } catch (e) {}
+        }
+        if (!found) {
+          try {
+            var raw = localStorage.getItem('techboss_scheduled_audio_config');
+            if (raw) {
+              found = JSON.parse(raw);
+              if (found) found._source = 'LOCAL CACHE';
+            }
           } catch (e) {}
         }
 
-        if (trackType && TRACK_PRESETS[trackType]) {
-          playAudioUrlsWithFallback(TRACK_PRESETS[trackType], playCelebrationFanfare);
-          return;
-        }
+        var sourceLabel = (found && found._source) ? found._source : 'NONE';
 
-        // Auto map by time or default to 9-00 AM.jpeg
-        if (TIME_AUDIO_MAP[timeKey]) {
-          playAudioUrlsWithFallback(TIME_AUDIO_MAP[timeKey], playCelebrationFanfare);
-          return;
-        }
+        if (found && typeof found === 'object' && found.target_time) {
+          // If a new schedule_id arrives that differs from arenaSchedule.schedule_id, reset fired lock
+          if (found.schedule_id && arenaSchedule.schedule_id && found.schedule_id !== arenaSchedule.schedule_id) {
+            console.log('[ARENA SCHEDULER] New schedule ID received: ' + found.schedule_id + ', unlocking trigger.');
+            lastFiredScheduleId = null;
+            localStorage.removeItem('techboss_last_fired_schedule_id');
+          }
 
-        // Default 9:00 AM track
-        playAudioUrlsWithFallback(['Times/9-00 AM.jpeg', 'Times/9-00 AM.mp3', 'success-sound.mp3'], playCelebrationFanfare);
+          arenaSchedule = found;
+          localStorage.setItem('techboss_scheduled_audio_time', arenaSchedule.target_time);
+          if (arenaSchedule.track) localStorage.setItem('techboss_scheduled_audio_track', arenaSchedule.track);
+
+          if (dbgScheduleReceived) {
+            dbgScheduleReceived.textContent = 'YES (' + sourceLabel + ')';
+            dbgScheduleReceived.className = 'arena-telemetry-val highlight';
+          }
+          if (dbgScheduledTime) dbgScheduledTime.textContent = arenaSchedule.target_time + ' IST';
+          if (dbgScheduleId) dbgScheduleId.textContent = arenaSchedule.schedule_id || '--';
+          if (dbgLastReceivedSchedule) {
+            dbgLastReceivedSchedule.textContent = '[' + sourceLabel + '] Time: ' + arenaSchedule.target_time + ' | Track: ' + (arenaSchedule.track || 'default') + ' | ID: ' + (arenaSchedule.schedule_id || '--');
+          }
+        } else {
+          var t = localStorage.getItem('techboss_scheduled_audio_time') || '09:00:00';
+          var tr = localStorage.getItem('techboss_scheduled_audio_track') || 'times-9am';
+          arenaSchedule.target_time = t.length === 5 ? (t + ':00') : t;
+          arenaSchedule.track = tr;
+
+          if (dbgScheduledTime) dbgScheduledTime.textContent = arenaSchedule.target_time + ' IST';
+          if (dbgScheduleId) dbgScheduleId.textContent = arenaSchedule.schedule_id || 'default';
+        }
       }
 
-      // Check system clock every second for 09:00 or custom scheduled time
-      function checkScheduledAudioTrigger() {
-        var now = new Date();
-        var hrs = String(now.getHours()).padStart(2, '0');
-        var mins = String(now.getMinutes()).padStart(2, '0');
-        var currentTimeStr = hrs + ':' + mins;
-        var todayKey = now.toISOString().slice(0, 10) + '_' + currentTimeStr;
+      // Check Immediate Audio Trigger from Admin (Fire Now)
+      var lastProcessedActionId = null;
+      async function checkImmediateArenaTrigger() {
+        if (window.TechBossSupabase && window.TechBossSupabase.fetchAudioTrigger) {
+          try {
+            var trig = await window.TechBossSupabase.fetchAudioTrigger();
+            if (trig && trig.action === 'FIRE_IMMEDIATE' && trig.action_id && trig.action_id !== lastProcessedActionId) {
+              // Check freshness (within last 30 seconds)
+              if (Date.now() - (trig.timestamp || 0) < 30000) {
+                lastProcessedActionId = trig.action_id;
+                console.log('[ARENA AUDIO] FIRE_IMMEDIATE triggered:', trig);
+                if (dbgLastCrossingDetected) {
+                  dbgLastCrossingDetected.textContent = formatISTTime(getNowIST()) + ' (IMMEDIATE TRIGGER)';
+                }
+                playArenaAudio(trig.track || arenaSchedule.track);
+                showKeynoteAnnouncement('⚡ ARENA KEYNOTE AUDIO ACTIVATED BY ORGANIZER');
+                if (typeof confetti === 'function') {
+                  confetti({ particleCount: 120, spread: 90, origin: { y: 0.35 } });
+                }
+              }
+            }
+          } catch (e) {}
+        }
+      }
 
-        var targetTime = localStorage.getItem('techboss_scheduled_audio_time') || '09:00';
-        // Normalize target time (e.g. "09:00:00" -> "09:00")
-        var normTarget = targetTime.slice(0, 5);
+      // Autonomous Time-Crossing Scheduler Loop (STEP 5 SPECIFICATION)
+      function checkScheduledAudioCrossing() {
+        var nowIST = getNowIST();
+        var todayKey = formatISTDate(nowIST);
+        var currentHMS = formatISTTime(nowIST);
 
-        if (currentTimeStr === normTarget && lastFiredAudioStamp !== todayKey) {
-          lastFiredAudioStamp = todayKey;
-          var customMsg = localStorage.getItem('techboss_scheduled_audio_msg') || '👑 THE ARENA IS LIVE — THE CHAMPIONSHIP HAS BEGUN!';
-          
-          playScheduledArenaAudio(null, currentTimeStr);
-          showKeynoteAnnouncement(customMsg);
-          
-          if (typeof confetti === 'function') {
-            confetti({
-              particleCount: 140,
-              spread: 100,
-              origin: { y: 0.35 },
-              colors: ['#ffd700', '#2997ff', '#30d158', '#ffffff', '#ff2a85']
-            });
+        if (dbgCurrentIST) dbgCurrentIST.textContent = currentHMS;
+        if (dbgLastSchedulerCheck) dbgLastSchedulerCheck.textContent = currentHMS;
+        if (dbgAudioContext && arenaAudioContext) {
+          dbgAudioContext.textContent = arenaAudioContext.state;
+          dbgAudioContext.className = 'arena-telemetry-val ' + (arenaAudioContext.state === 'running' ? 'highlight' : 'warn');
+        }
+
+        if (!arenaSchedule || arenaSchedule.enabled === false) {
+          if (dbgSchedulerState) {
+            dbgSchedulerState.textContent = 'STOPPED / DISABLED';
+            dbgSchedulerState.className = 'arena-telemetry-val warn';
+          }
+          previousCheckIST = nowIST;
+          return;
+        }
+
+        if (dbgSchedulerState) {
+          dbgSchedulerState.textContent = 'RUNNING';
+          dbgSchedulerState.className = 'arena-telemetry-val highlight';
+        }
+
+        var schedTimeStr = arenaSchedule.target_time || '09:00:00';
+        if (schedTimeStr.length === 5) schedTimeStr += ':00';
+        var parts = schedTimeStr.split(':');
+
+        var targetTriggerIST = new Date(nowIST);
+        targetTriggerIST.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), parseInt(parts[2] || '0', 10), 0);
+
+        var schedOccurrenceId = (arenaSchedule.schedule_id || 'daily') + '_' + todayKey + '_' + schedTimeStr;
+        var diffMs = nowIST.getTime() - targetTriggerIST.getTime();
+
+        // Initialize previousCheckIST on first tick
+        if (!previousCheckIST) {
+          previousCheckIST = new Date(nowIST.getTime() - 1000);
+          // If page loads > 60 seconds AFTER the scheduled target time today, mark past occurrence to avoid replaying old schedule
+          if (diffMs > 60000) {
+            lastFiredScheduleId = schedOccurrenceId;
+            lastFiredDateKey = todayKey;
+            localStorage.setItem('techboss_last_fired_schedule_id', lastFiredScheduleId);
+            localStorage.setItem('techboss_last_fired_date_key', lastFiredDateKey);
+            return;
           }
         }
+
+        // STEP 5: TIMESTAMP CROSSING LOGIC:
+        // previous timestamp < target timestamp AND current timestamp >= target timestamp
+        // OR current timestamp is within a 15-second grace window after target
+        var isCrossing = (previousCheckIST.getTime() < targetTriggerIST.getTime()) && (nowIST.getTime() >= targetTriggerIST.getTime());
+        var withinWindow = (diffMs >= 0) && (diffMs <= 15000);
+        var alreadyFired = (lastFiredScheduleId === schedOccurrenceId);
+
+        if ((isCrossing || withinWindow) && !alreadyFired) {
+          // Log exact required fields
+          console.log('[ARENA SCHEDULER] TIME CROSSING DETECTED!', {
+            previousTimestamp: formatISTTime(previousCheckIST),
+            currentTimestamp: formatISTTime(nowIST),
+            targetTimestamp: formatISTTime(targetTriggerIST),
+            differenceMs: diffMs,
+            occurrenceId: schedOccurrenceId,
+            scheduleId: arenaSchedule.schedule_id
+          });
+
+          if (dbgLastCrossingDetected) {
+            dbgLastCrossingDetected.textContent = currentHMS + ' (diff ' + diffMs + 'ms)';
+            dbgLastCrossingDetected.className = 'arena-telemetry-val highlight';
+          }
+
+          // Fire scheduled audio occurrence
+          lastFiredScheduleId = schedOccurrenceId;
+          lastFiredDateKey = todayKey;
+          localStorage.setItem('techboss_last_fired_schedule_id', lastFiredScheduleId);
+          localStorage.setItem('techboss_last_fired_date_key', lastFiredDateKey);
+
+          playArenaAudio(arenaSchedule.track, function () {
+            showKeynoteAnnouncement('👑 ARENA TIME SCHEDULE TRIGGERED: ' + schedTimeStr + ' IST');
+            if (typeof confetti === 'function') {
+              confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.35 },
+                colors: ['#ffd700', '#2997ff', '#30d158', '#ffffff', '#ff2a85']
+              });
+            }
+          });
+        }
+
+        previousCheckIST = nowIST;
       }
-      setInterval(checkScheduledAudioTrigger, 1000);
+
+      // Check crossing every second
+      setInterval(checkScheduledAudioCrossing, 1000);
+      syncArenaAudioSchedule();
+
+      // Check Immediate Trigger every 2 seconds
+      setInterval(checkImmediateArenaTrigger, 2000);
 
       // BroadcastChannel Real-Time Listener
       if (typeof BroadcastChannel !== 'undefined') {
@@ -3047,6 +4458,8 @@
                 }
               } else if (ev.data.type === 'TELEMETRY_BROADCAST') {
                 loadBroadcast();
+              } else if (ev.data.type === 'BOSS_HP_UPDATE') {
+                if (ev.data.hp !== undefined) updateBossHpUI(ev.data.hp, true);
               } else if (ev.data.type === 'INHOUSE_CHECKIN' || ev.data.type === 'INHOUSE_QR_SCANNED' || ev.data.type === 'INHOUSE_UPDATE') {
                 loadInHouseData();
                 loadActiveRoundData();
@@ -3054,15 +4467,14 @@
                   showScoreboardWelcomeGreeting(ev.data.contender || ev.data.handle);
                 }
               } else if (ev.data.type === 'FIRE_SCHEDULED_AUDIO') {
-                playScheduledArenaAudio(ev.data.track);
+                playArenaAudio(ev.data.track);
                 if (ev.data.message) showKeynoteAnnouncement(ev.data.message);
                 if (typeof confetti === 'function') {
                   confetti({ particleCount: 120, spread: 90, origin: { y: 0.4 } });
                 }
               } else if (ev.data.type === 'SCHEDULE_AUDIO_CONFIG') {
-                if (ev.data.time) localStorage.setItem('techboss_scheduled_audio_time', ev.data.time);
-                if (ev.data.track) localStorage.setItem('techboss_scheduled_audio_track', ev.data.track);
-                if (ev.data.message) localStorage.setItem('techboss_scheduled_audio_msg', ev.data.message);
+                if (ev.data.schedule) arenaSchedule = ev.data.schedule;
+                syncArenaAudioSchedule();
               }
             }
           };
@@ -3071,6 +4483,10 @@
 
       // Storage event listener across tabs
       window.addEventListener('storage', function (e) {
+        if (e.key === 'techboss_boss_hp') {
+          updateBossHpUI(e.newValue, true);
+          return;
+        }
         if (e.key === 'techboss_tournament_teams' || e.key === 'techboss_round2_teams_generated') {
           if (selectedRoundScope === 'AUTO' || selectedRoundScope === 1) {
             window.selectRoundScope(2);
@@ -3079,14 +4495,16 @@
           }
           return;
         }
+        if (e.key === 'techboss_scheduled_audio_config' || e.key === 'techboss_scheduled_audio_time') {
+          syncArenaAudioSchedule();
+        }
         if (e.key === 'techboss_solo_leaderboard' ||
             e.key === 'techboss_tournament_scores' ||
             e.key === 'techboss_tournament_rounds' ||
             e.key === 'techboss_board_updated_at' ||
             e.key === 'techboss_custom_broadcast' ||
             e.key === 'techboss_inhouse_checkins' ||
-            e.key === 'techboss_registrations' ||
-            e.key === 'techboss_scheduled_audio_time') {
+            e.key === 'techboss_registrations') {
           loadAllData();
         }
       });
@@ -3102,10 +4520,15 @@
             }
 
             var eventState = await window.TechBossSupabase.fetchEventState();
-            if (eventState && (eventState.broadcastMsg || eventState.announcement)) {
-              var msg = eventState.broadcastMsg || eventState.announcement;
-              localStorage.setItem('techboss_custom_broadcast', msg);
-              loadBroadcast();
+            if (eventState) {
+              if (eventState.bossHp !== undefined && eventState.bossHp !== null) {
+                updateBossHpUI(eventState.bossHp);
+              }
+              if (eventState.broadcastMsg || eventState.announcement) {
+                var msg = eventState.broadcastMsg || eventState.announcement;
+                localStorage.setItem('techboss_custom_broadcast', msg);
+                loadBroadcast();
+              }
             }
 
             var cloudInHouse = await window.TechBossSupabase.fetchInHouseCheckins();
@@ -3114,6 +4537,7 @@
               localStorage.setItem('techboss_inhouse_checkins', JSON.stringify(inHouseMap));
             }
 
+            await syncArenaAudioSchedule();
             loadActiveRoundData();
           } catch (err) { }
         }
@@ -3127,12 +4551,12 @@
         });
         window.TechBossSupabase.subscribeToEventState(function () {
           loadCloudState();
+          syncArenaAudioSchedule();
         });
         window.TechBossSupabase.subscribeToInHouseCheckins(function (cloudMap) {
           if (cloudMap && typeof cloudMap === 'object') {
             var keys = Object.keys(cloudMap);
             if (keys.length > lastInHouseCount && lastInHouseCount > 0) {
-              // Find the newest checkin
               var newest = null;
               for (var k in cloudMap) {
                 if (!newest || (cloudMap[k].timestamp && cloudMap[k].timestamp > (newest.timestamp || 0))) {
@@ -3153,6 +4577,7 @@
       setInterval(function () {
         loadAllData();
         loadCloudState();
+        syncArenaAudioSchedule();
       }, 2500);
 
       // Search & Segment Filters
@@ -3172,24 +4597,61 @@
         });
       });
 
-      // Fullscreen Toggle
+      // Stage Presentation Fullscreen & Persistence Mode
+      function applyStagePresentationMode(isActive) {
+        if (isActive) {
+          document.body.classList.add('stage-fullscreen-active');
+          if (fullscreenBtn) fullscreenBtn.innerHTML = '<span>⛶</span> Exit Stage Mode';
+          sessionStorage.setItem('techboss_stage_fullscreen', 'true');
+        } else {
+          document.body.classList.remove('stage-fullscreen-active');
+          if (fullscreenBtn) fullscreenBtn.innerHTML = '<span>⛶</span> Stage Fullscreen';
+          sessionStorage.removeItem('techboss_stage_fullscreen');
+        }
+      }
+      window.applyStagePresentationMode = applyStagePresentationMode;
+
       function toggleFullScreen() {
+        var isCurrentActive = document.body.classList.contains('stage-fullscreen-active');
         if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen().catch(function () { });
-          if (fullscreenBtn) fullscreenBtn.innerHTML = '<span>⛶</span> Exit Fullscreen';
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().then(function () {
+              applyStagePresentationMode(true);
+            }).catch(function () {
+              // If browser blocks native requestFullscreen (e.g. iframe or permission), toggle CSS stage presentation mode directly
+              applyStagePresentationMode(!isCurrentActive);
+            });
+          } else {
+            applyStagePresentationMode(!isCurrentActive);
+          }
         } else {
           if (document.exitFullscreen) {
-            document.exitFullscreen();
-            if (fullscreenBtn) fullscreenBtn.innerHTML = '<span>⛶</span> Stage Fullscreen';
+            document.exitFullscreen().then(function () {
+              applyStagePresentationMode(false);
+            }).catch(function () {
+              applyStagePresentationMode(false);
+            });
+          } else {
+            applyStagePresentationMode(false);
           }
         }
+      }
+      window.toggleFullScreen = toggleFullScreen;
+
+      document.addEventListener('fullscreenchange', function () {
+        applyStagePresentationMode(Boolean(document.fullscreenElement));
+      });
+
+      // Restore session persistent Stage presentation mode
+      if (sessionStorage.getItem('techboss_stage_fullscreen') === 'true') {
+        applyStagePresentationMode(true);
       }
 
       if (fullscreenBtn) fullscreenBtn.addEventListener('click', toggleFullScreen);
 
       // Keyboard Shortcut 'F' for Fullscreen
       document.addEventListener('keydown', function (e) {
-        if (e.target.tagName === 'INPUT') return;
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         if (e.key === 'f' || e.key === 'F') {
           toggleFullScreen();
         }

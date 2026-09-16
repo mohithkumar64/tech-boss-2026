@@ -91,8 +91,10 @@ class handler(BaseHTTPRequestHandler):
             return
 
         elif "event-state" in path:
-            status, data = supabase_request("event_state?id=eq.global")
-            item = data[0] if (isinstance(data, list) and len(data) > 0) else {"boss_hp": "78", "broadcast_msg": ""}
+            query = urllib.parse.parse_qs(parsed.query)
+            state_id = query.get("id", ["global"])[0]
+            status, data = supabase_request(f"event_state?id=eq.{state_id}")
+            item = data[0] if (isinstance(data, list) and len(data) > 0) else {"id": state_id, "boss_hp": "78", "broadcast_msg": ""}
             self._send_json(200, {"success": True, "event_state": item})
             return
 
@@ -433,7 +435,15 @@ class handler(BaseHTTPRequestHandler):
             except Exception:
                 pass
 
-            self._send_json(200, {"success": True, "count": len(scores) if scores else len(scores_map)})
+        elif "event-state" in path:
+            body = self._get_body_json()
+            payload = {
+                "id": str(body.get("id", "global")),
+                "boss_hp": str(body.get("boss_hp", "78")),
+                "broadcast_msg": str(body.get("broadcast_msg", ""))
+            }
+            supabase_request("event_state", method="POST", data=[payload], headers={"Prefer": "resolution=merge-duplicates"})
+            self._send_json(200, {"success": True, "event_state": payload})
             return
 
         self._send_json(404, {"error": "Not Found"})
@@ -461,6 +471,9 @@ class handler(BaseHTTPRequestHandler):
             if not r_num or not status_val:
                 self._send_json(400, {"error": "round_number and status are required"})
                 return
+
+            if status_val == "OPEN":
+                supabase_request(f"tournament_rounds?round_number=neq.{r_num}", method="PATCH", data={"status": "NOT_STARTED"})
 
             status, res = supabase_request(
                 f"tournament_rounds?round_number=eq.{r_num}",

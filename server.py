@@ -13,7 +13,15 @@ import datetime
 import urllib.request
 import urllib.parse
 import urllib.error
+import sys
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
 PORT = int(os.environ.get("PORT", 3000))
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://sgcqsfgjiofoqdylrvoi.supabase.co").rstrip("/")
@@ -112,8 +120,10 @@ class TechBossHandler(SimpleHTTPRequestHandler):
             return
 
         elif path == "/api/event-state":
-            status, data = supabase_request("event_state?id=eq.global")
-            item = data[0] if (isinstance(data, list) and len(data) > 0) else {"boss_hp": "78", "broadcast_msg": ""}
+            query = urllib.parse.parse_qs(parsed.query)
+            state_id = query.get("id", ["global"])[0]
+            status, data = supabase_request(f"event_state?id=eq.{state_id}")
+            item = data[0] if (isinstance(data, list) and len(data) > 0) else {"id": state_id, "boss_hp": "78", "broadcast_msg": ""}
             self._send_json(200, {"success": True, "event_state": item})
             return
 
@@ -383,7 +393,7 @@ class TechBossHandler(SimpleHTTPRequestHandler):
         elif path == "/api/event-state":
             body = self._get_body_json()
             payload = {
-                "id": "global",
+                "id": str(body.get("id", "global")),
                 "boss_hp": str(body.get("boss_hp", "78")),
                 "broadcast_msg": str(body.get("broadcast_msg", ""))
             }
@@ -530,6 +540,13 @@ class TechBossHandler(SimpleHTTPRequestHandler):
                 self._send_json(400, {"error": "round_number and status are required"})
                 return
 
+            if status_val == "OPEN":
+                # Set all other rounds to NOT_STARTED
+                supabase_request(f"tournament_rounds?round_number=neq.{r_num}", method="PATCH", data={"status": "NOT_STARTED"})
+                for r in TOURNAMENT_CACHE["rounds"]:
+                    if str(r.get("round_number")) != str(r_num):
+                        r["status"] = "NOT_STARTED"
+
             status, res = supabase_request(
                 f"tournament_rounds?round_number=eq.{r_num}",
                 method="PATCH",
@@ -540,11 +557,12 @@ class TechBossHandler(SimpleHTTPRequestHandler):
                 if str(r.get("round_number")) == str(r_num):
                     r["status"] = status_val
             try:
+                now_str = datetime.datetime.now(datetime.timezone.utc).isoformat()
                 state_data = {
                     "id": "tournament_rounds",
                     "broadcast_msg": json.dumps(TOURNAMENT_CACHE["rounds"]),
                     "boss_hp": "0",
-                    "updated_at": datetime.now(timezone.utc).isoformat()
+                    "updated_at": now_str
                 }
                 supabase_request("event_state", method="POST", data=state_data, headers={"Prefer": "resolution=merge-duplicates"})
             except Exception:

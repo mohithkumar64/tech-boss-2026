@@ -803,20 +803,35 @@
       </div>
 
       <!-- AUTO AUDIO SCHEDULER & ARENA TIME TRIGGER -->
-      <div class="cyber-card" style="padding:28px; border-color:rgba(229,179,88,0.45); box-shadow:0 0 25px rgba(229,179,88,0.12);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <div class="cyber-card" style="padding:28px; border-color:rgba(229,179,88,0.55); box-shadow:0 0 30px rgba(229,179,88,0.15);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
           <h3 style="font-size:18px; font-weight:800; color:var(--gold); display:flex; align-items:center; gap:8px;">
             <span>⏰</span> AUTO AUDIO SCHEDULER
           </h3>
-          <span class="badge-status status-verified" id="audioSchedulerStatusBadge">🟢 Active · 09:00 IST</span>
+          <span class="badge-status" id="audioSchedulerStatusBadge" style="background:rgba(48,209,88,0.18); color:var(--green); border:1px solid rgba(48,209,88,0.4); font-size:12px; font-weight:800; padding:4px 12px; border-radius:9999px;">
+            ● SCHEDULE ARMED
+          </span>
         </div>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">
-          Automatically play championship audio fanfare across the arena when the system clock hits your scheduled time (e.g. 09:00:00).
-        </p>
+
+        <!-- Live Telemetry Status Strip -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:12px; margin-bottom:18px; background:rgba(0,0,0,0.5); border:1px solid var(--panel-border); border-radius:10px; padding:12px 16px;">
+          <div>
+            <div style="font-size:10.5px; font-weight:800; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.8px;">Target Schedule</div>
+            <div id="adminNextAudioDisplay" class="mono" style="font-size:17px; font-weight:900; color:var(--gold); margin-top:2px;">09:00:00 IST</div>
+          </div>
+          <div>
+            <div style="font-size:10.5px; font-weight:800; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.8px;">Countdown</div>
+            <div id="adminAudioCountdownDisplay" class="mono" style="font-size:17px; font-weight:900; color:var(--cyan); margin-top:2px;">--:--:--</div>
+          </div>
+          <div>
+            <div style="font-size:10.5px; font-weight:800; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.8px;">Sync Status</div>
+            <div id="adminAudioSyncFeedback" style="font-size:12px; font-weight:700; color:var(--green); margin-top:4px;">✓ Schedule synced to Arena</div>
+          </div>
+        </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
           <div class="form-group" style="margin-bottom:0;">
-            <label for="scheduledAudioTimeInput">Target Trigger Time (24-Hour)</label>
+            <label for="scheduledAudioTimeInput">Target Trigger Time (IST · 24-Hour)</label>
             <input type="time" id="scheduledAudioTimeInput" value="09:00" step="1" style="font-family:'JetBrains Mono', monospace; font-size:16px; font-weight:700; color:#ffd700;">
           </div>
           <div class="form-group" style="margin-bottom:0;">
@@ -843,7 +858,6 @@
           <small style="color:var(--text-muted); font-size:11px; display:block; margin-top:4px;" id="customAudioFileName">No custom file chosen (default fanfare will be used)</small>
         </div>
 
-        <!-- Text announcement field hidden per user request; arena runs purely audible sound notes -->
         <div class="form-group" style="margin-bottom: 16px; display: none;">
           <label for="scheduledAnnouncementMsg">Scheduled Keynote Announcement</label>
           <input type="text" id="scheduledAnnouncementMsg" value="" placeholder="Announcement message when timer fires">
@@ -856,7 +870,7 @@
         </div>
 
         <div style="font-size:12px; color:var(--text-muted); background:rgba(0,0,0,0.35); padding:10px 14px; border-radius:6px; border:1px solid var(--panel-border);">
-          💡 <b>Tip:</b> Keep the Scoreboard or Main page open with sound enabled. At the exact scheduled time (e.g. 09:00:00), the audio fanfare plays automatically and celebration confetti fires across all connected devices.
+          💡 <b>Tip:</b> When the system clock crosses your scheduled time (IST), the arena audio triggers automatically across all connected projector and arena displays.
         </div>
       </div>
 
@@ -2695,11 +2709,16 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
       if (window.TechBossSupabase) {
         await window.TechBossSupabase.updateRoundStatus(currentRoundNum, newStatus);
       }
-      var target = tournamentRounds.find(function(r) { return r.round_number === currentRoundNum; });
-      if (target) target.status = newStatus;
+      tournamentRounds.forEach(function(r) {
+        if (r.round_number === currentRoundNum) {
+          r.status = newStatus;
+        } else if (newStatus === 'OPEN') {
+          r.status = 'NOT_STARTED';
+        }
+      });
       initRoundNavigator();
       renderActiveRoundScoreboard();
-      showToast('Round ' + currentRoundNum + ' status changed to ' + newStatus);
+      showToast('Round ' + currentRoundNum + ' status changed to ' + newStatus + (newStatus === 'OPEN' ? ' (other rounds set to NOT STARTED)' : ''));
     });
   }
 
@@ -3271,14 +3290,14 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
   }
 
   var TRACK_PRESETS = {
-    'times-9am': ['Times/9-00 AM.mp3', 'Times/9-00 AM.jpeg'],
-    'times-10am': ['Times/10-00 AM.mp3', 'Times/10-00 AM.jpeg'],
-    'times-11am': ['Times/11-00 AM.mp3', 'Times/11-00 AM.jpeg'],
-    'times-12pm': ['Times/12-00 PM.mp3', 'Times/12-00 PM.jpeg'],
-    'times-1pm': ['Times/1-00 PM.mp3', 'Times/1-00 PM.jpeg'],
-    'times-2pm': ['Times/2-00 PM.mp3', 'Times/2-00 PM.jpeg'],
-    'times-3pm': ['Times/3-00 PM.mp3', 'Times/3-00 PM.jpeg'],
-    'times-4pm': ['Times/4-00 PM.mp3', 'Times/4-00 PM.jpeg'],
+    'times-9am': ['Times/9-00 AM.mp3', 'success-sound.mp3'],
+    'times-10am': ['Times/10-00 AM.mp3', 'success-sound.mp3'],
+    'times-11am': ['Times/11-00 AM.mp3', 'success-sound.mp3'],
+    'times-12pm': ['Times/12-00 PM.mp3', 'success-sound.mp3'],
+    'times-1pm': ['Times/1-00 PM.mp3', 'success-sound.mp3'],
+    'times-2pm': ['Times/2-00 PM.mp3', 'success-sound.mp3'],
+    'times-3pm': ['Times/3-00 PM.mp3', 'success-sound.mp3'],
+    'times-4pm': ['Times/4-00 PM.mp3', 'success-sound.mp3'],
     'fanfare': ['success-sound.mp3'],
     'success': ['success-sound.mp3']
   };
@@ -3334,49 +3353,117 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
     playSynthFanfare();
   }
 
+  // Get Indian Standard Time Date Object helper
+  function getNowIST() {
+    var d = new Date();
+    var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    return new Date(utc + (3600000 * 5.5));
+  }
+
+  function formatTimeHMS(d) {
+    var hrs = String(d.getHours()).padStart(2, '0');
+    var mins = String(d.getMinutes()).padStart(2, '0');
+    var secs = String(d.getSeconds()).padStart(2, '0');
+    return hrs + ':' + mins + ':' + secs;
+  }
+
+  var currentActiveSchedule = null;
+
+  function updateAdminSchedulerUI() {
+    var nextDisplay = document.getElementById('adminNextAudioDisplay');
+    var countdownDisplay = document.getElementById('adminAudioCountdownDisplay');
+    var statusBadge = document.getElementById('audioSchedulerStatusBadge');
+
+    var timeVal = schedTimeInput ? schedTimeInput.value.trim() : '09:00';
+    var normTime = timeVal.length === 5 ? (timeVal + ':00') : timeVal;
+    if (nextDisplay) nextDisplay.textContent = normTime + ' IST';
+
+    var nowIST = getNowIST();
+    var parts = normTime.split(':');
+    var targetIST = new Date(nowIST);
+    targetIST.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), parseInt(parts[2] || '0', 10), 0);
+
+    var diffMs = targetIST.getTime() - nowIST.getTime();
+    if (diffMs <= -2000) {
+      // Past time for today
+      if (statusBadge) {
+        statusBadge.textContent = '✓ AUDIO FIRED';
+        statusBadge.style.background = 'rgba(255, 215, 0, 0.18)';
+        statusBadge.style.color = 'var(--gold)';
+        statusBadge.style.borderColor = 'rgba(255, 215, 0, 0.4)';
+      }
+      if (countdownDisplay) countdownDisplay.textContent = '00:00:00 (Passed)';
+    } else {
+      if (statusBadge) {
+        statusBadge.textContent = '● SCHEDULE ARMED';
+        statusBadge.style.background = 'rgba(48, 209, 88, 0.18)';
+        statusBadge.style.color = 'var(--green)';
+        statusBadge.style.borderColor = 'rgba(48, 209, 88, 0.4)';
+      }
+      var remSecs = Math.max(0, Math.floor(diffMs / 1000));
+      var ch = String(Math.floor(remSecs / 3600)).padStart(2, '0');
+      var cm = String(Math.floor((remSecs % 3600) / 60)).padStart(2, '0');
+      var cs = String(remSecs % 60).padStart(2, '0');
+      if (countdownDisplay) countdownDisplay.textContent = ch + ':' + cm + ':' + cs;
+    }
+  }
+  setInterval(updateAdminSchedulerUI, 1000);
+  updateAdminSchedulerUI();
+
   // Save and Sync Schedule
   if (saveSchedBtn) {
-    saveSchedBtn.addEventListener('click', function () {
+    saveSchedBtn.addEventListener('click', async function () {
       var timeVal = schedTimeInput ? schedTimeInput.value.trim() : '09:00';
       var trackVal = schedTrackSelect ? schedTrackSelect.value : 'times-9am';
+      var syncFeedback = document.getElementById('adminAudioSyncFeedback');
 
       if (!timeVal) {
-        alert('Please enter a target trigger time (e.g. 09:00)');
+        alert('Please enter a target trigger time (e.g. 09:00:00)');
         return;
       }
 
-      localStorage.setItem('techboss_scheduled_audio_time', timeVal);
-      localStorage.setItem('techboss_scheduled_audio_track', trackVal);
+      var normTime = timeVal.length === 5 ? (timeVal + ':00') : timeVal;
+      var scheduleId = 'sched_' + Date.now();
+      var schedObj = {
+        enabled: true,
+        target_time: normTime,
+        target_time_hm: normTime.slice(0, 5),
+        track: trackVal,
+        schedule_id: scheduleId,
+        created_at: new Date().toISOString()
+      };
 
-      if (schedStatusBadge) schedStatusBadge.textContent = '🟢 Active · Hourly Audio & ' + timeVal + ' IST';
+      saveSchedBtn.disabled = true;
+      saveSchedBtn.innerHTML = '💾 Syncing...';
+      if (syncFeedback) syncFeedback.textContent = '⏳ Syncing schedule to cloud database...';
 
-      // 1. Play locally in admin preview
-      playSoundTrack(trackVal);
+      // 1. Sync through TechBossSupabase
+      var synced = false;
+      if (window.TechBossSupabase && window.TechBossSupabase.saveAudioSchedule) {
+        synced = await window.TechBossSupabase.saveAudioSchedule(schedObj);
+      }
 
-      // 2. Broadcast via BroadcastChannel so open Live Arena tabs play immediately!
+      // 2. Broadcast via BroadcastChannel
       if (syncChannel) {
         try {
           syncChannel.postMessage({
             type: 'SCHEDULE_AUDIO_CONFIG',
-            time: timeVal,
+            schedule: schedObj,
+            time: normTime,
             track: trackVal,
-            timestamp: Date.now()
-          });
-          syncChannel.postMessage({
-            type: 'FIRE_SCHEDULED_AUDIO',
-            track: trackVal,
-            time: timeVal,
             timestamp: Date.now()
           });
         } catch (e) {}
       }
 
-      // 3. Sync to Supabase/API so external screens/projectors trigger immediately
-      if (window.TechBossSupabase && window.TechBossSupabase.triggerArenaAudio) {
-        window.TechBossSupabase.triggerArenaAudio(trackVal);
+      updateAdminSchedulerUI();
+      saveSchedBtn.disabled = false;
+      saveSchedBtn.innerHTML = '💾 Save & Sync Schedule';
+      if (syncFeedback) {
+        syncFeedback.textContent = '✓ Schedule synced to Arena (' + normTime + ' IST)';
+        syncFeedback.style.color = 'var(--green)';
       }
-
-      showToast('⏰ Hourly audio schedule synced & sound note fired in Live Arena!');
+      showToast('✓ Audio schedule (' + normTime + ' IST) synced to Arena & Projector!');
     });
   }
 
@@ -3389,7 +3476,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
   }
 
   if (triggerAudioNowBtn) {
-    triggerAudioNowBtn.addEventListener('click', function () {
+    triggerAudioNowBtn.addEventListener('click', async function () {
       var trackVal = schedTrackSelect ? schedTrackSelect.value : 'times-9am';
 
       playSoundTrack(trackVal);
@@ -3405,10 +3492,10 @@ ALTER PUBLICATION supabase_realtime ADD TABLE tournament_scores;</pre>
       }
 
       if (window.TechBossSupabase && window.TechBossSupabase.triggerArenaAudio) {
-        window.TechBossSupabase.triggerArenaAudio(trackVal);
+        await window.TechBossSupabase.triggerArenaAudio(trackVal);
       }
 
-      showToast('⚡ Fired live Arena sound note across all screens!');
+      showToast('⚡ Fired live Arena audio now across all screens!');
     });
   }
 
